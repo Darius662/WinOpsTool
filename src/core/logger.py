@@ -1,6 +1,6 @@
 """Centralized logging configuration."""
 import logging
-from .config import LOG_FILE, LOG_FORMAT, LOG_LEVEL
+from .logging_config import LOG_FILE, LOG_FORMAT, LOG_LEVEL
 
 def setup_logger(name: str) -> logging.Logger:
     """Create and configure a logger instance for a module.

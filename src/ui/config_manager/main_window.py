@@ -71,17 +71,17 @@ class ConfigManagerWindow(QMainWindow):
         file_menu = menubar.addMenu("File")
         
         load_action = QAction("Load Config...", self)
-        load_action.triggered.connect(self.config_handler.load_config)
+        load_action.triggered.connect(lambda: self.config_handler.load_config())
         file_menu.addAction(load_action)
 
         save_action = QAction("Save Config...", self)
-        save_action.triggered.connect(self.config_handler.save_config)
+        save_action.triggered.connect(lambda: self.config_handler.save_config())
         file_menu.addAction(save_action)
 
         file_menu.addSeparator()
 
         clear_action = QAction("Clear All", self)
-        clear_action.triggered.connect(self.config_handler.clear_config)
+        clear_action.triggered.connect(lambda: self.config_handler.clear_config())
         file_menu.addAction(clear_action)
 
         file_menu.addSeparator()

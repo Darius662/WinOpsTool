@@ -335,25 +335,29 @@ class MainWindow(QMainWindow):
             # Apply registry settings
             if "Registry Editor" in self.panels and "registry" in config:
                 panel = self.panels["Registry Editor"]
-                for key in config["registry"].get("keys", []):
-                    panel.add_registry_key(key["path"], key["values"])
+                for entry in config["registry"]:
+                    panel.add_registry_key(entry["path"], entry["value"])
                     
             # Apply users and groups
-            if "Users & Groups" in self.panels and "users_and_groups" in config:
+            if "Users & Groups" in self.panels and "users" in config:
                 panel = self.panels["Users & Groups"]
-                users_groups = config["users_and_groups"]
+                users = config["users"]
                 
-                # Create groups first
-                for group in users_groups.get("groups", []):
-                    panel.add_group(group["name"], group["comment"])
-                    
-                # Then create users and add to groups
-                for user in users_groups.get("users", []):
+                # Create users
+                for user in users.get("create", []):
                     panel.add_user(
-                        user["name"],
+                        user["username"],
                         user["password"],
-                        user["groups"],
+                        user.get("groups", []),
                         user.get("comment", "")
+                    )
+                    
+                # Create groups
+                for group in users.get("groups", []):
+                    panel.add_group(
+                        group["name"],
+                        group.get("comment", ""),
+                        group.get("members", [])
                     )
                     
             # Apply services configuration
@@ -362,46 +366,63 @@ class MainWindow(QMainWindow):
                 for service in config["services"]:
                     panel.configure_service(
                         service["name"],
-                        service["start_type"],
-                        service["state"]
+                        service.get("start_type", "auto"),
+                        service.get("state", "running"),
+                        service.get("description", "")
                     )
                     
             # Apply firewall rules
             if "Firewall" in self.panels and "firewall" in config:
                 panel = self.panels["Firewall"]
-                for rule in config["firewall"].get("rules", []):
+                firewall = config["firewall"]
+                
+                # Inbound rules
+                for rule in firewall.get("inbound", []):
                     panel.add_rule(
                         rule["name"],
-                        rule["direction"],
+                        "in",
                         rule["action"],
                         rule["protocol"],
-                        rule["local_ports"],
-                        rule["remote_ports"],
-                        rule["enabled"]
+                        rule.get("local_port", ""),
+                        rule.get("remote_port", ""),
+                        rule.get("enabled", True)
+                    )
+                    
+                # Outbound rules
+                for rule in firewall.get("outbound", []):
+                    panel.add_rule(
+                        rule["name"],
+                        "out",
+                        rule["action"],
+                        rule["protocol"],
+                        rule.get("local_port", ""),
+                        rule.get("remote_port", ""),
+                        rule.get("enabled", True)
                     )
                     
             # Apply software changes
             if "Software" in self.panels and "software" in config:
                 panel = self.panels["Software"]
+                software = config["software"]
                 
                 # Install software
-                for software in config["software"].get("install", []):
+                for item in software.get("install", []):
                     panel.install_software(
-                        path=software["path"],
-                        arguments=software.get("arguments", "")
+                        path=item["path"],
+                        arguments=item.get("arguments", "")
                     )
                     
                 # Uninstall software
-                for name in config["software"].get("uninstall", []):
-                    panel.uninstall_software(name)
+                for item in software.get("uninstall", []):
+                    panel.uninstall_software(item["name"])
                     
             # Apply permissions
             if "Permissions" in self.panels and "permissions" in config:
                 panel = self.panels["Permissions"]
-                for item in config["permissions"]:
+                for perm in config["permissions"]:
                     panel.set_permissions(
-                        item["path"],
-                        item["permissions"]
+                        perm["path"],
+                        perm["permissions"]
                     )
                     
             # Apply applications settings
@@ -414,14 +435,18 @@ class MainWindow(QMainWindow):
                     panel.add_startup_item(
                         item["name"],
                         item["command"],
-                        item["enabled"]
+                        item.get("enabled", True)
                     )
                     
                 # Handle processes
-                for proc in apps.get("processes", {}).get("stop", []):
+                processes = apps.get("processes", {})
+                
+                # Stop processes
+                for proc in processes.get("stop", []):
                     panel.stop_process(proc)
                     
-                for proc in apps.get("processes", {}).get("start", []):
+                # Start processes
+                for proc in processes.get("start", []):
                     panel.start_process(
                         proc["path"],
                         proc.get("arguments", "")

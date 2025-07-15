@@ -2,69 +2,29 @@
 # Copy this file and modify according to your needs
 
 environment_variables:
-  system:
-    # Example: PATH: "%PATH%;C:\NewPath"
-  user:
-    # Example: TEMP: "C:\Users\Username\AppData\Local\Temp"
+  system: {}
+  user: {}
 
-registry:
-  # Example:
-  # - path: "HKLM\Software\MyApp"
-  #   name: "Version"
-  #   type: "REG_SZ"
-  #   value: "1.0.0"
+registry: []
 
 users:
-  # Example:
-  # - username: "newuser"
-  #   password: "password123"
-  #   groups: ["Users", "Power Users"]
-  #   comment: "New user account"
+  create: []
+  groups: []
 
-services:
-  # Example:
-  # - name: "MyService"
-  #   start_type: "auto"
-  #   state: "running"
-  #   description: "My custom service"
+services: []
 
 firewall:
-  # Example:
-  # - name: "Allow Web Traffic"
-  #   direction: "in"
-  #   action: "allow"
-  #   protocol: "TCP"
-  #   local_port: "80,443"
-  #   enabled: true
+  inbound: []
+  outbound: []
 
 software:
-  install:
-    # Example:
-    # - path: "C:\Installers\app.msi"
-    #   arguments: "/quiet"
-    #   verify_path: "C:\Program Files\App\app.exe"
-  uninstall:
-    # Example:
-    # - name: "App to Remove"
+  install: []
+  uninstall: []
 
-permissions:
-  # Example:
-  # - path: "C:\Data"
-  #   permissions:
-  #     - user: "Users"
-  #       rights: ["read", "execute"]
-  #       type: "allow"
+permissions: []
 
 applications:
-  startup:
-    # Example:
-    # - name: "My App"
-    #   command: "C:\Apps\myapp.exe"
-    #   enabled: true
+  startup: []
   processes:
-    # Example:
-    start:
-      # - path: "C:\Apps\service.exe"
-      #   arguments: "--daemon"
-    stop:
-      # - "unwanted_process.exe"
+    start: []
+    stop: []

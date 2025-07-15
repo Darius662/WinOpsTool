@@ -1,0 +1,53 @@
+2025-07-15 23:16:00,041 - ConfigHandler - ERROR - Failed to load configuration: 'NoneType' object has no attribute 'items'
+2025-07-15 23:20:39,325 - src.core.dependency_manager - DEBUG - Package PyQt6 is installed
+2025-07-15 23:20:39,328 - src.core.dependency_manager - DEBUG - pywin32 modules are available
+2025-07-15 23:20:39,338 - src.core.dependency_manager - WARNING - Missing required package: pyyaml
+2025-07-15 23:20:39,365 - src.core.dependency_manager - DEBUG - Package psutil is installed
+2025-07-15 23:20:39,375 - src.core.dependency_manager - WARNING - Missing required package: wmi
+2025-07-15 23:20:43,225 - src.core.dependency_manager - INFO - Attempting to install pyyaml
+2025-07-15 23:20:44,624 - src.core.dependency_manager - INFO - Attempting to install wmi
+2025-07-15 23:20:47,731 - MainWindow - INFO - Loaded panel: Environment Variables
+2025-07-15 23:20:47,733 - MainWindow - INFO - Loaded panel: Registry Editor
+2025-07-15 23:20:47,735 - MainWindow - INFO - Loaded panel: Users & Groups
+2025-07-15 23:20:47,737 - MainWindow - INFO - Loaded panel: Services
+2025-07-15 23:20:47,740 - MainWindow - INFO - Loaded panel: Firewall
+2025-07-15 23:20:47,743 - MainWindow - INFO - Loaded panel: Software
+2025-07-15 23:20:47,745 - MainWindow - INFO - Loaded panel: Permissions
+2025-07-15 23:20:47,747 - MainWindow - INFO - Loaded panel: Applications
+2025-07-15 23:21:15,157 - ConfigHandler - ERROR - Failed to load configuration: 'NoneType' object has no attribute 'items'
+2025-07-15 23:24:04,817 - ConfigHandler - ERROR - Failed to load configuration: registry must be a list
+2025-07-15 23:25:39,852 - ConfigHandler - INFO - Loaded configuration from Z:/GitHub/Windows_System_Management_Tool/config/default.yaml
+2025-07-15 23:25:53,701 - src.core.dependency_manager - DEBUG - Package PyQt6 is installed
+2025-07-15 23:25:53,705 - src.core.dependency_manager - DEBUG - pywin32 modules are available
+2025-07-15 23:25:53,717 - src.core.dependency_manager - WARNING - Missing required package: pyyaml
+2025-07-15 23:25:53,741 - src.core.dependency_manager - DEBUG - Package psutil is installed
+2025-07-15 23:25:53,846 - src.core.dependency_manager - DEBUG - Package wmi is installed
+2025-07-15 23:26:01,405 - src.core.dependency_manager - DEBUG - Package PyQt6 is installed
+2025-07-15 23:26:01,407 - src.core.dependency_manager - DEBUG - pywin32 modules are available
+2025-07-15 23:26:01,416 - src.core.dependency_manager - WARNING - Missing required package: pyyaml
+2025-07-15 23:26:01,440 - src.core.dependency_manager - DEBUG - Package psutil is installed
+2025-07-15 23:26:01,539 - src.core.dependency_manager - DEBUG - Package wmi is installed
+2025-07-15 23:26:05,556 - src.core.dependency_manager - INFO - Attempting to install pyyaml
+2025-07-15 23:26:08,309 - MainWindow - INFO - Loaded panel: Environment Variables
+2025-07-15 23:26:08,312 - MainWindow - INFO - Loaded panel: Registry Editor
+2025-07-15 23:26:08,316 - MainWindow - INFO - Loaded panel: Users & Groups
+2025-07-15 23:26:08,318 - MainWindow - INFO - Loaded panel: Services
+2025-07-15 23:26:08,320 - MainWindow - INFO - Loaded panel: Firewall
+2025-07-15 23:26:08,323 - MainWindow - INFO - Loaded panel: Software
+2025-07-15 23:26:08,325 - MainWindow - INFO - Loaded panel: Permissions
+2025-07-15 23:26:08,328 - MainWindow - INFO - Loaded panel: Applications
+2025-07-15 23:26:17,023 - MainWindow - ERROR - Failed to import configuration: 'list' object has no attribute 'get'
+2025-07-15 23:28:46,774 - src.core.dependency_manager - DEBUG - Package PyQt6 is installed
+2025-07-15 23:28:46,778 - src.core.dependency_manager - DEBUG - pywin32 modules are available
+2025-07-15 23:28:46,795 - src.core.dependency_manager - WARNING - Missing required package: pyyaml
+2025-07-15 23:28:46,820 - src.core.dependency_manager - DEBUG - Package psutil is installed
+2025-07-15 23:28:46,919 - src.core.dependency_manager - DEBUG - Package wmi is installed
+2025-07-15 23:28:48,795 - src.core.dependency_manager - INFO - Attempting to install pyyaml
+2025-07-15 23:28:51,907 - MainWindow - INFO - Loaded panel: Environment Variables
+2025-07-15 23:28:51,909 - MainWindow - INFO - Loaded panel: Registry Editor
+2025-07-15 23:28:51,913 - MainWindow - INFO - Loaded panel: Users & Groups
+2025-07-15 23:28:51,915 - MainWindow - INFO - Loaded panel: Services
+2025-07-15 23:28:51,917 - MainWindow - INFO - Loaded panel: Firewall
+2025-07-15 23:28:51,919 - MainWindow - INFO - Loaded panel: Software
+2025-07-15 23:28:51,922 - MainWindow - INFO - Loaded panel: Permissions
+2025-07-15 23:28:51,924 - MainWindow - INFO - Loaded panel: Applications
