@@ -50,6 +50,16 @@ A dedicated tool for creating and managing configuration files that can be impor
 
 ## Installation
 
+### Option 1: Using Executables
+
+1. Download the latest release from the Releases page
+2. Extract the ZIP file
+3. Run the executables with administrator privileges:
+   - `SystemManagementTool.exe` - Main application
+   - `ConfigurationManager.exe` - Configuration tool
+
+### Option 2: From Source
+
 1. Clone the repository:
    ```bash
    git clone https://github.com/yourusername/windows-system-management.git
@@ -60,6 +70,29 @@ A dedicated tool for creating and managing configuration files that can be impor
    ```bash
    pip install -r requirements.txt
    ```
+
+3. Run the Python scripts or build executables:
+   ```bash
+   # Run Python scripts
+   python main.py
+   python config_manager.py
+
+   # Or build executables
+   python build.py
+   ```
+
+### Building Executables
+
+To create standalone executables:
+
+1. Ensure PyInstaller is installed (included in requirements.txt)
+2. Run the build script:
+   ```bash
+   python build.py
+   ```
+3. Find the executables in the `dist` directory:
+   - `main.exe` - System Management Tool
+   - `config_manager.exe` - Configuration Manager
 
 ## Usage
 

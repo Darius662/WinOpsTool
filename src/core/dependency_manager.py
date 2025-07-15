@@ -7,6 +7,8 @@ from .config import REQUIRED_PACKAGES
 
 logger = setup_logger(__name__)
 
+from .bundled import is_bundled
+
 def check_dependencies() -> Tuple[bool, List[str]]:
     """Check if all required packages are installed.
     
@@ -15,6 +17,11 @@ def check_dependencies() -> Tuple[bool, List[str]]:
         - Boolean indicating if all dependencies are met
         - List of missing package names
     """
+    # If running as bundled executable, skip dependency check
+    if is_bundled():
+        logger.debug('Running as bundled executable, skipping dependency check')
+        return True, []
+    
     missing_packages = []
     
     for package in REQUIRED_PACKAGES:
