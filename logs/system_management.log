@@ -395,3 +395,633 @@ AttributeError: 'MainWindow' object has no attribute 'dialog_handler'. Did you m
 2025-07-16 13:42:35,138 - src.core.dependencies.checker - DEBUG - Package PyYAML is installed
 2025-07-16 13:42:35,141 - src.core.dependencies.checker - DEBUG - Package psutil is installed
 2025-07-16 13:42:35,144 - src.core.dependencies.checker - DEBUG - Package wmi is installed
+2025-07-16 14:35:06,809 - src.core.dependencies.checker - DEBUG - Package PyQt6 is installed
+2025-07-16 14:35:06,811 - src.core.dependencies.checker - DEBUG - pywin32 modules are available
+2025-07-16 14:35:06,813 - src.core.dependencies.checker - DEBUG - Package PyYAML is installed
+2025-07-16 14:35:06,816 - src.core.dependencies.checker - DEBUG - Package psutil is installed
+2025-07-16 14:35:06,818 - src.core.dependencies.checker - DEBUG - Package wmi is installed
+2025-07-16 14:35:06,987 - __main__ - ERROR - Unexpected error in main
+Traceback (most recent call last):
+  File "Z:\GitHub\Windows_System_Management_Tool\main.py", line 50, in main
+    window = MainWindow()
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\main\window.py", line 37, in __init__
+    self.panel_manager = PanelManager(self)
+                         ~~~~~~~~~~~~^^^^^^
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\main\panel_manager.py", line 20, in __init__
+    self.setup_panels()
+    ~~~~~~~~~~~~~~~~~^^
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\main\panel_manager.py", line 25, in setup_panels
+    from ..panels.environment_panel import EnvironmentPanel
+ModuleNotFoundError: No module named 'src.ui.panels.environment_panel'
+2025-07-16 14:36:35,765 - src.core.dependencies.checker - DEBUG - Package PyQt6 is installed
+2025-07-16 14:36:35,767 - src.core.dependencies.checker - DEBUG - pywin32 modules are available
+2025-07-16 14:36:35,770 - src.core.dependencies.checker - DEBUG - Package PyYAML is installed
+2025-07-16 14:36:35,778 - src.core.dependencies.checker - DEBUG - Package psutil is installed
+2025-07-16 14:36:35,783 - src.core.dependencies.checker - DEBUG - Package wmi is installed
+2025-07-16 14:36:35,961 - __main__ - ERROR - Unexpected error in main
+Traceback (most recent call last):
+  File "Z:\GitHub\Windows_System_Management_Tool\main.py", line 50, in main
+    window = MainWindow()
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\main\window.py", line 37, in __init__
+    self.panel_manager = PanelManager(self)
+                         ~~~~~~~~~~~~^^^^^^
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\main\panel_manager.py", line 20, in __init__
+    self.setup_panels()
+    ~~~~~~~~~~~~~~~~~^^
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\main\panel_manager.py", line 26, in setup_panels
+    env_panel = EnvironmentPanel(self.parent)
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\panels\environment\panel.py", line 19, in __init__
+    super().__init__(main_window)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\base\base_panel.py", line 19, in __init__
+    self.setup_connections()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\base\base_panel.py", line 27, in setup_connections
+    raise NotImplementedError('Panels must implement setup_connections')
+NotImplementedError: Panels must implement setup_connections
+2025-07-16 14:37:49,683 - src.core.dependencies.checker - DEBUG - Package PyQt6 is installed
+2025-07-16 14:37:49,685 - src.core.dependencies.checker - DEBUG - pywin32 modules are available
+2025-07-16 14:37:49,688 - src.core.dependencies.checker - DEBUG - Package PyYAML is installed
+2025-07-16 14:37:49,690 - src.core.dependencies.checker - DEBUG - Package psutil is installed
+2025-07-16 14:37:49,692 - src.core.dependencies.checker - DEBUG - Package wmi is installed
+2025-07-16 14:37:49,940 - __main__ - ERROR - Unexpected error in main
+Traceback (most recent call last):
+  File "Z:\GitHub\Windows_System_Management_Tool\main.py", line 50, in main
+    window = MainWindow()
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\main\window.py", line 37, in __init__
+    self.panel_manager = PanelManager(self)
+                         ~~~~~~~~~~~~^^^^^^
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\main\panel_manager.py", line 20, in __init__
+    self.setup_panels()
+    ~~~~~~~~~~~~~~~~~^^
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\main\panel_manager.py", line 32, in setup_panels
+    reg_panel = RegistryPanel(self.parent)
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\panels\registry\panel.py", line 28, in __init__
+    super().__init__(main_window)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\base\base_panel.py", line 19, in __init__
+    self.setup_connections()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\base\base_panel.py", line 27, in setup_connections
+    raise NotImplementedError('Panels must implement setup_connections')
+NotImplementedError: Panels must implement setup_connections
+2025-07-16 14:40:11,077 - src.core.dependencies.checker - DEBUG - Package PyQt6 is installed
+2025-07-16 14:40:11,081 - src.core.dependencies.checker - DEBUG - pywin32 modules are available
+2025-07-16 14:40:11,082 - src.core.dependencies.checker - DEBUG - Package PyYAML is installed
+2025-07-16 14:40:11,084 - src.core.dependencies.checker - DEBUG - Package psutil is installed
+2025-07-16 14:40:11,086 - src.core.dependencies.checker - DEBUG - Package wmi is installed
+2025-07-16 14:40:11,398 - __main__ - ERROR - Unexpected error in main
+Traceback (most recent call last):
+  File "Z:\GitHub\Windows_System_Management_Tool\main.py", line 50, in main
+    window = MainWindow()
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\main\window.py", line 37, in __init__
+    self.panel_manager = PanelManager(self)
+                         ~~~~~~~~~~~~^^^^^^
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\main\panel_manager.py", line 20, in __init__
+    self.setup_panels()
+    ~~~~~~~~~~~~~~~~~^^
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\main\panel_manager.py", line 38, in setup_panels
+    users_panel = UsersPanel(self.parent)
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\panels\users\panel.py", line 20, in __init__
+    super().__init__(main_window)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\base\base_panel.py", line 18, in __init__
+    self.setup_ui()
+    ~~~~~~~~~~~~~^^
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\panels\users\panel.py", line 35, in setup_ui
+    super().setup_ui()
+    ~~~~~~~~~~~~~~~~^^
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\base\base_panel.py", line 23, in setup_ui
+    raise NotImplementedError('Panels must implement setup_ui')
+NotImplementedError: Panels must implement setup_ui
+2025-07-16 14:41:16,437 - src.core.dependencies.checker - DEBUG - Package PyQt6 is installed
+2025-07-16 14:41:16,439 - src.core.dependencies.checker - DEBUG - pywin32 modules are available
+2025-07-16 14:41:16,441 - src.core.dependencies.checker - DEBUG - Package PyYAML is installed
+2025-07-16 14:41:16,443 - src.core.dependencies.checker - DEBUG - Package psutil is installed
+2025-07-16 14:41:16,446 - src.core.dependencies.checker - DEBUG - Package wmi is installed
+2025-07-16 14:41:16,842 - UsersPanel - INFO - Refreshed users and groups lists
+2025-07-16 14:41:16,973 - __main__ - ERROR - Unexpected error in main
+Traceback (most recent call last):
+  File "Z:\GitHub\Windows_System_Management_Tool\main.py", line 50, in main
+    window = MainWindow()
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\main\window.py", line 37, in __init__
+    self.panel_manager = PanelManager(self)
+                         ~~~~~~~~~~~~^^^^^^
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\main\panel_manager.py", line 20, in __init__
+    self.setup_panels()
+    ~~~~~~~~~~~~~~~~~^^
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\main\panel_manager.py", line 44, in setup_panels
+    services_panel = ServicesPanel(self.parent)
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\panels\services\panel.py", line 20, in __init__
+    super().__init__(parent)
+    ~~~~~~~~~~~~~~~~^^^^^^^^
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\base\base_panel.py", line 19, in __init__
+    self.setup_connections()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\base\base_panel.py", line 27, in setup_connections
+    raise NotImplementedError('Panels must implement setup_connections')
+NotImplementedError: Panels must implement setup_connections
+2025-07-16 14:43:05,358 - src.core.dependencies.checker - DEBUG - Package PyQt6 is installed
+2025-07-16 14:43:05,361 - src.core.dependencies.checker - DEBUG - pywin32 modules are available
+2025-07-16 14:43:05,363 - src.core.dependencies.checker - DEBUG - Package PyYAML is installed
+2025-07-16 14:43:05,366 - src.core.dependencies.checker - DEBUG - Package psutil is installed
+2025-07-16 14:43:05,368 - src.core.dependencies.checker - DEBUG - Package wmi is installed
+2025-07-16 14:43:05,761 - UsersPanel - INFO - Refreshed users and groups lists
+2025-07-16 14:43:05,859 - ServiceManager - WARNING - Failed to get details for service BDESVC: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:05,862 - ServiceManager - WARNING - Failed to get details for service BFE: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:05,866 - ServiceManager - WARNING - Failed to get details for service BrokerInfrastructure: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:05,874 - ServiceManager - WARNING - Failed to get details for service CertPropSvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:05,879 - ServiceManager - WARNING - Failed to get details for service CLFS: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:05,882 - ServiceManager - WARNING - Failed to get details for service ClipSVC: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:05,886 - ServiceManager - WARNING - Failed to get details for service CoreMessagingRegistrar: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:05,891 - ServiceManager - WARNING - Failed to get details for service DcomLaunch: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:05,898 - ServiceManager - WARNING - Failed to get details for service Dnscache: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:05,902 - ServiceManager - WARNING - Failed to get details for service DPS: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:05,908 - ServiceManager - WARNING - Failed to get details for service EFS: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:05,920 - ServiceManager - WARNING - Failed to get details for service gpsvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:05,947 - ServiceManager - WARNING - Failed to get details for service LSM: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:05,953 - ServiceManager - WARNING - Failed to get details for service MDCoreSvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:05,959 - ServiceManager - WARNING - Failed to get details for service mpsdrv: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:05,961 - ServiceManager - WARNING - Failed to get details for service mpssvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:05,965 - ServiceManager - WARNING - Failed to get details for service MSDTC: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:05,972 - ServiceManager - WARNING - Failed to get details for service MsSecCore: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:05,974 - ServiceManager - WARNING - Failed to get details for service MsSecFlt: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:05,976 - ServiceManager - WARNING - Failed to get details for service MsSecWfp: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:05,988 - ServiceManager - WARNING - Failed to get details for service NgcCtnrSvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:05,990 - ServiceManager - WARNING - Failed to get details for service NgcSvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:06,013 - ServiceManager - WARNING - Failed to get details for service RmSvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:06,016 - ServiceManager - WARNING - Failed to get details for service RpcEptMapper: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:06,019 - ServiceManager - WARNING - Failed to get details for service RpcSs: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:06,023 - ServiceManager - WARNING - Failed to get details for service SCardSvr: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:06,025 - ServiceManager - WARNING - Failed to get details for service ScDeviceEnum: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:06,028 - ServiceManager - WARNING - Failed to get details for service scfilter: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:06,030 - ServiceManager - WARNING - Failed to get details for service Schedule: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:06,033 - ServiceManager - WARNING - Failed to get details for service SCPolicySvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:06,037 - ServiceManager - WARNING - Failed to get details for service SecurityHealthService: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:06,039 - ServiceManager - WARNING - Failed to get details for service Sense: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:06,047 - ServiceManager - WARNING - Failed to get details for service SmsRouter: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:06,052 - ServiceManager - WARNING - Failed to get details for service sppsvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:06,060 - ServiceManager - WARNING - Failed to get details for service SystemEventsBroker: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:06,067 - ServiceManager - WARNING - Failed to get details for service TextInputManagementService: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:06,071 - ServiceManager - WARNING - Failed to get details for service TimeBrokerSvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:06,075 - ServiceManager - WARNING - Failed to get details for service TrustedInstaller: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:06,111 - ServiceManager - WARNING - Failed to get details for service WdBoot: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:06,114 - ServiceManager - WARNING - Failed to get details for service WdFilter: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:06,117 - ServiceManager - WARNING - Failed to get details for service WdiServiceHost: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:06,119 - ServiceManager - WARNING - Failed to get details for service WdiSystemHost: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:06,122 - ServiceManager - WARNING - Failed to get details for service WdNisDrv: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:06,124 - ServiceManager - WARNING - Failed to get details for service WdNisSvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:06,130 - ServiceManager - WARNING - Failed to get details for service WinDefend: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:06,133 - ServiceManager - WARNING - Failed to get details for service WinHttpAutoProxySvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:06,144 - ServiceManager - WARNING - Failed to get details for service wscsvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:06,156 - ServiceManager - WARNING - Failed to get details for service CredentialEnrollmentManagerUserSvc_e223c: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:06,158 - ServiceManager - WARNING - Failed to get details for service DeviceAssociationBrokerSvc_e223c: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:06,163 - ServiceManager - WARNING - Failed to get details for service PrintWorkflowUserSvc_e223c: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:43:06,172 - ServicesPanel - INFO - Refreshed services list
+2025-07-16 14:43:06,225 - __main__ - ERROR - Unexpected error in main
+Traceback (most recent call last):
+  File "Z:\GitHub\Windows_System_Management_Tool\main.py", line 50, in main
+    window = MainWindow()
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\main\window.py", line 37, in __init__
+    self.panel_manager = PanelManager(self)
+                         ~~~~~~~~~~~~^^^^^^
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\main\panel_manager.py", line 20, in __init__
+    self.setup_panels()
+    ~~~~~~~~~~~~~~~~~^^
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\main\panel_manager.py", line 50, in setup_panels
+    firewall_panel = FirewallPanel(self.parent)
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\panels\firewall\panel.py", line 19, in __init__
+    super().__init__(parent)
+    ~~~~~~~~~~~~~~~~^^^^^^^^
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\base\base_panel.py", line 19, in __init__
+    self.setup_connections()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\base\base_panel.py", line 27, in setup_connections
+    raise NotImplementedError('Panels must implement setup_connections')
+NotImplementedError: Panels must implement setup_connections
+2025-07-16 14:45:03,741 - src.core.dependencies.checker - DEBUG - Package PyQt6 is installed
+2025-07-16 14:45:03,745 - src.core.dependencies.checker - DEBUG - pywin32 modules are available
+2025-07-16 14:45:03,747 - src.core.dependencies.checker - DEBUG - Package PyYAML is installed
+2025-07-16 14:45:03,750 - src.core.dependencies.checker - DEBUG - Package psutil is installed
+2025-07-16 14:45:03,753 - src.core.dependencies.checker - DEBUG - Package wmi is installed
+2025-07-16 14:45:04,088 - UsersPanel - INFO - Refreshed users and groups lists
+2025-07-16 14:45:04,166 - ServiceManager - WARNING - Failed to get details for service BDESVC: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,169 - ServiceManager - WARNING - Failed to get details for service BFE: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,173 - ServiceManager - WARNING - Failed to get details for service BrokerInfrastructure: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,181 - ServiceManager - WARNING - Failed to get details for service CertPropSvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,185 - ServiceManager - WARNING - Failed to get details for service CLFS: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,188 - ServiceManager - WARNING - Failed to get details for service ClipSVC: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,193 - ServiceManager - WARNING - Failed to get details for service CoreMessagingRegistrar: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,198 - ServiceManager - WARNING - Failed to get details for service DcomLaunch: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,205 - ServiceManager - WARNING - Failed to get details for service Dnscache: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,209 - ServiceManager - WARNING - Failed to get details for service DPS: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,215 - ServiceManager - WARNING - Failed to get details for service EFS: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,227 - ServiceManager - WARNING - Failed to get details for service gpsvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,254 - ServiceManager - WARNING - Failed to get details for service LSM: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,259 - ServiceManager - WARNING - Failed to get details for service MDCoreSvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,266 - ServiceManager - WARNING - Failed to get details for service mpsdrv: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,269 - ServiceManager - WARNING - Failed to get details for service mpssvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,273 - ServiceManager - WARNING - Failed to get details for service MSDTC: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,279 - ServiceManager - WARNING - Failed to get details for service MsSecCore: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,281 - ServiceManager - WARNING - Failed to get details for service MsSecFlt: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,284 - ServiceManager - WARNING - Failed to get details for service MsSecWfp: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,296 - ServiceManager - WARNING - Failed to get details for service NgcCtnrSvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,298 - ServiceManager - WARNING - Failed to get details for service NgcSvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,321 - ServiceManager - WARNING - Failed to get details for service RmSvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,324 - ServiceManager - WARNING - Failed to get details for service RpcEptMapper: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,328 - ServiceManager - WARNING - Failed to get details for service RpcSs: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,333 - ServiceManager - WARNING - Failed to get details for service SCardSvr: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,336 - ServiceManager - WARNING - Failed to get details for service ScDeviceEnum: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,338 - ServiceManager - WARNING - Failed to get details for service scfilter: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,341 - ServiceManager - WARNING - Failed to get details for service Schedule: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,344 - ServiceManager - WARNING - Failed to get details for service SCPolicySvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,348 - ServiceManager - WARNING - Failed to get details for service SecurityHealthService: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,351 - ServiceManager - WARNING - Failed to get details for service Sense: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,359 - ServiceManager - WARNING - Failed to get details for service SmsRouter: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,363 - ServiceManager - WARNING - Failed to get details for service sppsvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,372 - ServiceManager - WARNING - Failed to get details for service SystemEventsBroker: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,378 - ServiceManager - WARNING - Failed to get details for service TextInputManagementService: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,382 - ServiceManager - WARNING - Failed to get details for service TimeBrokerSvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,388 - ServiceManager - WARNING - Failed to get details for service TrustedInstaller: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,415 - ServiceManager - WARNING - Failed to get details for service WdBoot: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,419 - ServiceManager - WARNING - Failed to get details for service WdFilter: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,422 - ServiceManager - WARNING - Failed to get details for service WdiServiceHost: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,425 - ServiceManager - WARNING - Failed to get details for service WdiSystemHost: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,429 - ServiceManager - WARNING - Failed to get details for service WdNisDrv: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,433 - ServiceManager - WARNING - Failed to get details for service WdNisSvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,440 - ServiceManager - WARNING - Failed to get details for service WinDefend: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,444 - ServiceManager - WARNING - Failed to get details for service WinHttpAutoProxySvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,455 - ServiceManager - WARNING - Failed to get details for service wscsvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,466 - ServiceManager - WARNING - Failed to get details for service CredentialEnrollmentManagerUserSvc_e223c: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,468 - ServiceManager - WARNING - Failed to get details for service DeviceAssociationBrokerSvc_e223c: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,473 - ServiceManager - WARNING - Failed to get details for service PrintWorkflowUserSvc_e223c: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:45:04,482 - ServicesPanel - INFO - Refreshed services list
+2025-07-16 14:45:04,641 - FirewallPanel - ERROR - Failed to refresh rules: index 4 has type 'int' but 'str' is expected
+2025-07-16 14:45:06,063 - SoftwarePanel - INFO - Refreshed software list
+2025-07-16 14:45:06,105 - __main__ - ERROR - Unexpected error in main
+Traceback (most recent call last):
+  File "Z:\GitHub\Windows_System_Management_Tool\main.py", line 50, in main
+    window = MainWindow()
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\main\window.py", line 37, in __init__
+    self.panel_manager = PanelManager(self)
+                         ~~~~~~~~~~~~^^^^^^
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\main\panel_manager.py", line 20, in __init__
+    self.setup_panels()
+    ~~~~~~~~~~~~~~~~~^^
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\main\panel_manager.py", line 62, in setup_panels
+    perms_panel = PermissionsPanel(self.parent)
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\panels\permissions\panel.py", line 20, in __init__
+    super().__init__(parent)
+    ~~~~~~~~~~~~~~~~^^^^^^^^
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\base\base_panel.py", line 18, in __init__
+    self.setup_ui()
+    ~~~~~~~~~~~~~^^
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\panels\permissions\panel.py", line 67, in setup_ui
+    self.update_buttons()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "Z:\GitHub\Windows_System_Management_Tool\src\ui\panels\permissions\panel.py", line 71, in update_buttons
+    has_path = bool(self.current_path)
+                    ^^^^^^^^^^^^^^^^^
+AttributeError: 'PermissionsPanel' object has no attribute 'current_path'
+2025-07-16 14:47:25,210 - src.core.dependencies.checker - DEBUG - Package PyQt6 is installed
+2025-07-16 14:47:25,213 - src.core.dependencies.checker - DEBUG - pywin32 modules are available
+2025-07-16 14:47:25,215 - src.core.dependencies.checker - DEBUG - Package PyYAML is installed
+2025-07-16 14:47:25,217 - src.core.dependencies.checker - DEBUG - Package psutil is installed
+2025-07-16 14:47:25,220 - src.core.dependencies.checker - DEBUG - Package wmi is installed
+2025-07-16 14:47:25,584 - UsersPanel - INFO - Refreshed users and groups lists
+2025-07-16 14:47:25,684 - ServiceManager - WARNING - Failed to get details for service BDESVC: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:25,687 - ServiceManager - WARNING - Failed to get details for service BFE: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:25,692 - ServiceManager - WARNING - Failed to get details for service BrokerInfrastructure: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:25,700 - ServiceManager - WARNING - Failed to get details for service CertPropSvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:25,704 - ServiceManager - WARNING - Failed to get details for service CLFS: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:25,720 - ServiceManager - WARNING - Failed to get details for service ClipSVC: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:25,727 - ServiceManager - WARNING - Failed to get details for service CoreMessagingRegistrar: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:25,734 - ServiceManager - WARNING - Failed to get details for service DcomLaunch: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:25,743 - ServiceManager - WARNING - Failed to get details for service Dnscache: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:25,749 - ServiceManager - WARNING - Failed to get details for service DPS: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:25,758 - ServiceManager - WARNING - Failed to get details for service EFS: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:25,774 - ServiceManager - WARNING - Failed to get details for service gpsvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:25,811 - ServiceManager - WARNING - Failed to get details for service LSM: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:25,823 - ServiceManager - WARNING - Failed to get details for service MDCoreSvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:25,828 - ServiceManager - WARNING - Failed to get details for service mpsdrv: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:25,830 - ServiceManager - WARNING - Failed to get details for service mpssvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:25,833 - ServiceManager - WARNING - Failed to get details for service MSDTC: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:25,840 - ServiceManager - WARNING - Failed to get details for service MsSecCore: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:25,844 - ServiceManager - WARNING - Failed to get details for service MsSecFlt: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:25,847 - ServiceManager - WARNING - Failed to get details for service MsSecWfp: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:25,860 - ServiceManager - WARNING - Failed to get details for service NgcCtnrSvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:25,863 - ServiceManager - WARNING - Failed to get details for service NgcSvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:25,884 - ServiceManager - WARNING - Failed to get details for service RmSvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:25,886 - ServiceManager - WARNING - Failed to get details for service RpcEptMapper: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:25,890 - ServiceManager - WARNING - Failed to get details for service RpcSs: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:25,896 - ServiceManager - WARNING - Failed to get details for service SCardSvr: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:25,937 - ServiceManager - WARNING - Failed to get details for service ScDeviceEnum: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:25,950 - ServiceManager - WARNING - Failed to get details for service scfilter: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:25,953 - ServiceManager - WARNING - Failed to get details for service Schedule: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:25,956 - ServiceManager - WARNING - Failed to get details for service SCPolicySvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:25,968 - ServiceManager - WARNING - Failed to get details for service SecurityHealthService: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:25,972 - ServiceManager - WARNING - Failed to get details for service Sense: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:25,981 - ServiceManager - WARNING - Failed to get details for service SmsRouter: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:25,986 - ServiceManager - WARNING - Failed to get details for service sppsvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:25,995 - ServiceManager - WARNING - Failed to get details for service SystemEventsBroker: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:26,000 - ServiceManager - WARNING - Failed to get details for service TextInputManagementService: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:26,004 - ServiceManager - WARNING - Failed to get details for service TimeBrokerSvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:26,013 - ServiceManager - WARNING - Failed to get details for service TrustedInstaller: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:26,042 - ServiceManager - WARNING - Failed to get details for service WdBoot: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:26,045 - ServiceManager - WARNING - Failed to get details for service WdFilter: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:26,047 - ServiceManager - WARNING - Failed to get details for service WdiServiceHost: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:26,049 - ServiceManager - WARNING - Failed to get details for service WdiSystemHost: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:26,053 - ServiceManager - WARNING - Failed to get details for service WdNisDrv: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:26,055 - ServiceManager - WARNING - Failed to get details for service WdNisSvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:26,063 - ServiceManager - WARNING - Failed to get details for service WinDefend: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:26,067 - ServiceManager - WARNING - Failed to get details for service WinHttpAutoProxySvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:26,082 - ServiceManager - WARNING - Failed to get details for service wscsvc: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:26,095 - ServiceManager - WARNING - Failed to get details for service CredentialEnrollmentManagerUserSvc_e223c: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:26,097 - ServiceManager - WARNING - Failed to get details for service DeviceAssociationBrokerSvc_e223c: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:26,102 - ServiceManager - WARNING - Failed to get details for service PrintWorkflowUserSvc_e223c: (5, 'OpenService', 'Access is denied.')
+2025-07-16 14:47:26,111 - ServicesPanel - INFO - Refreshed services list
+2025-07-16 14:47:26,307 - FirewallPanel - ERROR - Failed to refresh rules: index 4 has type 'int' but 'str' is expected
+2025-07-16 14:47:31,500 - SoftwarePanel - INFO - Refreshed software list
+2025-07-16 14:47:32,301 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 14:47:32,413 - StartupTab - INFO - Refreshed startup items list
+2025-07-16 14:47:37,310 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 14:50:44,996 - src.core.dependencies.checker - DEBUG - Package PyQt6 is installed
+2025-07-16 14:50:44,999 - src.core.dependencies.checker - DEBUG - pywin32 modules are available
+2025-07-16 14:50:45,001 - src.core.dependencies.checker - DEBUG - Package PyYAML is installed
+2025-07-16 14:50:45,003 - src.core.dependencies.checker - DEBUG - Package psutil is installed
+2025-07-16 14:50:45,006 - src.core.dependencies.checker - DEBUG - Package wmi is installed
+2025-07-16 14:50:45,390 - UsersPanel - INFO - Refreshed users and groups lists
+2025-07-16 14:50:45,646 - ServicesPanel - INFO - Refreshed services list
+2025-07-16 14:50:45,810 - FirewallPanel - ERROR - Failed to refresh rules: index 4 has type 'int' but 'str' is expected
+2025-07-16 14:50:48,320 - SoftwarePanel - INFO - Refreshed software list
+2025-07-16 14:50:49,125 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 14:50:49,192 - StartupTab - INFO - Refreshed startup items list
+2025-07-16 14:50:54,006 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 14:50:59,000 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 14:51:03,975 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 14:51:08,995 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 14:51:13,997 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 14:51:19,030 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:13:49,353 - src.core.dependencies.checker - DEBUG - Package PyQt6 is installed
+2025-07-16 19:13:49,356 - src.core.dependencies.checker - DEBUG - pywin32 modules are available
+2025-07-16 19:13:49,359 - src.core.dependencies.checker - DEBUG - Package PyYAML is installed
+2025-07-16 19:13:49,361 - src.core.dependencies.checker - DEBUG - Package psutil is installed
+2025-07-16 19:13:49,363 - src.core.dependencies.checker - DEBUG - Package wmi is installed
+2025-07-16 19:13:49,696 - UsersPanel - INFO - Refreshed users and groups lists
+2025-07-16 19:13:50,060 - ServicesPanel - INFO - Refreshed services list
+2025-07-16 19:13:50,234 - FirewallPanel - ERROR - Failed to refresh rules: index 4 has type 'int' but 'str' is expected
+2025-07-16 19:13:52,309 - SoftwarePanel - INFO - Refreshed software list
+2025-07-16 19:13:52,866 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:13:52,931 - StartupTab - INFO - Refreshed startup items list
+2025-07-16 19:15:08,916 - src.core.dependencies.checker - DEBUG - Package PyQt6 is installed
+2025-07-16 19:15:08,919 - src.core.dependencies.checker - DEBUG - pywin32 modules are available
+2025-07-16 19:15:08,923 - src.core.dependencies.checker - DEBUG - Package PyYAML is installed
+2025-07-16 19:15:08,925 - src.core.dependencies.checker - DEBUG - Package psutil is installed
+2025-07-16 19:15:08,927 - src.core.dependencies.checker - DEBUG - Package wmi is installed
+2025-07-16 19:15:09,315 - UsersPanel - INFO - Refreshed users and groups lists
+2025-07-16 19:15:09,629 - ServicesPanel - INFO - Refreshed services list
+2025-07-16 19:15:09,807 - FirewallPanel - INFO - Refreshed firewall rules
+2025-07-16 19:15:09,884 - SoftwarePanel - INFO - Refreshed software list
+2025-07-16 19:15:10,478 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:15:10,534 - StartupTab - INFO - Refreshed startup items list
+2025-07-16 19:15:15,420 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:15:20,400 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:15:25,403 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:15:30,439 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:15:35,408 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:15:40,409 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:15:45,402 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:15:50,400 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:15:55,421 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:16:00,480 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:16:54,050 - src.core.dependencies.checker - DEBUG - Package PyQt6 is installed
+2025-07-16 19:16:54,052 - src.core.dependencies.checker - DEBUG - pywin32 modules are available
+2025-07-16 19:16:54,056 - src.core.dependencies.checker - DEBUG - Package PyYAML is installed
+2025-07-16 19:16:54,058 - src.core.dependencies.checker - DEBUG - Package psutil is installed
+2025-07-16 19:16:54,061 - src.core.dependencies.checker - DEBUG - Package wmi is installed
+2025-07-16 19:16:54,484 - UsersPanel - INFO - Refreshed users and groups lists
+2025-07-16 19:16:54,734 - ServicesPanel - INFO - Refreshed services list
+2025-07-16 19:16:54,903 - FirewallPanel - INFO - Refreshed firewall rules
+2025-07-16 19:16:54,981 - SoftwarePanel - INFO - Refreshed software list
+2025-07-16 19:16:55,494 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:16:55,556 - StartupTab - INFO - Refreshed startup items list
+2025-07-16 19:17:00,490 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:17:05,534 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:17:10,534 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:17:15,518 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:17:20,638 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:17:25,639 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:17:30,580 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:17:35,569 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:17:40,607 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:17:45,593 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:17:50,588 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:17:55,594 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:18:00,589 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:18:05,582 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:18:10,591 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:18:15,586 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:18:20,635 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:18:25,588 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:18:30,585 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:18:35,585 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:18:40,571 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:18:45,593 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:18:50,587 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:18:55,805 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:19:00,608 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:21:28,472 - src.core.dependencies.checker - DEBUG - Package PyQt6 is installed
+2025-07-16 19:21:28,476 - src.core.dependencies.checker - DEBUG - pywin32 modules are available
+2025-07-16 19:21:28,478 - src.core.dependencies.checker - DEBUG - Package PyYAML is installed
+2025-07-16 19:21:28,481 - src.core.dependencies.checker - DEBUG - Package psutil is installed
+2025-07-16 19:21:28,484 - src.core.dependencies.checker - DEBUG - Package wmi is installed
+2025-07-16 19:21:28,835 - UsersPanel - INFO - Refreshed users and groups lists
+2025-07-16 19:21:29,078 - ServicesPanel - INFO - Refreshed services list
+2025-07-16 19:21:29,237 - FirewallPanel - INFO - Refreshed firewall rules
+2025-07-16 19:21:29,316 - SoftwarePanel - INFO - Refreshed software list
+2025-07-16 19:21:29,840 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:21:29,902 - StartupTab - INFO - Refreshed startup items list
+2025-07-16 19:21:34,877 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:21:39,868 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:21:44,855 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:21:49,828 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:21:54,834 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:21:59,841 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:22:04,859 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:22:09,842 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:22:14,845 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:22:19,875 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:22:24,872 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:22:29,861 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:22:34,880 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:22:39,923 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:22:44,870 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:22:49,865 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:22:54,858 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:22:59,896 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:23:04,902 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:23:50,627 - src.core.dependencies.checker - DEBUG - Package PyQt6 is installed
+2025-07-16 19:23:50,638 - src.core.dependencies.checker - DEBUG - pywin32 modules are available
+2025-07-16 19:23:50,641 - src.core.dependencies.checker - DEBUG - Package PyYAML is installed
+2025-07-16 19:23:50,643 - src.core.dependencies.checker - DEBUG - Package psutil is installed
+2025-07-16 19:23:50,646 - src.core.dependencies.checker - DEBUG - Package wmi is installed
+2025-07-16 19:23:51,079 - UsersPanel - INFO - Refreshed users and groups lists
+2025-07-16 19:23:51,384 - ServicesPanel - INFO - Refreshed services list
+2025-07-16 19:23:51,553 - FirewallPanel - INFO - Refreshed firewall rules
+2025-07-16 19:23:51,619 - SoftwarePanel - INFO - Refreshed software list
+2025-07-16 19:23:52,178 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:23:52,243 - StartupTab - INFO - Refreshed startup items list
+2025-07-16 19:23:57,141 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:24:02,167 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:24:07,151 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:24:12,112 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:24:17,108 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:24:20,456 - EnvironmentPanel - INFO - Added User variable: test=test
+2025-07-16 19:24:22,106 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:24:27,104 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:24:32,100 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:24:37,096 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:24:42,108 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:26:05,790 - src.core.dependencies.checker - DEBUG - Package PyQt6 is installed
+2025-07-16 19:26:05,792 - src.core.dependencies.checker - DEBUG - pywin32 modules are available
+2025-07-16 19:26:05,795 - src.core.dependencies.checker - DEBUG - Package PyYAML is installed
+2025-07-16 19:26:05,797 - src.core.dependencies.checker - DEBUG - Package psutil is installed
+2025-07-16 19:26:05,800 - src.core.dependencies.checker - DEBUG - Package wmi is installed
+2025-07-16 19:26:06,116 - UsersPanel - INFO - Refreshed users and groups lists
+2025-07-16 19:26:06,353 - ServicesPanel - INFO - Refreshed services list
+2025-07-16 19:26:06,506 - FirewallPanel - INFO - Refreshed firewall rules
+2025-07-16 19:26:06,567 - SoftwarePanel - INFO - Refreshed software list
+2025-07-16 19:26:07,137 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:26:07,195 - StartupTab - INFO - Refreshed startup items list
+2025-07-16 19:27:38,654 - src.core.dependencies.checker - DEBUG - Package PyQt6 is installed
+2025-07-16 19:27:38,670 - src.core.dependencies.checker - DEBUG - pywin32 modules are available
+2025-07-16 19:27:38,673 - src.core.dependencies.checker - DEBUG - Package PyYAML is installed
+2025-07-16 19:27:38,676 - src.core.dependencies.checker - DEBUG - Package psutil is installed
+2025-07-16 19:27:38,678 - src.core.dependencies.checker - DEBUG - Package wmi is installed
+2025-07-16 19:27:39,030 - UsersPanel - INFO - Refreshed users and groups lists
+2025-07-16 19:27:39,282 - ServicesPanel - INFO - Refreshed services list
+2025-07-16 19:27:39,439 - FirewallPanel - INFO - Refreshed firewall rules
+2025-07-16 19:27:39,511 - SoftwarePanel - INFO - Refreshed software list
+2025-07-16 19:27:40,158 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:27:40,214 - StartupTab - INFO - Refreshed startup items list
+2025-07-16 19:27:45,081 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:27:50,093 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:28:19,305 - src.core.dependencies.checker - DEBUG - Package PyQt6 is installed
+2025-07-16 19:28:19,313 - src.core.dependencies.checker - DEBUG - pywin32 modules are available
+2025-07-16 19:28:19,315 - src.core.dependencies.checker - DEBUG - Package PyYAML is installed
+2025-07-16 19:28:19,317 - src.core.dependencies.checker - DEBUG - Package psutil is installed
+2025-07-16 19:28:19,320 - src.core.dependencies.checker - DEBUG - Package wmi is installed
+2025-07-16 19:28:19,737 - UsersPanel - INFO - Refreshed users and groups lists
+2025-07-16 19:28:20,014 - ServicesPanel - INFO - Refreshed services list
+2025-07-16 19:28:20,175 - FirewallPanel - INFO - Refreshed firewall rules
+2025-07-16 19:28:20,245 - SoftwarePanel - INFO - Refreshed software list
+2025-07-16 19:28:20,835 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:28:20,902 - StartupTab - INFO - Refreshed startup items list
+2025-07-16 19:28:25,825 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:28:30,825 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:28:35,815 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:28:40,844 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:28:45,843 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:28:50,844 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:28:55,864 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:29:00,865 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:34:57,538 - src.core.dependencies.checker - DEBUG - Package PyQt6 is installed
+2025-07-16 19:34:57,550 - src.core.dependencies.checker - DEBUG - pywin32 modules are available
+2025-07-16 19:34:57,552 - src.core.dependencies.checker - DEBUG - Package PyYAML is installed
+2025-07-16 19:34:57,554 - src.core.dependencies.checker - DEBUG - Package psutil is installed
+2025-07-16 19:34:57,561 - src.core.dependencies.checker - DEBUG - Package wmi is installed
+2025-07-16 19:34:57,988 - UsersPanel - INFO - Refreshed users and groups lists
+2025-07-16 19:34:58,333 - ServicesPanel - INFO - Refreshed services list
+2025-07-16 19:34:58,510 - FirewallPanel - INFO - Refreshed firewall rules
+2025-07-16 19:34:58,586 - SoftwarePanel - INFO - Refreshed software list
+2025-07-16 19:34:59,389 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:34:59,470 - StartupTab - INFO - Refreshed startup items list
+2025-07-16 19:35:04,371 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:35:09,297 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:35:14,357 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:35:19,338 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:35:24,233 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:35:29,410 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:35:34,506 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:35:39,447 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:35:44,430 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:35:49,396 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:35:54,458 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:35:59,441 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:36:04,421 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:36:09,463 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:36:14,440 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:36:19,462 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:36:24,690 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:36:29,324 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:36:34,763 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:36:39,327 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:36:44,363 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:36:49,669 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:36:54,752 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:36:59,449 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:37:24,170 - src.core.dependencies.checker - DEBUG - Package PyQt6 is installed
+2025-07-16 19:37:24,172 - src.core.dependencies.checker - DEBUG - pywin32 modules are available
+2025-07-16 19:37:24,174 - src.core.dependencies.checker - DEBUG - Package PyYAML is installed
+2025-07-16 19:37:24,176 - src.core.dependencies.checker - DEBUG - Package psutil is installed
+2025-07-16 19:37:24,180 - src.core.dependencies.checker - DEBUG - Package wmi is installed
+2025-07-16 19:37:24,522 - UsersPanel - INFO - Refreshed users and groups lists
+2025-07-16 19:37:24,877 - ServicesPanel - INFO - Refreshed services list
+2025-07-16 19:37:25,062 - FirewallPanel - INFO - Refreshed firewall rules
+2025-07-16 19:37:25,126 - SoftwarePanel - INFO - Refreshed software list
+2025-07-16 19:37:25,816 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:37:25,884 - StartupTab - INFO - Refreshed startup items list
+2025-07-16 19:37:30,885 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:37:35,798 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:37:40,805 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:37:45,815 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:37:50,815 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:37:55,786 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:38:00,784 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:38:05,801 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:38:10,799 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:38:13,266 - EnvironmentPanel - INFO - Added User variable: test=test
+2025-07-16 19:38:15,790 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:38:20,804 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:38:25,817 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:38:30,801 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:38:35,815 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:38:40,818 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:38:45,816 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:38:50,817 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:38:55,811 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:39:00,829 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:39:05,908 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:39:10,835 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:39:15,833 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:39:20,833 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:39:25,844 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:39:30,905 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:39:35,879 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:39:40,875 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:39:45,871 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:39:50,884 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:39:55,969 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:40:00,902 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:40:05,891 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:40:10,945 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:43:41,824 - src.core.dependencies.checker - DEBUG - Package PyQt6 is installed
+2025-07-16 19:43:41,827 - src.core.dependencies.checker - DEBUG - pywin32 modules are available
+2025-07-16 19:43:41,829 - src.core.dependencies.checker - DEBUG - Package PyYAML is installed
+2025-07-16 19:43:41,832 - src.core.dependencies.checker - DEBUG - Package psutil is installed
+2025-07-16 19:43:41,834 - src.core.dependencies.checker - DEBUG - Package wmi is installed
+2025-07-16 19:43:42,202 - UsersPanel - INFO - Refreshed users and groups lists
+2025-07-16 19:43:42,494 - ServicesPanel - INFO - Refreshed services list
+2025-07-16 19:43:42,684 - FirewallPanel - INFO - Refreshed firewall rules
+2025-07-16 19:43:42,807 - SoftwarePanel - INFO - Refreshed software list
+2025-07-16 19:43:43,536 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:43:43,614 - StartupTab - INFO - Refreshed startup items list
+2025-07-16 19:43:48,526 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:43:53,542 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:43:58,597 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:44:03,532 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:44:08,553 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:44:13,551 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:44:18,558 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:44:23,540 - ProcessesTab - INFO - Refreshed processes list
+2025-07-16 19:44:28,546 - ProcessesTab - INFO - Refreshed processes list

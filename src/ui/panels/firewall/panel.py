@@ -19,46 +19,46 @@ class FirewallPanel(BasePanel):
         super().__init__(parent)
         self.logger = setup_logger(self.__class__.__name__)
         self.manager = FirewallManager()
-        self.setup_ui()
         self.refresh_rules()
         
     def setup_ui(self):
         """Set up the panel UI."""
-        layout = QVBoxLayout(self)
-        
         # Filter controls
         filter_layout = QHBoxLayout()
         self.filter_combo = QComboBox()
         self.filter_combo.addItems(["All Rules", "Inbound", "Outbound"])
-        self.filter_combo.currentTextChanged.connect(self.refresh_rules)
         filter_layout.addWidget(self.filter_combo)
         
         # Action buttons
         self.add_button = QPushButton("Add Rule")
-        self.add_button.clicked.connect(self.add_rule)
         filter_layout.addWidget(self.add_button)
         
         self.delete_button = QPushButton("Delete Rule")
-        self.delete_button.clicked.connect(self.delete_rule)
         filter_layout.addWidget(self.delete_button)
         
         self.toggle_button = QPushButton("Enable/Disable")
-        self.toggle_button.clicked.connect(self.toggle_rule)
         filter_layout.addWidget(self.toggle_button)
         
         self.refresh_button = QPushButton("Refresh")
-        self.refresh_button.clicked.connect(self.refresh_rules)
         filter_layout.addWidget(self.refresh_button)
         
-        layout.addLayout(filter_layout)
+        self.add_layout(filter_layout)
         
         # Rules tree
         self.rules_tree = RulesTree()
-        self.rules_tree.itemSelectionChanged.connect(self.update_buttons)
-        layout.addWidget(self.rules_tree)
+        self.add_widget(self.rules_tree)
         
         # Initial button state
         self.update_buttons()
+        
+    def setup_connections(self):
+        """Set up signal/slot connections."""
+        self.filter_combo.currentTextChanged.connect(self.refresh_rules)
+        self.add_button.clicked.connect(self.add_rule)
+        self.delete_button.clicked.connect(self.delete_rule)
+        self.toggle_button.clicked.connect(self.toggle_rule)
+        self.refresh_button.clicked.connect(self.refresh_rules)
+        self.rules_tree.itemSelectionChanged.connect(self.update_buttons)
         
     def update_buttons(self):
         """Update button enabled states based on selection."""

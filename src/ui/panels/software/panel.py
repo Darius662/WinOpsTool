@@ -19,13 +19,10 @@ class SoftwarePanel(BasePanel):
         super().__init__(parent)
         self.logger = setup_logger(self.__class__.__name__)
         self.manager = SoftwareManager()
-        self.setup_ui()
         self.refresh_software()
         
     def setup_ui(self):
         """Initialize the UI components."""
-        layout = QVBoxLayout(self)
-        
         # Filter controls
         filter_layout = QHBoxLayout()
         self.filter_combo = QComboBox()
@@ -34,7 +31,6 @@ class SoftwarePanel(BasePanel):
             "System Software",
             "User Software"
         ])
-        self.filter_combo.currentTextChanged.connect(self.refresh_software)
         filter_layout.addWidget(self.filter_combo)
         
         # Action buttons
@@ -46,18 +42,11 @@ class SoftwarePanel(BasePanel):
         for btn in [self.install_btn, self.uninstall_btn, self.repair_btn, self.refresh_btn]:
             filter_layout.addWidget(btn)
             
-        layout.addLayout(filter_layout)
+        self.add_layout(filter_layout)
         
         # Software tree
         self.software_tree = SoftwareTree()
-        self.software_tree.itemSelectionChanged.connect(self.update_buttons)
-        layout.addWidget(self.software_tree)
-        
-        # Connect signals
-        self.install_btn.clicked.connect(self.install_software)
-        self.uninstall_btn.clicked.connect(self.uninstall_software)
-        self.repair_btn.clicked.connect(self.repair_software)
-        self.refresh_btn.clicked.connect(self.refresh_software)
+        self.add_widget(self.software_tree)
         
         # Initial button state
         self.update_buttons()
@@ -189,7 +178,12 @@ class SoftwarePanel(BasePanel):
             
     def setup_connections(self):
         """Set up signal/slot connections."""
-        pass  # All connections are set up in setup_ui
+        self.filter_combo.currentTextChanged.connect(self.refresh_software)
+        self.install_btn.clicked.connect(self.install_software)
+        self.uninstall_btn.clicked.connect(self.uninstall_software)
+        self.repair_btn.clicked.connect(self.repair_software)
+        self.refresh_btn.clicked.connect(self.refresh_software)
+        self.software_tree.itemSelectionChanged.connect(self.update_buttons)
         
     def cleanup(self):
         """Perform cleanup before panel is destroyed."""

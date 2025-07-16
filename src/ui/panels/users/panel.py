@@ -31,13 +31,9 @@ class UsersPanel(BasePanel):
         
     def setup_ui(self):
         """Set up the panel UI."""
-        # Call parent setup_ui first
-        super().setup_ui()
-        layout = QVBoxLayout(self)
-        
         # Create tab widget for users and groups
         self.tab_widget = QTabWidget()
-        layout.addWidget(self.tab_widget)
+        self.add_widget(self.tab_widget)
         
         # Users tab
         users_widget = QWidget()
@@ -48,21 +44,17 @@ class UsersPanel(BasePanel):
         
         users_buttons = QHBoxLayout()
         
-        add_user_button = QPushButton("Add User")
-        add_user_button.clicked.connect(self.add_user)
-        users_buttons.addWidget(add_user_button)
+        self.add_user_button = QPushButton("Add User")
+        users_buttons.addWidget(self.add_user_button)
         
-        edit_user_button = QPushButton("Edit User")
-        edit_user_button.clicked.connect(self.edit_user)
-        users_buttons.addWidget(edit_user_button)
+        self.edit_user_button = QPushButton("Edit User")
+        users_buttons.addWidget(self.edit_user_button)
         
-        delete_user_button = QPushButton("Delete User")
-        delete_user_button.clicked.connect(self.delete_user)
-        users_buttons.addWidget(delete_user_button)
+        self.delete_user_button = QPushButton("Delete User")
+        users_buttons.addWidget(self.delete_user_button)
         
-        refresh_users_button = QPushButton("Refresh")
-        refresh_users_button.clicked.connect(self.refresh_lists)
-        users_buttons.addWidget(refresh_users_button)
+        self.refresh_users_button = QPushButton("Refresh")
+        users_buttons.addWidget(self.refresh_users_button)
         
         users_layout.addLayout(users_buttons)
         
@@ -77,21 +69,17 @@ class UsersPanel(BasePanel):
         
         groups_buttons = QHBoxLayout()
         
-        add_group_button = QPushButton("Add Group")
-        add_group_button.clicked.connect(self.add_group)
-        groups_buttons.addWidget(add_group_button)
+        self.add_group_button = QPushButton("Add Group")
+        groups_buttons.addWidget(self.add_group_button)
         
-        edit_group_button = QPushButton("Edit Group")
-        edit_group_button.clicked.connect(self.edit_group)
-        groups_buttons.addWidget(edit_group_button)
+        self.edit_group_button = QPushButton("Edit Group")
+        groups_buttons.addWidget(self.edit_group_button)
         
-        delete_group_button = QPushButton("Delete Group")
-        delete_group_button.clicked.connect(self.delete_group)
-        groups_buttons.addWidget(delete_group_button)
+        self.delete_group_button = QPushButton("Delete Group")
+        groups_buttons.addWidget(self.delete_group_button)
         
-        refresh_groups_button = QPushButton("Refresh")
-        refresh_groups_button.clicked.connect(self.refresh_lists)
-        groups_buttons.addWidget(refresh_groups_button)
+        self.refresh_groups_button = QPushButton("Refresh")
+        groups_buttons.addWidget(self.refresh_groups_button)
         
         groups_layout.addLayout(groups_buttons)
         
@@ -269,8 +257,17 @@ class UsersPanel(BasePanel):
                 
     def setup_connections(self):
         """Set up signal/slot connections."""
-        # No additional connections needed
-        pass
+        # User tab connections
+        self.add_user_button.clicked.connect(self.add_user)
+        self.edit_user_button.clicked.connect(self.edit_user)
+        self.delete_user_button.clicked.connect(self.delete_user)
+        self.refresh_users_button.clicked.connect(self.refresh_lists)
+        
+        # Group tab connections
+        self.add_group_button.clicked.connect(self.add_group)
+        self.edit_group_button.clicked.connect(self.edit_group)
+        self.delete_group_button.clicked.connect(self.delete_group)
+        self.refresh_groups_button.clicked.connect(self.refresh_lists)
         
     def load_data(self):
         """Load or refresh panel data."""

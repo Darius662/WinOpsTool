@@ -20,51 +20,51 @@ class ServicesPanel(BasePanel):
         super().__init__(parent)
         self.logger = setup_logger(self.__class__.__name__)
         self.manager = ServiceManager()
-        self.setup_ui()
         self.refresh_services()
         
     def setup_ui(self):
         """Set up the panel UI."""
-        layout = QVBoxLayout(self)
-        
         # Search controls
         search_layout = QHBoxLayout()
         search_label = QLabel("Search:")
         self.search_edit = QLineEdit()
-        self.search_edit.textChanged.connect(self.filter_services)
         search_layout.addWidget(search_label)
         search_layout.addWidget(self.search_edit)
         
         # Action buttons
         self.start_button = QPushButton("Start")
-        self.start_button.clicked.connect(self.start_service)
         search_layout.addWidget(self.start_button)
         
         self.stop_button = QPushButton("Stop")
-        self.stop_button.clicked.connect(self.stop_service)
         search_layout.addWidget(self.stop_button)
         
         self.restart_button = QPushButton("Restart")
-        self.restart_button.clicked.connect(self.restart_service)
         search_layout.addWidget(self.restart_button)
         
         self.startup_button = QPushButton("Startup Type")
-        self.startup_button.clicked.connect(self.change_startup)
         search_layout.addWidget(self.startup_button)
         
         self.refresh_button = QPushButton("Refresh")
-        self.refresh_button.clicked.connect(self.refresh_services)
         search_layout.addWidget(self.refresh_button)
         
-        layout.addLayout(search_layout)
+        self.add_layout(search_layout)
         
         # Services tree
         self.services_tree = ServicesTree()
-        self.services_tree.itemSelectionChanged.connect(self.update_buttons)
-        layout.addWidget(self.services_tree)
+        self.add_widget(self.services_tree)
         
         # Initial button state
         self.update_buttons()
+        
+    def setup_connections(self):
+        """Set up signal/slot connections."""
+        self.search_edit.textChanged.connect(self.filter_services)
+        self.start_button.clicked.connect(self.start_service)
+        self.stop_button.clicked.connect(self.stop_service)
+        self.restart_button.clicked.connect(self.restart_service)
+        self.startup_button.clicked.connect(self.change_startup)
+        self.refresh_button.clicked.connect(self.refresh_services)
+        self.services_tree.itemSelectionChanged.connect(self.update_buttons)
         
     def update_buttons(self):
         """Update button enabled states based on selection."""

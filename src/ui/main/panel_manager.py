@@ -22,49 +22,49 @@ class PanelManager:
     def setup_panels(self):
         """Set up all feature panels."""
         # Environment Variables panel
-        from ..panels.environment_panel import EnvironmentPanel
+        from ..panels.environment import EnvironmentPanel
         env_panel = EnvironmentPanel(self.parent)
         self.tab_widget.addTab(env_panel, "Environment Variables")
         self.panels["Environment Variables"] = env_panel
         
         # Registry Editor panel
-        from ..panels.registry_panel import RegistryPanel
+        from ..panels.registry import RegistryPanel
         reg_panel = RegistryPanel(self.parent)
         self.tab_widget.addTab(reg_panel, "Registry Editor")
         self.panels["Registry Editor"] = reg_panel
         
         # Users & Groups panel
-        from ..panels.users_panel import UsersPanel
+        from ..panels.users import UsersPanel
         users_panel = UsersPanel(self.parent)
         self.tab_widget.addTab(users_panel, "Users & Groups")
         self.panels["Users & Groups"] = users_panel
         
         # Services panel
-        from ..panels.services_panel import ServicesPanel
+        from ..panels.services import ServicesPanel
         services_panel = ServicesPanel(self.parent)
         self.tab_widget.addTab(services_panel, "Services")
         self.panels["Services"] = services_panel
         
         # Firewall panel
-        from ..panels.firewall_panel import FirewallPanel
+        from ..panels.firewall import FirewallPanel
         firewall_panel = FirewallPanel(self.parent)
         self.tab_widget.addTab(firewall_panel, "Firewall")
         self.panels["Firewall"] = firewall_panel
         
         # Software panel
-        from ..panels.software_panel import SoftwarePanel
+        from ..panels.software import SoftwarePanel
         software_panel = SoftwarePanel(self.parent)
         self.tab_widget.addTab(software_panel, "Software")
         self.panels["Software"] = software_panel
         
         # Permissions panel
-        from ..panels.permissions_panel import PermissionsPanel
+        from ..panels.permissions import PermissionsPanel
         perms_panel = PermissionsPanel(self.parent)
         self.tab_widget.addTab(perms_panel, "Permissions")
         self.panels["Permissions"] = perms_panel
         
         # Applications panel
-        from ..panels.applications_panel import ApplicationsPanel
+        from ..panels.applications import ApplicationsPanel
         apps_panel = ApplicationsPanel(self.parent)
         self.tab_widget.addTab(apps_panel, "Applications")
         self.panels["Applications"] = apps_panel

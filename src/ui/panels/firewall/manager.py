@@ -29,12 +29,23 @@ class FirewallManager:
                 if filter_type and direction.lower() != filter_type.lower():
                     continue
                     
+                # Convert protocol number to string
+                protocol = str(rule.Protocol)
+                if protocol == "*" or protocol == "0":
+                    protocol = "Any"
+                elif protocol == "6":
+                    protocol = "TCP"
+                elif protocol == "17":
+                    protocol = "UDP"
+                elif protocol == "1":
+                    protocol = "ICMP"
+                
                 rules.append({
                     'name': rule.Name,
                     'enabled': rule.Enabled,
                     'direction': direction,
                     'action': "Allow" if rule.Action == 1 else "Block",
-                    'protocol': rule.Protocol if rule.Protocol != "*" else "Any",
+                    'protocol': protocol,
                     'local_ports': rule.LocalPorts or "",
                     'remote_ports': rule.RemotePorts or "",
                     'program': rule.ApplicationName or ""

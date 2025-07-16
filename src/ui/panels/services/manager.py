@@ -29,47 +29,76 @@ class ServiceManager:
                 for svc in win32service.EnumServicesStatus(sc_handle, type_filter, state_filter):
                     name = svc[0]
                     try:
-                        # Get detailed info
-                        handle = win32service.OpenService(sc_handle, name, win32service.SERVICE_ALL_ACCESS)
+                        # First try with fewer permissions
+                        access_level = win32service.SERVICE_QUERY_CONFIG | win32service.SERVICE_QUERY_STATUS
                         try:
-                            config = win32service.QueryServiceConfig(handle)
-                            status = win32service.QueryServiceStatus(handle)
-                            description = self._get_service_description(handle)
-                            
-                            # Map status code to string
-                            state = {
-                                win32service.SERVICE_STOPPED: "Stopped",
-                                win32service.SERVICE_START_PENDING: "Starting",
-                                win32service.SERVICE_STOP_PENDING: "Stopping",
-                                win32service.SERVICE_RUNNING: "Running",
-                                win32service.SERVICE_CONTINUE_PENDING: "Continuing",
-                                win32service.SERVICE_PAUSE_PENDING: "Pausing",
-                                win32service.SERVICE_PAUSED: "Paused"
-                            }.get(status[1], "Unknown")
-                            
-                            # Map start type to string
-                            start_type = {
-                                win32service.SERVICE_AUTO_START: "Automatic",
-                                win32service.SERVICE_DEMAND_START: "Manual",
-                                win32service.SERVICE_DISABLED: "Disabled",
-                                win32service.SERVICE_BOOT_START: "Boot",
-                                win32service.SERVICE_SYSTEM_START: "System"
-                            }.get(config[2], "Unknown")
-                            
+                            handle = win32service.OpenService(sc_handle, name, access_level)
+                            try:
+                                config = win32service.QueryServiceConfig(handle)
+                                status = win32service.QueryServiceStatus(handle)
+                                description = self._get_service_description(handle)
+                                
+                                # Map status code to string
+                                state = {
+                                    win32service.SERVICE_STOPPED: "Stopped",
+                                    win32service.SERVICE_START_PENDING: "Starting",
+                                    win32service.SERVICE_STOP_PENDING: "Stopping",
+                                    win32service.SERVICE_RUNNING: "Running",
+                                    win32service.SERVICE_CONTINUE_PENDING: "Continuing",
+                                    win32service.SERVICE_PAUSE_PENDING: "Pausing",
+                                    win32service.SERVICE_PAUSED: "Paused"
+                                }.get(status[1], "Unknown")
+                                
+                                # Map start type to string
+                                start_type = {
+                                    win32service.SERVICE_AUTO_START: "Automatic",
+                                    win32service.SERVICE_DEMAND_START: "Manual",
+                                    win32service.SERVICE_DISABLED: "Disabled",
+                                    win32service.SERVICE_BOOT_START: "Boot",
+                                    win32service.SERVICE_SYSTEM_START: "System"
+                                }.get(config[2], "Unknown")
+                                
+                                services.append({
+                                    'name': name,
+                                    'display_name': svc[1],
+                                    'description': description,
+                                    'state': state,
+                                    'start_type': start_type,
+                                    'path': config[3],
+                                    'account': config[7]
+                                })
+                                
+                            finally:
+                                win32service.CloseServiceHandle(handle)
+                        except pywintypes.error as e:
+                            if e.winerror == 5:  # Access denied error code
+                                # Add service with limited info
+                                services.append({
+                                    'name': name,
+                                    'display_name': svc[1],
+                                    'description': "Access denied - run as administrator for full details",
+                                    'state': "Unknown",
+                                    'start_type': "Unknown",
+                                    'path': "",
+                                    'account': ""
+                                })
+                            else:
+                                # Log non-access denied errors
+                                self.logger.warning(f"Failed to get details for service {name}: {str(e)}")
+                    except pywintypes.error as e:
+                        if e.winerror == 5:  # Access denied error code
+                            # Silently add service with limited info
                             services.append({
                                 'name': name,
                                 'display_name': svc[1],
-                                'description': description,
-                                'state': state,
-                                'start_type': start_type,
-                                'path': config[3],
-                                'account': config[7]
+                                'description': "Access denied - run as administrator for full details",
+                                'state': "Unknown",
+                                'start_type': "Unknown",
+                                'path': "",
+                                'account': ""
                             })
-                            
-                        finally:
-                            win32service.CloseServiceHandle(handle)
-                    except pywintypes.error as e:
-                        self.logger.warning(f"Failed to get details for service {name}: {str(e)}")
+                        else:
+                            self.logger.warning(f"Failed to get details for service {name}: {str(e)}")
                         continue
                         
             finally:

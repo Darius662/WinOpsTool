@@ -10,14 +10,14 @@ from .remote_handler import RemoteHandler
 from .help_handler import HelpHandler
 
 # Import panels
-from src.ui.panels.environment_panel import EnvironmentPanel
-from src.ui.panels.registry_panel import RegistryPanel
-from src.ui.panels.users_panel import UsersPanel
-from src.ui.panels.services_panel import ServicesPanel
-from src.ui.panels.firewall_panel import FirewallPanel
-from src.ui.panels.software_panel import SoftwarePanel
-from src.ui.panels.permissions_panel import PermissionsPanel
-from src.ui.panels.applications_panel import ApplicationsPanel
+from src.ui.panels.environment import EnvironmentPanel
+from src.ui.panels.registry import RegistryPanel
+from src.ui.panels.users import UsersPanel
+from src.ui.panels.services import ServicesPanel
+from src.ui.panels.firewall import FirewallPanel
+from src.ui.panels.software import SoftwarePanel
+from src.ui.panels.permissions import PermissionsPanel
+from src.ui.panels.applications import ApplicationsPanel
 
 class MainWindow(QMainWindow):
     """Main window for the System Management Tool."""

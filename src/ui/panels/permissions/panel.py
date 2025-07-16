@@ -20,22 +20,21 @@ class PermissionsPanel(BasePanel):
         super().__init__(parent)
         self.logger = setup_logger(self.__class__.__name__)
         self.manager = PermissionsManager()
-        self.current_path = None
-        self.setup_ui()
         
     def setup_ui(self):
         """Initialize the UI components."""
+        # Initialize current path
+        self.current_path = None
+        
         # Path selection
         self.path_combo = QComboBox()
         self.path_combo.setEditable(True)
         self.path_combo.setMaxCount(10)
-        self.path_combo.currentTextChanged.connect(self.path_changed)
         self.add_widget(self.path_combo)
         
         # Browse button
         browse_layout = QHBoxLayout()
         self.browse_btn = QPushButton("Browse...")
-        self.browse_btn.clicked.connect(self.browse_path)
         browse_layout.addWidget(self.browse_btn)
         self.add_layout(browse_layout)
         
@@ -55,13 +54,6 @@ class PermissionsPanel(BasePanel):
             button_layout.addWidget(btn)
             
         self.add_layout(button_layout)
-        
-        # Connect signals
-        self.add_btn.clicked.connect(self.add_permission)
-        self.edit_btn.clicked.connect(self.edit_permission)
-        self.remove_btn.clicked.connect(self.remove_permission)
-        self.refresh_btn.clicked.connect(self.refresh_permissions)
-        self.permissions_tree.itemSelectionChanged.connect(self.update_buttons)
         
         # Initial button state
         self.update_buttons()
@@ -208,7 +200,13 @@ class PermissionsPanel(BasePanel):
             
     def setup_connections(self):
         """Set up signal/slot connections."""
-        pass  # All connections are set up in setup_ui
+        self.path_combo.currentTextChanged.connect(self.path_changed)
+        self.browse_btn.clicked.connect(self.browse_path)
+        self.add_btn.clicked.connect(self.add_permission)
+        self.edit_btn.clicked.connect(self.edit_permission)
+        self.remove_btn.clicked.connect(self.remove_permission)
+        self.refresh_btn.clicked.connect(self.refresh_permissions)
+        self.permissions_tree.itemSelectionChanged.connect(self.update_buttons)
         
     def cleanup(self):
         """Perform cleanup before panel is destroyed."""

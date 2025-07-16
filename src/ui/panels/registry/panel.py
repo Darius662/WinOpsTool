@@ -31,32 +31,33 @@ class RegistryPanel(BasePanel):
         
     def setup_ui(self):
         """Set up the panel UI."""
-        layout = QVBoxLayout(self)
-        
         # Create tree widget
         self.tree = RegistryTree()
-        layout.addWidget(self.tree)
+        self.add_widget(self.tree)
         
         # Create buttons
         button_layout = QHBoxLayout()
         
-        add_button = QPushButton("Add")
-        add_button.clicked.connect(self.add_entry)
-        button_layout.addWidget(add_button)
+        self.add_button = QPushButton("Add")
+        button_layout.addWidget(self.add_button)
         
-        edit_button = QPushButton("Edit")
-        edit_button.clicked.connect(self.edit_entry)
-        button_layout.addWidget(edit_button)
+        self.edit_button = QPushButton("Edit")
+        button_layout.addWidget(self.edit_button)
         
-        delete_button = QPushButton("Delete")
-        delete_button.clicked.connect(self.delete_entry)
-        button_layout.addWidget(delete_button)
+        self.delete_button = QPushButton("Delete")
+        button_layout.addWidget(self.delete_button)
         
-        refresh_button = QPushButton("Refresh")
-        refresh_button.clicked.connect(self.refresh_entries)
-        button_layout.addWidget(refresh_button)
+        self.refresh_button = QPushButton("Refresh")
+        button_layout.addWidget(self.refresh_button)
         
-        layout.addLayout(button_layout)
+        self.add_layout(button_layout)
+        
+    def setup_connections(self):
+        """Set up signal/slot connections."""
+        self.add_button.clicked.connect(self.add_entry)
+        self.edit_button.clicked.connect(self.edit_entry)
+        self.delete_button.clicked.connect(self.delete_entry)
+        self.refresh_button.clicked.connect(self.refresh_entries)
         
     def add_entry(self):
         """Add a new registry entry."""
