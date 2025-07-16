@@ -29,7 +29,7 @@ class MenuHandler:
         
         # Import config
         import_action = QAction("Import Config...", self.main_window)
-        import_action.triggered.connect(self.main_window.import_configuration)
+        import_action.triggered.connect(self.main_window.dialog_handler.import_configuration)
         file_menu.addAction(import_action)
         
         # Apply config
@@ -50,7 +50,7 @@ class MenuHandler:
         
         # Connect
         connect_action = QAction("Connect...", self.main_window)
-        connect_action.triggered.connect(self.main_window.remote_handler.connect)
+        connect_action.triggered.connect(self.main_window.dialog_handler.show_connections)
         remote_menu.addAction(connect_action)
         
         # Disconnect
@@ -62,7 +62,7 @@ class MenuHandler:
         
         # File transfer
         transfer_action = QAction("File Transfer...", self.main_window)
-        transfer_action.triggered.connect(self.main_window.remote_handler.show_file_transfer)
+        transfer_action.triggered.connect(self.main_window.dialog_handler.show_file_transfer)
         remote_menu.addAction(transfer_action)
         
     def setup_help_menu(self):
@@ -76,27 +76,13 @@ class MenuHandler:
         
         # About
         about_action = QAction("About", self.main_window)
-        about_action.triggered.connect(self.show_about)
+        about_action.triggered.connect(self.main_window.dialog_handler.show_about)
         help_menu.addAction(about_action)
         
-    def show_about(self):
-        """Show about dialog."""
-        QMessageBox.about(
-            self.main_window,
-            "About System Management Tool",
-            """<h3>Windows System Management Tool</h3>
-            <p>Version 1.0</p>
-            <p>A tool for managing Windows system settings and configurations.</p>
-            <p>Features:</p>
-            <ul>
-                <li>Environment variables management</li>
-                <li>Registry editor</li>
-                <li>User and group management</li>
-                <li>Services configuration</li>
-                <li>Firewall rules</li>
-                <li>Software installation</li>
-                <li>File permissions</li>
-                <li>Application management</li>
-                <li>Remote system management</li>
-            </ul>"""
-        )
+    def create_menu_bar(self):
+        """Create and return the menu bar.
+        
+        Returns:
+            QMenuBar: The created menu bar
+        """
+        return self.menubar

@@ -1,11 +1,11 @@
 """Environment variables management panel."""
-import os
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QPushButton,
                           QMessageBox)
 from src.core.logger import setup_logger
 from src.ui.base.base_panel import BasePanel
 from .tree_widget import EnvironmentTree
 from .dialogs import AddVariableDialog
+from .manager import EnvironmentManager
 
 class EnvironmentPanel(BasePanel):
     """Panel for managing environment variables."""
@@ -18,6 +18,7 @@ class EnvironmentPanel(BasePanel):
         """
         super().__init__(main_window)
         self.logger = setup_logger(self.__class__.__name__)
+        self.manager = EnvironmentManager()
         self.setup_ui()
         self.refresh_variables()
         
@@ -57,14 +58,17 @@ class EnvironmentPanel(BasePanel):
             name, value, var_type = dialog.get_variable()
             try:
                 # Set environment variable
+                success = False
                 if var_type == "System":
-                    # TODO: Use Windows API to set system variable
-                    pass
+                    success = self.manager.set_system_variable(name, value)
                 else:
-                    os.environ[name] = value
+                    success = self.manager.set_user_variable(name, value)
                     
-                self.tree.add_variable(name, value, var_type)
-                self.logger.info(f"Added {var_type} variable: {name}={value}")
+                if success:
+                    self.tree.add_variable(name, value, var_type)
+                    self.logger.info(f"Added {var_type} variable: {name}={value}")
+                else:
+                    raise Exception("Failed to set variable")
             except Exception as e:
                 self.logger.error(f"Failed to add variable: {str(e)}")
                 QMessageBox.critical(
@@ -90,19 +94,29 @@ class EnvironmentPanel(BasePanel):
         if dialog.exec():
             new_name, new_value, new_type = dialog.get_variable()
             try:
-                # Update environment variable
+                success = False
+                # Delete old variable if name changed
+                if name != new_name:
+                    if var_type == "System":
+                        success = self.manager.delete_system_variable(name)
+                    else:
+                        success = self.manager.delete_user_variable(name)
+                    if not success:
+                        raise Exception(f"Failed to delete old variable {name}")
+                        
+                # Set new variable
                 if new_type == "System":
-                    # TODO: Use Windows API to set system variable
-                    pass
+                    success = self.manager.set_system_variable(new_name, new_value)
                 else:
-                    if name != new_name:
-                        del os.environ[name]
-                    os.environ[new_name] = new_value
+                    success = self.manager.set_user_variable(new_name, new_value)
                     
-                self.tree.update_variable(item, new_name, new_value, new_type)
-                self.logger.info(
-                    f"Updated variable: {name}={value} -> {new_name}={new_value}"
-                )
+                if success:
+                    self.tree.update_variable(item, new_name, new_value, new_type)
+                    self.logger.info(
+                        f"Updated variable: {name}={value} -> {new_name}={new_value}"
+                    )
+                else:
+                    raise Exception("Failed to set new variable value")
             except Exception as e:
                 self.logger.error(f"Failed to update variable: {str(e)}")
                 QMessageBox.critical(
@@ -133,17 +147,19 @@ class EnvironmentPanel(BasePanel):
         
         if reply == QMessageBox.StandardButton.Yes:
             try:
-                # Delete environment variable
+                success = False
                 if var_type == "System":
-                    # TODO: Use Windows API to delete system variable
-                    pass
+                    success = self.manager.delete_system_variable(name)
                 else:
-                    del os.environ[name]
+                    success = self.manager.delete_user_variable(name)
                     
-                self.tree.takeTopLevelItem(
-                    self.tree.indexOfTopLevelItem(item)
-                )
-                self.logger.info(f"Deleted {var_type} variable: {name}")
+                if success:
+                    self.tree.takeTopLevelItem(
+                        self.tree.indexOfTopLevelItem(item)
+                    )
+                    self.logger.info(f"Deleted {var_type} variable: {name}")
+                else:
+                    raise Exception("Failed to delete variable")
             except Exception as e:
                 self.logger.error(f"Failed to delete variable: {str(e)}")
                 QMessageBox.critical(
@@ -157,10 +173,12 @@ class EnvironmentPanel(BasePanel):
         self.tree.clear_variables()
         
         # Add user variables
-        for name, value in os.environ.items():
+        for name, value in self.manager.get_user_variables().items():
             self.tree.add_variable(name, value, "User")
             
-        # TODO: Add system variables using Windows API
+        # Add system variables
+        for name, value in self.manager.get_system_variables().items():
+            self.tree.add_variable(name, value, "System")
         
     def update_remote_state(self, connected):
         """Update UI based on remote connection state.

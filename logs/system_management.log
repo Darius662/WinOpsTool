@@ -310,3 +310,88 @@ NameError: name 'QMenu' is not defined
 2025-07-16 12:37:51,648 - src.core.dependency_manager - DEBUG - Package PyYAML is installed
 2025-07-16 12:37:51,650 - src.core.dependency_manager - DEBUG - Package psutil is installed
 2025-07-16 12:37:51,652 - src.core.dependency_manager - DEBUG - Package wmi is installed
+2025-07-16 12:44:10,124 - src.core.dependencies.checker - DEBUG - Package PyQt6 is installed
+2025-07-16 12:44:10,130 - src.core.dependencies.checker - DEBUG - pywin32 modules are available
+2025-07-16 12:44:10,133 - src.core.dependencies.checker - DEBUG - Package PyYAML is installed
+2025-07-16 12:44:10,135 - src.core.dependencies.checker - DEBUG - Package psutil is installed
+2025-07-16 12:44:10,137 - src.core.dependencies.checker - DEBUG - Package wmi is installed
+2025-07-16 12:44:10,300 - __main__ - ERROR - Unexpected error in main
+Traceback (most recent call last):
+  File "z:\GitHub\Windows_System_Management_Tool\main.py", line 50, in main
+    window = MainWindow()
+  File "z:\GitHub\Windows_System_Management_Tool\src\ui\main\window.py", line 36, in __init__
+    self.menu_handler = MenuHandler(self)  # MenuHandler depends on other handlers
+                        ~~~~~~~~~~~^^^^^^
+  File "z:\GitHub\Windows_System_Management_Tool\src\ui\main\menu_handler.py", line 18, in __init__
+    self.setup_menus()
+    ~~~~~~~~~~~~~~~~^^
+  File "z:\GitHub\Windows_System_Management_Tool\src\ui\main\menu_handler.py", line 22, in setup_menus
+    self.setup_file_menu()
+    ~~~~~~~~~~~~~~~~~~~~^^
+  File "z:\GitHub\Windows_System_Management_Tool\src\ui\main\menu_handler.py", line 32, in setup_file_menu
+    import_action.triggered.connect(self.main_window.import_configuration)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'MainWindow' object has no attribute 'import_configuration'
+2025-07-16 12:45:46,121 - src.core.dependencies.checker - DEBUG - Package PyQt6 is installed
+2025-07-16 12:45:46,124 - src.core.dependencies.checker - DEBUG - pywin32 modules are available
+2025-07-16 12:45:46,127 - src.core.dependencies.checker - DEBUG - Package PyYAML is installed
+2025-07-16 12:45:46,129 - src.core.dependencies.checker - DEBUG - Package psutil is installed
+2025-07-16 12:45:46,131 - src.core.dependencies.checker - DEBUG - Package wmi is installed
+2025-07-16 12:45:46,294 - __main__ - ERROR - Unexpected error in main
+Traceback (most recent call last):
+  File "z:\GitHub\Windows_System_Management_Tool\main.py", line 50, in main
+    window = MainWindow()
+  File "z:\GitHub\Windows_System_Management_Tool\src\ui\main\window.py", line 36, in __init__
+    self.menu_handler = MenuHandler(self)  # MenuHandler depends on other handlers
+                        ~~~~~~~~~~~^^^^^^
+  File "z:\GitHub\Windows_System_Management_Tool\src\ui\main\menu_handler.py", line 18, in __init__
+    self.setup_menus()
+    ~~~~~~~~~~~~~~~~^^
+  File "z:\GitHub\Windows_System_Management_Tool\src\ui\main\menu_handler.py", line 22, in setup_menus
+    self.setup_file_menu()
+    ~~~~~~~~~~~~~~~~~~~~^^
+  File "z:\GitHub\Windows_System_Management_Tool\src\ui\main\menu_handler.py", line 32, in setup_file_menu
+    import_action.triggered.connect(self.main_window.dialog_handler.import_configuration)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'MainWindow' object has no attribute 'dialog_handler'. Did you mean: 'config_handler'?
+2025-07-16 12:47:20,430 - src.core.dependencies.checker - DEBUG - Package PyQt6 is installed
+2025-07-16 12:47:20,432 - src.core.dependencies.checker - DEBUG - pywin32 modules are available
+2025-07-16 12:47:20,434 - src.core.dependencies.checker - DEBUG - Package PyYAML is installed
+2025-07-16 12:47:20,436 - src.core.dependencies.checker - DEBUG - Package psutil is installed
+2025-07-16 12:47:20,438 - src.core.dependencies.checker - DEBUG - Package wmi is installed
+2025-07-16 12:47:28,292 - src.ui.main.window - WARNING - Panel Environment Variables does not support configuration application
+2025-07-16 12:59:32,479 - src.core.dependencies.checker - DEBUG - Package PyQt6 is installed
+2025-07-16 12:59:32,481 - src.core.dependencies.checker - DEBUG - pywin32 modules are available
+2025-07-16 12:59:32,484 - src.core.dependencies.checker - DEBUG - Package PyYAML is installed
+2025-07-16 12:59:32,486 - src.core.dependencies.checker - DEBUG - Package psutil is installed
+2025-07-16 12:59:32,488 - src.core.dependencies.checker - DEBUG - Package wmi is installed
+2025-07-16 13:07:33,130 - src.core.dependencies.checker - DEBUG - Package PyQt6 is installed
+2025-07-16 13:07:33,138 - src.core.dependencies.checker - DEBUG - pywin32 modules are available
+2025-07-16 13:07:33,140 - src.core.dependencies.checker - DEBUG - Package PyYAML is installed
+2025-07-16 13:07:33,142 - src.core.dependencies.checker - DEBUG - Package psutil is installed
+2025-07-16 13:07:33,145 - src.core.dependencies.checker - DEBUG - Package wmi is installed
+2025-07-16 13:07:41,826 - src.core.dependencies.checker - DEBUG - Package PyQt6 is installed
+2025-07-16 13:07:41,829 - src.core.dependencies.checker - DEBUG - pywin32 modules are available
+2025-07-16 13:07:41,831 - src.core.dependencies.checker - DEBUG - Package PyYAML is installed
+2025-07-16 13:07:41,833 - src.core.dependencies.checker - DEBUG - Package psutil is installed
+2025-07-16 13:07:41,836 - src.core.dependencies.checker - DEBUG - Package wmi is installed
+2025-07-16 13:20:20,784 - src.core.dependencies.checker - DEBUG - Package PyQt6 is installed
+2025-07-16 13:20:20,787 - src.core.dependencies.checker - DEBUG - pywin32 modules are available
+2025-07-16 13:20:20,789 - src.core.dependencies.checker - DEBUG - Package PyYAML is installed
+2025-07-16 13:20:20,791 - src.core.dependencies.checker - DEBUG - Package psutil is installed
+2025-07-16 13:20:20,794 - src.core.dependencies.checker - DEBUG - Package wmi is installed
+2025-07-16 13:26:31,177 - src.core.dependencies.checker - DEBUG - Package PyQt6 is installed
+2025-07-16 13:26:31,179 - src.core.dependencies.checker - DEBUG - pywin32 modules are available
+2025-07-16 13:26:31,181 - src.core.dependencies.checker - DEBUG - Package PyYAML is installed
+2025-07-16 13:26:31,184 - src.core.dependencies.checker - DEBUG - Package psutil is installed
+2025-07-16 13:26:31,186 - src.core.dependencies.checker - DEBUG - Package wmi is installed
+2025-07-16 13:40:53,572 - src.core.dependencies.checker - DEBUG - Package PyQt6 is installed
+2025-07-16 13:40:53,578 - src.core.dependencies.checker - DEBUG - pywin32 modules are available
+2025-07-16 13:40:53,581 - src.core.dependencies.checker - DEBUG - Package PyYAML is installed
+2025-07-16 13:40:53,583 - src.core.dependencies.checker - DEBUG - Package psutil is installed
+2025-07-16 13:40:53,585 - src.core.dependencies.checker - DEBUG - Package wmi is installed
+2025-07-16 13:42:35,134 - src.core.dependencies.checker - DEBUG - Package PyQt6 is installed
+2025-07-16 13:42:35,136 - src.core.dependencies.checker - DEBUG - pywin32 modules are available
+2025-07-16 13:42:35,138 - src.core.dependencies.checker - DEBUG - Package PyYAML is installed
+2025-07-16 13:42:35,141 - src.core.dependencies.checker - DEBUG - Package psutil is installed
+2025-07-16 13:42:35,144 - src.core.dependencies.checker - DEBUG - Package wmi is installed
