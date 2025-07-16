@@ -28,5 +28,6 @@ REQUIRED_PACKAGES = [
     'pywin32',
     'psutil',
     'pyuac',
-    'winreg'
+    'winreg',
+    'pyyaml'
 ]

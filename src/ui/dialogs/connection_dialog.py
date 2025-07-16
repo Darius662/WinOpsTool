@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QFormLayout,
                           QPushButton, QLineEdit, QTreeWidget, QTreeWidgetItem,
                           QMessageBox)
 from PyQt6.QtCore import Qt
-from src.core.remote_manager import RemoteManager
+from src.core.remote.manager import RemoteManager
 
 class ConnectionDialog(QDialog):
     """Dialog for managing remote PC connections."""

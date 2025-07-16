@@ -27,8 +27,22 @@ class BasePanel(QWidget):
         raise NotImplementedError('Panels must implement setup_connections')
         
     def cleanup(self):
-        """Perform cleanup before panel is destroyed."""
-        raise NotImplementedError('Panels must implement cleanup')
+        """Perform cleanup before panel is destroyed.
+        
+        This method clears the main layout of all widgets.
+        Derived classes should override this method if additional cleanup is needed.
+        """
+        # Remove all widgets from the layout
+        while self.main_layout.count():
+            item = self.main_layout.takeAt(0)
+            if item.widget():
+                item.widget().setParent(None)
+            elif item.layout():
+                # Recursively clear sublayouts
+                while item.layout().count():
+                    subitem = item.layout().takeAt(0)
+                    if subitem.widget():
+                        subitem.widget().setParent(None)
         
     def add_widget(self, widget):
         """Add a widget to the main layout."""
@@ -52,9 +66,4 @@ class BasePanel(QWidget):
         """
         pass  # Optional to override
         
-    def cleanup(self):
-        """Perform cleanup before panel is destroyed.
-        
-        Override this method in derived classes.
-        """
-        pass  # Optional to override
+    # Note: The cleanup method is already defined above

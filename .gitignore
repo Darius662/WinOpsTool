@@ -1,0 +1,36 @@
+# Python build and distribution files
+build/
+dist/
+*.spec
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Virtual environment
+venv/
+env/
+.env/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+logs/
+*.log
+
+# Backup files
+*.old
+*.bak
+*~
+
+# Windows specific
+Thumbs.db
+desktop.ini
+
+# Project specific backups
+backups/
+*.backup

@@ -5,10 +5,10 @@ import sys
 from pathlib import Path
 from PyQt6.QtWidgets import QApplication, QMessageBox
 from src.core.logger import setup_logger
-from src.core.dependency_manager import check_dependencies, install_dependencies
+from src.core.dependencies import check_dependencies, install_dependencies
 from src.core.privileges import is_admin, request_admin_privileges
 from src.ui.dialogs.error_dialog import show_error
-from src.ui.main_window import MainWindow
+from src.ui.main.window import MainWindow
 from src.core.config import APP_NAME
 
 logger = setup_logger(__name__)
