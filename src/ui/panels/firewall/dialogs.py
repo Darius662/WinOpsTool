@@ -6,37 +6,47 @@ from src.core.logger import setup_logger
 class AddRuleDialog(QDialog):
     """Dialog for adding/editing firewall rules."""
     
-    def __init__(self, parent=None, name="", direction="Inbound", action="Allow",
-                protocol="TCP", local_ports="", remote_ports="", program=""):
+    def __init__(self, parent=None, direction="inbound", rule_data=None):
         """Initialize dialog.
         
         Args:
             parent: Parent widget
-            name: Initial rule name
-            direction: Initial direction ("Inbound" or "Outbound")
-            action: Initial action ("Allow" or "Block")
-            protocol: Initial protocol ("TCP", "UDP", or "Any")
-            local_ports: Initial local ports
-            remote_ports: Initial remote ports
-            program: Initial program path
+            direction: Rule direction ("inbound" or "outbound")
+            rule_data: Optional dictionary with existing rule data for editing
         """
         super().__init__(parent)
         self.logger = setup_logger(self.__class__.__name__)
         
-        # Store initial values
-        self.name = name
-        self.direction = direction
-        self.action = action
-        self.protocol = protocol
-        self.local_ports = local_ports
-        self.remote_ports = remote_ports
-        self.program = program
+        # Store direction
+        self.direction = direction.capitalize()  # Ensure first letter is capitalized
+        
+        # Initialize default values
+        self.name = ""
+        self.action = "Allow"
+        self.protocol = "TCP"
+        self.local_ports = ""
+        self.remote_ports = ""
+        self.program = ""
+        
+        # If editing an existing rule, use its values
+        self.is_edit_mode = rule_data is not None
+        if self.is_edit_mode:
+            self.name = rule_data.get('name', "")
+            self.action = rule_data.get('action', "Allow")
+            self.protocol = rule_data.get('protocol', "TCP")
+            self.local_ports = rule_data.get('local_ports', "")
+            self.remote_ports = rule_data.get('remote_ports', "")
+            self.program = rule_data.get('program', "")
         
         self.setup_ui()
         
     def setup_ui(self):
         """Set up the dialog UI."""
-        self.setWindowTitle("Add Firewall Rule")
+        # Set window title based on mode
+        if self.is_edit_mode:
+            self.setWindowTitle(f"Edit {self.direction} Firewall Rule")
+        else:
+            self.setWindowTitle(f"Add {self.direction} Firewall Rule")
         layout = QVBoxLayout(self)
         
         # Rule name
@@ -47,14 +57,12 @@ class AddRuleDialog(QDialog):
         name_layout.addWidget(self.name_edit)
         layout.addLayout(name_layout)
         
-        # Direction
+        # Direction (read-only in this dialog)
         direction_layout = QHBoxLayout()
         direction_label = QLabel("Direction:")
-        self.direction_combo = QComboBox()
-        self.direction_combo.addItems(["Inbound", "Outbound"])
-        self.direction_combo.setCurrentText(self.direction)
+        self.direction_label = QLabel(self.direction)
         direction_layout.addWidget(direction_label)
-        direction_layout.addWidget(self.direction_combo)
+        direction_layout.addWidget(self.direction_label)
         layout.addLayout(direction_layout)
         
         # Action
@@ -129,7 +137,7 @@ class AddRuleDialog(QDialog):
         """
         return {
             'name': self.name_edit.text().strip(),
-            'direction': self.direction_combo.currentText(),
+            'direction': self.direction,
             'action': self.action_combo.currentText(),
             'protocol': self.protocol_combo.currentText(),
             'local_ports': self.local_ports_edit.text().strip(),

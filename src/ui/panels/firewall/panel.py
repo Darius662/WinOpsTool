@@ -1,11 +1,12 @@
 """Firewall rules management panel."""
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QPushButton,
-                          QComboBox, QMessageBox)
+                          QTabWidget, QMessageBox)
 from src.core.logger import setup_logger
 from src.ui.base.base_panel import BasePanel
 from .tree_widget import RulesTree
 from .dialogs import AddRuleDialog
 from .manager import FirewallManager
+from .components.rule_list import RuleList
 
 class FirewallPanel(BasePanel):
     """Panel for managing Windows Firewall rules."""
@@ -16,118 +17,148 @@ class FirewallPanel(BasePanel):
         Args:
             parent: Parent widget
         """
+        # Initialize manager before calling super().__init__ which will call setup_ui
+        self.manager = FirewallManager()
         super().__init__(parent)
         self.logger = setup_logger(self.__class__.__name__)
-        self.manager = FirewallManager()
-        self.refresh_rules()
+        
+        # Refresh rules initially after setup is complete
+        self.refresh_rules("inbound")
+        self.refresh_rules("outbound")
         
     def setup_ui(self):
         """Set up the panel UI."""
-        # Filter controls
-        filter_layout = QHBoxLayout()
-        self.filter_combo = QComboBox()
-        self.filter_combo.addItems(["All Rules", "Inbound", "Outbound"])
-        filter_layout.addWidget(self.filter_combo)
+        # Create tab widget
+        self.tab_widget = QTabWidget()
         
-        # Action buttons
-        self.add_button = QPushButton("Add Rule")
-        filter_layout.addWidget(self.add_button)
+        # Create inbound and outbound rule lists
+        self.inbound_rules = RuleList("inbound")
+        self.outbound_rules = RuleList("outbound")
         
-        self.delete_button = QPushButton("Delete Rule")
-        filter_layout.addWidget(self.delete_button)
+        # Add tabs
+        self.tab_widget.addTab(self.inbound_rules, "Inbound Rules")
+        self.tab_widget.addTab(self.outbound_rules, "Outbound Rules")
         
-        self.toggle_button = QPushButton("Enable/Disable")
-        filter_layout.addWidget(self.toggle_button)
-        
-        self.refresh_button = QPushButton("Refresh")
-        filter_layout.addWidget(self.refresh_button)
-        
-        self.add_layout(filter_layout)
-        
-        # Rules tree
-        self.rules_tree = RulesTree()
-        self.add_widget(self.rules_tree)
-        
-        # Initial button state
-        self.update_buttons()
+        # Add tab widget to panel
+        self.add_widget(self.tab_widget)
         
     def setup_connections(self):
         """Set up signal/slot connections."""
-        self.filter_combo.currentTextChanged.connect(self.refresh_rules)
-        self.add_button.clicked.connect(self.add_rule)
-        self.delete_button.clicked.connect(self.delete_rule)
-        self.toggle_button.clicked.connect(self.toggle_rule)
-        self.refresh_button.clicked.connect(self.refresh_rules)
-        self.rules_tree.itemSelectionChanged.connect(self.update_buttons)
+        # Connect inbound rule list signals
+        self.inbound_rules.add_rule.connect(self.add_rule)
+        self.inbound_rules.edit_rule.connect(self.edit_rule)
+        self.inbound_rules.delete_rule.connect(self.delete_rule)
+        self.inbound_rules.toggle_rule.connect(self.toggle_rule)
+        self.inbound_rules.refresh_rules.connect(self.refresh_rules)
         
-    def update_buttons(self):
-        """Update button enabled states based on selection."""
-        has_selection = bool(self.rules_tree.selectedItems())
-        self.delete_button.setEnabled(has_selection)
-        self.toggle_button.setEnabled(has_selection)
+        # Connect outbound rule list signals
+        self.outbound_rules.add_rule.connect(self.add_rule)
+        self.outbound_rules.edit_rule.connect(self.edit_rule)
+        self.outbound_rules.delete_rule.connect(self.delete_rule)
+        self.outbound_rules.toggle_rule.connect(self.toggle_rule)
+        self.outbound_rules.refresh_rules.connect(self.refresh_rules)
         
-    def refresh_rules(self):
-        """Refresh the rules list."""
+        # Connect tab changed signal
+        self.tab_widget.currentChanged.connect(self._on_tab_changed)
+        
+    def _on_tab_changed(self, index):
+        """Handle tab change event.
+        
+        Args:
+            index: New tab index
+        """
+        # Refresh the rules in the newly selected tab
+        direction = "inbound" if index == 0 else "outbound"
+        self.refresh_rules(direction)
+        
+    def refresh_rules(self, direction):
+        """Refresh the rules list for the specified direction.
+        
+        Args:
+            direction: "inbound" or "outbound"
+        """
         try:
-            # Get filter type
-            filter_text = self.filter_combo.currentText()
-            filter_type = filter_text.lower() if filter_text != "All Rules" else None
+            # Get rules for the specified direction
+            rules = self.manager.get_rules(direction)
             
-            # Clear and repopulate tree
-            self.rules_tree.clear_rules()
-            rules = self.manager.get_rules(filter_type)
-            
-            for rule in rules:
-                self.rules_tree.add_rule(
-                    rule['name'],
-                    rule['enabled'],
-                    rule['direction'],
-                    rule['action'],
-                    rule['protocol'],
-                    rule['local_ports'],
-                    rule['remote_ports'],
-                    rule['program']
-                )
+            # Update the appropriate rule list
+            if direction == "inbound":
+                self.inbound_rules.add_rules(rules)
+            else:
+                self.outbound_rules.add_rules(rules)
                 
-            self.logger.info("Refreshed firewall rules")
+            self.logger.info(f"Refreshed {direction} firewall rules")
         except Exception as e:
-            self.logger.error(f"Failed to refresh rules: {str(e)}")
-            QMessageBox.critical(self, "Error", "Failed to refresh firewall rules")
+            self.logger.error(f"Failed to refresh {direction} rules: {str(e)}")
+            QMessageBox.critical(self, "Error", f"Failed to refresh {direction} firewall rules")
             
-    def add_rule(self):
-        """Add a new firewall rule."""
-        dialog = AddRuleDialog(self)
+    def add_rule(self, direction):
+        """Add a new firewall rule.
+        
+        Args:
+            direction: "inbound" or "outbound"
+        """
+        dialog = AddRuleDialog(self, direction)
         if dialog.exec():
             rule = dialog.get_rule()
             if self.manager.add_rule(**rule):
-                self.refresh_rules()
+                self.refresh_rules(direction)
             else:
                 QMessageBox.critical(self, "Error", "Failed to add firewall rule")
                 
-    def delete_rule(self):
-        """Delete selected firewall rule."""
-        item = self.rules_tree.selectedItems()[0]
-        name = item.text(0)
+    def edit_rule(self, direction, rule_data):
+        """Edit an existing firewall rule.
         
+        Args:
+            direction: "inbound" or "outbound"
+            rule_data: Dictionary with rule properties
+        """
+        dialog = AddRuleDialog(self, direction, rule_data)
+        if dialog.exec():
+            # First delete the old rule
+            if self.manager.delete_rule(rule_data['name']):
+                # Then add the new rule with updated properties
+                new_rule = dialog.get_rule()
+                if self.manager.add_rule(**new_rule):
+                    self.refresh_rules(direction)
+                else:
+                    QMessageBox.critical(self, "Error", "Failed to update firewall rule")
+            else:
+                QMessageBox.critical(self, "Error", "Failed to update firewall rule")
+                
+    def delete_rule(self, direction, rule_name):
+        """Delete a firewall rule.
+        
+        Args:
+            direction: "inbound" or "outbound"
+            rule_name: Name of the rule to delete
+        """
         reply = QMessageBox.question(
             self,
             "Confirm Delete",
-            f"Are you sure you want to delete rule '{name}'?",
+            f"Are you sure you want to delete rule '{rule_name}'?",
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
         )
         
         if reply == QMessageBox.StandardButton.Yes:
-            if self.manager.delete_rule(name):
-                self.refresh_rules()
+            if self.manager.delete_rule(rule_name):
+                self.refresh_rules(direction)
             else:
                 QMessageBox.critical(self, "Error", "Failed to delete firewall rule")
                 
-    def toggle_rule(self):
-        """Toggle enabled state of selected rule."""
-        item = self.rules_tree.selectedItems()[0]
-        rule = self.rules_tree.get_rule(item)
+    def toggle_rule(self, direction, rule_name, new_state):
+        """Toggle enabled state of a rule.
         
-        if self.manager.set_rule_enabled(rule['name'], not rule['enabled']):
-            self.rules_tree.update_rule(item, not rule['enabled'])
+        Args:
+            direction: "inbound" or "outbound"
+            rule_name: Name of the rule to toggle
+            new_state: New enabled state
+        """
+        if self.manager.set_rule_enabled(rule_name, new_state):
+            # Update the rule in the appropriate list
+            if direction == "inbound":
+                self.inbound_rules.update_rule_state(rule_name, new_state)
+            else:
+                self.outbound_rules.update_rule_state(rule_name, new_state)
         else:
             QMessageBox.critical(self, "Error", "Failed to toggle firewall rule")

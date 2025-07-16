@@ -1,5 +1,6 @@
 """Tree widget for environment variables."""
 from PyQt6.QtWidgets import QTreeWidget, QTreeWidgetItem
+from PyQt6.QtCore import Qt
 from src.core.logger import setup_logger
 
 class EnvironmentTree(QTreeWidget):
@@ -17,35 +18,34 @@ class EnvironmentTree(QTreeWidget):
         
     def setup_ui(self):
         """Set up the tree widget UI."""
-        self.setHeaderLabels(["Name", "Value", "Type"])
-        self.setColumnWidth(0, 200)
-        self.setColumnWidth(1, 300)
+        self.setAlternatingRowColors(True)
+        self.setSortingEnabled(True)
+        self.setRootIsDecorated(False)  # No expand/collapse icons
         
-    def add_variable(self, name, value, var_type="User"):
+    def add_variable(self, name, value):
         """Add an environment variable to the tree.
         
         Args:
             name: Variable name
             value: Variable value
-            var_type: Variable type (User/System)
+            
+        Returns:
+            The created tree item
         """
-        item = QTreeWidgetItem([name, value, var_type])
+        item = QTreeWidgetItem([name, value])
         self.addTopLevelItem(item)
         return item
         
-    def update_variable(self, item, name, value, var_type=None):
+    def update_variable(self, item, name, value):
         """Update an existing environment variable.
         
         Args:
             item: QTreeWidgetItem to update
             name: New variable name
             value: New variable value
-            var_type: New variable type (optional)
         """
         item.setText(0, name)
         item.setText(1, value)
-        if var_type:
-            item.setText(2, var_type)
             
     def get_variable(self, item):
         """Get variable details from tree item.
@@ -54,14 +54,22 @@ class EnvironmentTree(QTreeWidget):
             item: QTreeWidgetItem to get details from
             
         Returns:
-            Tuple of (name, value, type)
+            Tuple of (name, value)
         """
-        return (
-            item.text(0),
-            item.text(1),
-            item.text(2)
-        )
+        return (item.text(0), item.text(1))
         
     def clear_variables(self):
         """Clear all variables from the tree."""
         self.clear()
+        
+    def find_variable(self, name):
+        """Find a variable by name.
+        
+        Args:
+            name: Variable name to find
+            
+        Returns:
+            QTreeWidgetItem if found, None otherwise
+        """
+        items = self.findItems(name, Qt.MatchFlag.MatchExactly, 0)
+        return items[0] if items else None

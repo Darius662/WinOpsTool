@@ -1,0 +1,1 @@
+"""Software panel components."""

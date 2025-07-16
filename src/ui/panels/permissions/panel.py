@@ -1,11 +1,9 @@
 """Windows Permissions management panel."""
-from PyQt6.QtWidgets import (QHBoxLayout, QPushButton, QMessageBox, QComboBox,
-                          QFileDialog)
-from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QMessageBox
 from src.core.logger import setup_logger
 from src.ui.base.base_panel import BasePanel
-from .tree_widget import PermissionsTree
 from .manager import PermissionsManager
+from .components.permissions_list import PermissionsList
 from .dialogs import PermissionDialog
 
 class PermissionsPanel(BasePanel):
@@ -17,67 +15,29 @@ class PermissionsPanel(BasePanel):
         Args:
             parent: Parent widget
         """
+        # Initialize manager before calling super().__init__ which will call setup_ui
+        self.manager = PermissionsManager()
         super().__init__(parent)
         self.logger = setup_logger(self.__class__.__name__)
-        self.manager = PermissionsManager()
         
     def setup_ui(self):
         """Initialize the UI components."""
+        # Create permissions list component
+        self.permissions_list = PermissionsList()
+        self.add_widget(self.permissions_list)
+        
         # Initialize current path
         self.current_path = None
         
-        # Path selection
-        self.path_combo = QComboBox()
-        self.path_combo.setEditable(True)
-        self.path_combo.setMaxCount(10)
-        self.add_widget(self.path_combo)
-        
-        # Browse button
-        browse_layout = QHBoxLayout()
-        self.browse_btn = QPushButton("Browse...")
-        browse_layout.addWidget(self.browse_btn)
-        self.add_layout(browse_layout)
-        
-        # Permissions tree
-        self.permissions_tree = PermissionsTree()
-        self.add_widget(self.permissions_tree)
-        
-        # Buttons
-        button_layout = QHBoxLayout()
-        
-        self.add_btn = QPushButton("Add Permission")
-        self.edit_btn = QPushButton("Edit Permission")
-        self.remove_btn = QPushButton("Remove Permission")
-        self.refresh_btn = QPushButton("Refresh")
-        
-        for btn in [self.add_btn, self.edit_btn, self.remove_btn, self.refresh_btn]:
-            button_layout.addWidget(btn)
-            
-        self.add_layout(button_layout)
-        
-        # Initial button state
-        self.update_buttons()
-        
     def update_buttons(self):
         """Update button enabled states based on selection."""
-        has_path = bool(self.current_path)
-        has_selection = bool(self.permissions_tree.selectedItems())
-        
-        self.add_btn.setEnabled(has_path)
-        self.edit_btn.setEnabled(has_path and has_selection)
-        self.remove_btn.setEnabled(has_path and has_selection)
-        self.refresh_btn.setEnabled(has_path)
+        # This is now handled by the PermissionsList component
+        pass
         
     def browse_path(self):
         """Browse for a file or folder."""
-        path = QFileDialog.getExistingDirectory(
-            self,
-            "Select Folder",
-            self.current_path or ""
-        )
-        
-        if path:
-            self.path_combo.setCurrentText(path)
+        # This is now handled by the PermissionsList component
+        pass
             
     def path_changed(self, path):
         """Handle path change.
@@ -87,29 +47,21 @@ class PermissionsPanel(BasePanel):
         """
         self.current_path = path
         self.refresh_permissions()
-        self.update_buttons()
         
     def refresh_permissions(self):
         """Refresh the permissions list."""
         try:
             if not self.current_path:
-                self.permissions_tree.clear_permissions()
                 return
                 
-            # Add path to combo if not present
-            if self.path_combo.findText(self.current_path) == -1:
-                self.path_combo.addItem(self.current_path)
+            # Add path to combo history
+            self.permissions_list.add_path_to_history(self.current_path)
                 
-            # Clear and repopulate tree
-            self.permissions_tree.clear_permissions()
+            # Get permissions from manager
             permissions = self.manager.get_permissions(self.current_path)
             
-            for perm in permissions:
-                self.permissions_tree.add_permission(
-                    perm['name'],
-                    perm['type'],
-                    perm['permissions']
-                )
+            # Update permissions list component
+            self.permissions_list.add_permissions(permissions)
                 
             self.logger.info(f"Refreshed permissions for {self.current_path}")
             
@@ -117,10 +69,14 @@ class PermissionsPanel(BasePanel):
             self.logger.error(f"Failed to refresh permissions: {str(e)}")
             QMessageBox.critical(self, "Error", "Failed to refresh permissions list")
             
-    def add_permission(self):
-        """Add a new permission."""
+    def add_permission(self, path):
+        """Add a new permission.
+        
+        Args:
+            path: Current path
+        """
         try:
-            if not self.current_path:
+            if not path:
                 return
                 
             dialog = PermissionDialog(self)
@@ -128,7 +84,7 @@ class PermissionsPanel(BasePanel):
                 data = dialog.get_permission_data()
                 
                 if self.manager.add_permission(
-                    self.current_path,
+                    path,
                     data["name"],
                     data["mask"]
                 ):
@@ -140,17 +96,23 @@ class PermissionsPanel(BasePanel):
             self.logger.error(f"Failed to add permission: {str(e)}")
             QMessageBox.critical(self, "Error", f"Failed to add permission: {str(e)}")
             
-    def edit_permission(self):
-        """Edit selected permission."""
+    def edit_permission(self, path):
+        """Edit selected permission.
+        
+        Args:
+            path: Current path
+        """
         try:
-            current_item = self.permissions_tree.currentItem()
-            if not current_item or not self.current_path:
+            if not path:
                 return
                 
-            name = current_item.text(0)
-            
+            # Get selected permission from component
+            name = self.permissions_list.get_selected_permission()
+            if not name:
+                return
+                
             # Get current permissions
-            permissions = self.manager.get_permissions(self.current_path)
+            permissions = self.manager.get_permissions(path)
             current_perm = next((p for p in permissions if p['name'] == name), None)
             if not current_perm:
                 return
@@ -160,7 +122,7 @@ class PermissionsPanel(BasePanel):
                 data = dialog.get_permission_data()
                 
                 if self.manager.edit_permission(
-                    self.current_path,
+                    path,
                     data["name"],
                     data["mask"]
                 ):
@@ -172,15 +134,21 @@ class PermissionsPanel(BasePanel):
             self.logger.error(f"Failed to edit permission: {str(e)}")
             QMessageBox.critical(self, "Error", f"Failed to edit permission: {str(e)}")
             
-    def remove_permission(self):
-        """Remove selected permission."""
+    def remove_permission(self, path):
+        """Remove selected permission.
+        
+        Args:
+            path: Current path
+        """
         try:
-            current_item = self.permissions_tree.currentItem()
-            if not current_item or not self.current_path:
+            if not path:
                 return
                 
-            name = current_item.text(0)
-            
+            # Get selected permission from component
+            name = self.permissions_list.get_selected_permission()
+            if not name:
+                return
+                
             reply = QMessageBox.question(
                 self,
                 "Confirm Remove",
@@ -189,7 +157,7 @@ class PermissionsPanel(BasePanel):
             )
             
             if reply == QMessageBox.StandardButton.Yes:
-                if self.manager.remove_permission(self.current_path, name):
+                if self.manager.remove_permission(path, name):
                     self.refresh_permissions()
                 else:
                     QMessageBox.critical(self, "Error", f"Failed to remove permission for {name}")
@@ -200,13 +168,12 @@ class PermissionsPanel(BasePanel):
             
     def setup_connections(self):
         """Set up signal/slot connections."""
-        self.path_combo.currentTextChanged.connect(self.path_changed)
-        self.browse_btn.clicked.connect(self.browse_path)
-        self.add_btn.clicked.connect(self.add_permission)
-        self.edit_btn.clicked.connect(self.edit_permission)
-        self.remove_btn.clicked.connect(self.remove_permission)
-        self.refresh_btn.clicked.connect(self.refresh_permissions)
-        self.permissions_tree.itemSelectionChanged.connect(self.update_buttons)
+        # Connect permissions list signals
+        self.permissions_list.path_changed.connect(self.path_changed)
+        self.permissions_list.add_permission.connect(self.add_permission)
+        self.permissions_list.edit_permission.connect(self.edit_permission)
+        self.permissions_list.remove_permission.connect(self.remove_permission)
+        self.permissions_list.refresh_permissions.connect(self.refresh_permissions)
         
     def cleanup(self):
         """Perform cleanup before panel is destroyed."""

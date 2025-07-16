@@ -1,12 +1,14 @@
 """Users and groups management panel."""
 import win32netcon
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QPushButton,
-                          QTabWidget, QMessageBox)
+                          QTabWidget, QMessageBox, QSplitter, QLabel)
+from PyQt6.QtCore import Qt, pyqtSlot
 from src.core.logger import setup_logger
 from src.ui.base.base_panel import BasePanel
 from .tree_widget import UsersTree, GroupsTree
 from .dialogs import AddUserDialog, AddGroupDialog
 from .manager import UserManager, GroupManager
+from .components import DetailsView
 
 class UsersPanel(BasePanel):
     """Panel for managing users and groups."""
@@ -29,19 +31,99 @@ class UsersPanel(BasePanel):
         self.setup_connections()
         self.load_data()
         
+    def cleanup(self):
+        """Perform cleanup before panel is destroyed.
+        
+        Override of BasePanel.cleanup to handle specific cleanup tasks.
+        """
+        # Clear references to UI elements to avoid memory leaks
+        if hasattr(self, 'users_tree') and self.users_tree is not None:
+            try:
+                self.users_tree.clear()
+            except RuntimeError:
+                # Widget might have been deleted already
+                pass
+        
+        if hasattr(self, 'groups_tree') and self.groups_tree is not None:
+            try:
+                self.groups_tree.clear()
+            except RuntimeError:
+                # Widget might have been deleted already
+                pass
+                
+        if hasattr(self, 'users_details_view') and self.users_details_view is not None:
+            try:
+                self.users_details_view.clear()
+            except RuntimeError:
+                # Widget might have been deleted already
+                pass
+                
+        if hasattr(self, 'groups_details_view') and self.groups_details_view is not None:
+            try:
+                self.groups_details_view.clear()
+            except RuntimeError:
+                # Widget might have been deleted already
+                pass
+                
+        # Call the parent class cleanup to clear the main layout
+        # This should be called after clearing individual widgets
+        super().cleanup()
+    
     def setup_ui(self):
         """Set up the panel UI."""
+        # Clear any existing layout if this is not the initial setup
+        if hasattr(self, 'tab_widget') and self.tab_widget is not None:
+            self.cleanup()
+        
         # Create tab widget for users and groups
         self.tab_widget = QTabWidget()
-        self.add_widget(self.tab_widget)
         
         # Users tab
         users_widget = QWidget()
         users_layout = QVBoxLayout(users_widget)
+        users_layout.setContentsMargins(0, 0, 0, 0)
+        
+        # Create a main container for users tab
+        users_main_widget = QWidget()
+        users_main_layout = QVBoxLayout(users_main_widget)
+        users_main_layout.setContentsMargins(0, 0, 0, 0)
+        
+        # Create horizontal splitter for users tab
+        users_splitter = QSplitter(Qt.Orientation.Horizontal)
+        
+        # Left side - Users tree
+        users_tree_container = QWidget()
+        users_tree_layout = QVBoxLayout(users_tree_container)
+        users_tree_layout.setContentsMargins(0, 0, 0, 0)
+        
+        users_tree_label = QLabel("Users")
+        users_tree_layout.addWidget(users_tree_label)
         
         self.users_tree = UsersTree()
-        users_layout.addWidget(self.users_tree)
+        users_tree_layout.addWidget(self.users_tree)
         
+        # Right side - User details
+        users_details_container = QWidget()
+        users_details_layout = QVBoxLayout(users_details_container)
+        users_details_layout.setContentsMargins(0, 0, 0, 0)
+        
+        users_details_label = QLabel("User Details")
+        users_details_layout.addWidget(users_details_label)
+        
+        self.users_details_view = DetailsView()
+        users_details_layout.addWidget(self.users_details_view)
+        
+        # Add containers to splitter
+        users_splitter.addWidget(users_tree_container)
+        users_splitter.addWidget(users_details_container)
+        
+        # Set splitter sizes (40% left, 60% right)
+        users_splitter.setSizes([400, 600])
+        
+        # Add splitter to main layout with stretch
+        users_main_layout.addWidget(users_splitter, 1)
+        
+        # Create button bar at the bottom
         users_buttons = QHBoxLayout()
         
         self.add_user_button = QPushButton("Add User")
@@ -56,17 +138,60 @@ class UsersPanel(BasePanel):
         self.refresh_users_button = QPushButton("Refresh")
         users_buttons.addWidget(self.refresh_users_button)
         
-        users_layout.addLayout(users_buttons)
+        # Add button bar to main layout without stretch
+        users_main_layout.addLayout(users_buttons, 0)
+        
+        # Add main widget to users layout
+        users_layout.addWidget(users_main_widget)
         
         self.tab_widget.addTab(users_widget, "Users")
         
         # Groups tab
         groups_widget = QWidget()
         groups_layout = QVBoxLayout(groups_widget)
+        groups_layout.setContentsMargins(0, 0, 0, 0)
+        
+        # Create a main container for groups tab
+        groups_main_widget = QWidget()
+        groups_main_layout = QVBoxLayout(groups_main_widget)
+        groups_main_layout.setContentsMargins(0, 0, 0, 0)
+        
+        # Create horizontal splitter for groups tab
+        groups_splitter = QSplitter(Qt.Orientation.Horizontal)
+        
+        # Left side - Groups tree
+        groups_tree_container = QWidget()
+        groups_tree_layout = QVBoxLayout(groups_tree_container)
+        groups_tree_layout.setContentsMargins(0, 0, 0, 0)
+        
+        groups_tree_label = QLabel("Groups")
+        groups_tree_layout.addWidget(groups_tree_label)
         
         self.groups_tree = GroupsTree()
-        groups_layout.addWidget(self.groups_tree)
+        groups_tree_layout.addWidget(self.groups_tree)
         
+        # Right side - Group details
+        groups_details_container = QWidget()
+        groups_details_layout = QVBoxLayout(groups_details_container)
+        groups_details_layout.setContentsMargins(0, 0, 0, 0)
+        
+        groups_details_label = QLabel("Group Details")
+        groups_details_layout.addWidget(groups_details_label)
+        
+        self.groups_details_view = DetailsView()
+        groups_details_layout.addWidget(self.groups_details_view)
+        
+        # Add containers to splitter
+        groups_splitter.addWidget(groups_tree_container)
+        groups_splitter.addWidget(groups_details_container)
+        
+        # Set splitter sizes (40% left, 60% right)
+        groups_splitter.setSizes([400, 600])
+        
+        # Add splitter to main layout with stretch
+        groups_main_layout.addWidget(groups_splitter, 1)
+        
+        # Create button bar at the bottom
         groups_buttons = QHBoxLayout()
         
         self.add_group_button = QPushButton("Add Group")
@@ -81,9 +206,16 @@ class UsersPanel(BasePanel):
         self.refresh_groups_button = QPushButton("Refresh")
         groups_buttons.addWidget(self.refresh_groups_button)
         
-        groups_layout.addLayout(groups_buttons)
+        # Add button bar to main layout without stretch
+        groups_main_layout.addLayout(groups_buttons, 0)
+        
+        # Add main widget to groups layout
+        groups_layout.addWidget(groups_main_widget)
         
         self.tab_widget.addTab(groups_widget, "Groups")
+        
+        # Add tab widget to panel
+        self.add_widget(self.tab_widget)
         
     def add_user(self):
         """Add a new user account."""
@@ -262,12 +394,14 @@ class UsersPanel(BasePanel):
         self.edit_user_button.clicked.connect(self.edit_user)
         self.delete_user_button.clicked.connect(self.delete_user)
         self.refresh_users_button.clicked.connect(self.refresh_lists)
+        self.users_tree.itemSelectionChanged.connect(self.on_user_selected)
         
         # Group tab connections
         self.add_group_button.clicked.connect(self.add_group)
         self.edit_group_button.clicked.connect(self.edit_group)
         self.delete_group_button.clicked.connect(self.delete_group)
         self.refresh_groups_button.clicked.connect(self.refresh_lists)
+        self.groups_tree.itemSelectionChanged.connect(self.on_group_selected)
         
     def load_data(self):
         """Load or refresh panel data."""
@@ -278,10 +412,27 @@ class UsersPanel(BasePanel):
         # No data to save
         pass
         
-    def cleanup(self):
-        """Perform cleanup before panel is destroyed."""
-        # No cleanup needed
-        pass
+    # Cleanup method is now implemented above
+    
+    @pyqtSlot()
+    def on_user_selected(self):
+        """Handle user selection in the tree."""
+        item = self.users_tree.currentItem()
+        if item:
+            username, full_name, description, disabled = self.users_tree.get_user(item)
+            self.users_details_view.show_user_details(username, full_name, description, disabled)
+        else:
+            self.users_details_view.clear()
+    
+    @pyqtSlot()
+    def on_group_selected(self):
+        """Handle group selection in the tree."""
+        item = self.groups_tree.currentItem()
+        if item:
+            name, description, members = self.groups_tree.get_group(item)
+            self.groups_details_view.show_group_details(name, description, members)
+        else:
+            self.groups_details_view.clear()
         
     def refresh_lists(self):
         """Refresh users and groups lists."""

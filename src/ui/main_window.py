@@ -61,7 +61,7 @@ class MainWindow(QMainWindow):
         self.panels["Environment Variables"] = env_panel
         
         # Registry Editor panel
-        from .panels.registry_panel import RegistryPanel
+        from .panels.registry import RegistryPanel
         reg_panel = RegistryPanel(self)
         self.tab_widget.addTab(reg_panel, "Registry Editor")
         self.panels["Registry Editor"] = reg_panel

@@ -15,6 +15,8 @@ A powerful GUI application for managing and configuring Windows systems locally 
 - Firewall Rules Configuration
 - File/Folder Permissions
 - Application Management
+  - Processes monitoring and control
+  - Startup items management
 - Remote PC Management
 - Configuration Import
 - Logging and Error Handling
@@ -111,7 +113,7 @@ To create standalone executables:
    - Configure firewall rules
    - Install/uninstall software
    - Set file permissions
-   - Manage applications
+   - Manage applications (processes and startup items)
 
 3. For remote management:
    - Use Remote -> Manage Connections
@@ -137,6 +139,37 @@ To create standalone executables:
 - Default template provided in `config/default.yaml`
 - Can be edited manually or through the Configuration Manager
 - Support all configurable aspects of the system
+
+## Architecture
+
+The Windows System Management Tool follows a modular architecture pattern for maintainability, testability, and clean separation of concerns:
+
+### Panel Structure
+
+1. **Backend Logic**
+   - `manager.py`: Handles Windows API operations and business logic
+   - Error handling and logging
+   - Clean separation from UI
+
+2. **UI Components**
+   - Reusable components in dedicated directories
+   - Button components with consistent signal/slot patterns
+   - Tree widgets for data display
+   - Dialogs for user input
+
+3. **Panel Integration**
+   - `panel.py`: Coordinates UI and backend
+   - Proper initialization order (resources → UI → connections → data loading)
+   - Consistent BasePanel inheritance pattern
+
+### Modularized Panels
+
+All panels follow the same consistent pattern:
+- **Applications Panel**: Processes and Startup tabs with modular components
+- **Firewall Panel**: Inbound and Outbound rules with tabbed interface
+- **Software Panel**: Installation and management components
+- **Permissions Panel**: File system permission management
+- And more...
 
 ## Best Practices
 

@@ -123,11 +123,13 @@ class HelpWindow(QMainWindow):
         </ul>
         
         <h3>Applications</h3>
-        <p>Application control:</p>
+        <p>Application control with modular components:</p>
         <ul>
-            <li>Manage startup items</li>
-            <li>Start/stop processes</li>
-            <li>Configure auto-start</li>
+            <li>Processes tab: View and manage running processes</li>
+            <li>End individual processes or process trees</li>
+            <li>Startup tab: Manage Windows startup applications</li>
+            <li>Add or remove startup items</li>
+            <li>Auto-refresh capabilities for real-time monitoring</li>
         </ul>
         
         <h3>Remote Management</h3>

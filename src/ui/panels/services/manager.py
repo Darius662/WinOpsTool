@@ -2,6 +2,8 @@
 import win32service
 import win32serviceutil
 import pywintypes
+import win32security
+import winreg
 from src.core.logger import setup_logger
 
 class ServiceManager:
@@ -110,6 +112,32 @@ class ServiceManager:
             self.logger.error(f"Failed to enumerate services: {str(e)}")
             return []
             
+    def is_driver(self, name):
+        """Check if a service is a driver.
+        
+        Args:
+            name: Service name
+            
+        Returns:
+            bool: True if the service is a driver, False otherwise
+        """
+        try:
+            sc_handle = win32service.OpenSCManager(None, None, win32service.SC_MANAGER_ALL_ACCESS)
+            try:
+                handle = win32service.OpenService(sc_handle, name, win32service.SERVICE_QUERY_CONFIG)
+                try:
+                    config = win32service.QueryServiceConfig(handle)
+                    # Check if service type is a driver
+                    service_type = config[0]  # First element is service type
+                    return bool(service_type & win32service.SERVICE_DRIVER)
+                finally:
+                    win32service.CloseServiceHandle(handle)
+            finally:
+                win32service.CloseServiceHandle(sc_handle)
+        except Exception as e:
+            self.logger.error(f"Error checking if {name} is a driver: {str(e)}")
+            return False
+            
     def _get_service_description(self, handle):
         """Get service description.
         
@@ -196,14 +224,284 @@ class ServiceManager:
             if start_type not in type_map:
                 raise ValueError(f"Invalid start type: {start_type}")
                 
-            win32serviceutil.ChangeServiceConfig(
-                name,
-                startType=type_map[start_type]
-            )
-            
-            self.logger.info(f"Changed startup type for {name} to {start_type}")
-            return True
+            # Open service manager and service
+            handle_scm = win32service.OpenSCManager(None, None, win32service.SC_MANAGER_ALL_ACCESS)
+            try:
+                handle_svc = win32service.OpenService(handle_scm, name, win32service.SERVICE_CHANGE_CONFIG)
+                try:
+                    # Change service config
+                    win32service.ChangeServiceConfig(
+                        handle_svc,
+                        win32service.SERVICE_NO_CHANGE,  # service type
+                        type_map[start_type],            # start type
+                        win32service.SERVICE_NO_CHANGE,  # error control
+                        None,                           # binary path
+                        None,                           # load order group
+                        0,                              # tag id
+                        None,                           # dependencies
+                        None,                           # service start name
+                        None,                           # password
+                        None                            # display name
+                    )
+                    self.logger.info(f"Changed startup type for {name} to {start_type}")
+                    return True
+                finally:
+                    win32service.CloseServiceHandle(handle_svc)
+            finally:
+                win32service.CloseServiceHandle(handle_scm)
             
         except Exception as e:
             self.logger.error(f"Failed to change startup type for {name}: {str(e)}")
+            return False
+            
+    def set_display_name(self, name, display_name):
+        """Set service display name.
+        
+        Args:
+            name: Service name
+            display_name: New display name
+            
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        try:
+            # Open service manager and service
+            handle_scm = win32service.OpenSCManager(None, None, win32service.SC_MANAGER_ALL_ACCESS)
+            try:
+                handle_svc = win32service.OpenService(handle_scm, name, win32service.SERVICE_CHANGE_CONFIG)
+                try:
+                    # Change service config
+                    win32service.ChangeServiceConfig(
+                        handle_svc,
+                        win32service.SERVICE_NO_CHANGE,  # service type
+                        win32service.SERVICE_NO_CHANGE,  # start type
+                        win32service.SERVICE_NO_CHANGE,  # error control
+                        None,                           # binary path
+                        None,                           # load order group
+                        0,                              # tag id
+                        None,                           # dependencies
+                        None,                           # service start name
+                        None,                           # password
+                        display_name                    # display name
+                    )
+                    self.logger.info(f"Changed display name for {name} to {display_name}")
+                    return True
+                finally:
+                    win32service.CloseServiceHandle(handle_svc)
+            finally:
+                win32service.CloseServiceHandle(handle_scm)
+            
+        except Exception as e:
+            self.logger.error(f"Failed to change display name for {name}: {str(e)}")
+            return False
+            
+    def set_description(self, name, description):
+        """Set service description.
+        
+        Args:
+            name: Service name
+            description: New description
+            
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        try:
+            sc_handle = win32service.OpenSCManager(None, None, win32service.SC_MANAGER_ALL_ACCESS)
+            try:
+                service_handle = win32service.OpenService(sc_handle, name, win32service.SERVICE_CHANGE_CONFIG)
+                try:
+                    # Create description structure
+                    desc_info = win32service.SERVICE_DESCRIPTION(description)
+                    win32service.ChangeServiceConfig2(service_handle, win32service.SERVICE_CONFIG_DESCRIPTION, desc_info)
+                    
+                    self.logger.info(f"Changed description for {name}")
+                    return True
+                finally:
+                    win32service.CloseServiceHandle(service_handle)
+            finally:
+                win32service.CloseServiceHandle(sc_handle)
+                
+        except Exception as e:
+            self.logger.error(f"Failed to change description for {name}: {str(e)}")
+            return False
+            
+    def set_path(self, name, path):
+        """Set service binary path.
+        
+        Args:
+            name: Service name
+            path: New binary path
+            
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        try:
+            # Open service manager and service
+            handle_scm = win32service.OpenSCManager(None, None, win32service.SC_MANAGER_ALL_ACCESS)
+            try:
+                handle_svc = win32service.OpenService(handle_scm, name, win32service.SERVICE_CHANGE_CONFIG)
+                try:
+                    # Change service config
+                    win32service.ChangeServiceConfig(
+                        handle_svc,
+                        win32service.SERVICE_NO_CHANGE,  # service type
+                        win32service.SERVICE_NO_CHANGE,  # start type
+                        win32service.SERVICE_NO_CHANGE,  # error control
+                        path,                           # binary path
+                        None,                           # load order group
+                        0,                              # tag id
+                        None,                           # dependencies
+                        None,                           # service start name
+                        None,                           # password
+                        None                            # display name
+                    )
+                    self.logger.info(f"Changed binary path for {name} to {path}")
+                    return True
+                finally:
+                    win32service.CloseServiceHandle(handle_svc)
+            finally:
+                win32service.CloseServiceHandle(handle_scm)
+            
+        except Exception as e:
+            self.logger.error(f"Failed to change binary path for {name}: {str(e)}")
+            return False
+            
+    def set_account(self, name, account, password=None):
+        """Set service logon account.
+        
+        Args:
+            name: Service name
+            account: New logon account (e.g., "LocalSystem", "NT AUTHORITY\\NetworkService", etc.)
+            password: Account password (None for system accounts)
+            
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        try:
+            # Open service manager and service
+            handle_scm = win32service.OpenSCManager(None, None, win32service.SC_MANAGER_ALL_ACCESS)
+            try:
+                handle_svc = win32service.OpenService(handle_scm, name, win32service.SERVICE_CHANGE_CONFIG)
+                try:
+                    # Change service config
+                    win32service.ChangeServiceConfig(
+                        handle_svc,
+                        win32service.SERVICE_NO_CHANGE,  # service type
+                        win32service.SERVICE_NO_CHANGE,  # start type
+                        win32service.SERVICE_NO_CHANGE,  # error control
+                        None,                           # binary path
+                        None,                           # load order group
+                        0,                              # tag id
+                        None,                           # dependencies
+                        account,                        # service start name
+                        password,                       # password
+                        None                            # display name
+                    )
+                    self.logger.info(f"Changed logon account for {name} to {account}")
+                    return True
+                finally:
+                    win32service.CloseServiceHandle(handle_svc)
+            finally:
+                win32service.CloseServiceHandle(handle_scm)
+            
+        except Exception as e:
+            self.logger.error(f"Failed to change logon account for {name}: {str(e)}")
+            return False
+            
+    def set_recovery_options(self, name, first_action="restart", second_action="restart", 
+                           third_action="none", reset_period=86400):
+        """Set service recovery options.
+        
+        Args:
+            name: Service name
+            first_action: Action on first failure ("restart", "reboot", "run_command", "none")
+            second_action: Action on second failure
+            third_action: Action on subsequent failures
+            reset_period: Time in seconds after which to reset failure count (default 1 day)
+            
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        try:
+            # Recovery options can only be set for Win32 services, not for drivers
+            if self.is_driver(name):
+                self.logger.warning(f"Cannot set recovery options for driver {name}")
+                return False
+                
+            sc_handle = win32service.OpenSCManager(None, None, win32service.SC_MANAGER_ALL_ACCESS)
+            try:
+                service_handle = win32service.OpenService(sc_handle, name, win32service.SERVICE_ALL_ACCESS)
+                try:
+                    # Map action strings to constants
+                    action_map = {
+                        "none": win32service.SC_ACTION_NONE,
+                        "restart": win32service.SC_ACTION_RESTART,
+                        "reboot": win32service.SC_ACTION_REBOOT,
+                        "run_command": win32service.SC_ACTION_RUN_COMMAND
+                    }
+                    
+                    # Create actions array
+                    actions = [
+                        (action_map.get(first_action, win32service.SC_ACTION_NONE), 30000),  # 30 sec delay
+                        (action_map.get(second_action, win32service.SC_ACTION_NONE), 30000), # 30 sec delay
+                        (action_map.get(third_action, win32service.SC_ACTION_NONE), 30000)   # 30 sec delay
+                    ]
+                    
+                    # Set recovery options
+                    win32service.ChangeServiceConfig2(
+                        service_handle,
+                        win32service.SERVICE_CONFIG_FAILURE_ACTIONS,
+                        {
+                            'ResetPeriod': reset_period,
+                            'RebootMsg': '',
+                            'Command': '',
+                            'Actions': actions
+                        }
+                    )
+                    
+                    self.logger.info(f"Set recovery options for {name}")
+                    return True
+                    
+                finally:
+                    win32service.CloseServiceHandle(service_handle)
+            finally:
+                win32service.CloseServiceHandle(sc_handle)
+                
+        except Exception as e:
+            self.logger.error(f"Failed to set recovery options for {name}: {str(e)}")
+            return False
+            
+    def set_delayed_auto_start(self, name, delayed=True):
+        """Set delayed auto-start option.
+        
+        Args:
+            name: Service name
+            delayed: Whether to enable delayed auto-start
+            
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        try:
+            sc_handle = win32service.OpenSCManager(None, None, win32service.SC_MANAGER_ALL_ACCESS)
+            try:
+                service_handle = win32service.OpenService(sc_handle, name, win32service.SERVICE_CHANGE_CONFIG)
+                try:
+                    # Set delayed auto-start info
+                    win32service.ChangeServiceConfig2(
+                        service_handle,
+                        win32service.SERVICE_CONFIG_DELAYED_AUTO_START_INFO,
+                        delayed
+                    )
+                    
+                    status = "enabled" if delayed else "disabled"
+                    self.logger.info(f"Delayed auto-start {status} for {name}")
+                    return True
+                    
+                finally:
+                    win32service.CloseServiceHandle(service_handle)
+            finally:
+                win32service.CloseServiceHandle(sc_handle)
+                
+        except Exception as e:
+            self.logger.error(f"Failed to set delayed auto-start for {name}: {str(e)}")
             return False
