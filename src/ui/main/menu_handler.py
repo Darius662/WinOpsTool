@@ -29,7 +29,7 @@ class MenuHandler:
         
         # Import config
         import_action = QAction("Import Config...", self.main_window)
-        import_action.triggered.connect(self.main_window.import_config)
+        import_action.triggered.connect(self.main_window.import_configuration)
         file_menu.addAction(import_action)
         
         # Apply config

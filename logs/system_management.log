@@ -51,3 +51,262 @@
 2025-07-15 23:28:51,919 - MainWindow - INFO - Loaded panel: Software
 2025-07-15 23:28:51,922 - MainWindow - INFO - Loaded panel: Permissions
 2025-07-15 23:28:51,924 - MainWindow - INFO - Loaded panel: Applications
+2025-07-16 11:54:26,295 - __main__ - INFO - Requesting admin privileges
+2025-07-16 11:54:26,299 - src.core.privileges - INFO - Requesting admin privileges
+2025-07-16 11:54:31,034 - src.core.dependency_manager - DEBUG - Package PyQt6 is installed
+2025-07-16 11:54:31,037 - src.core.dependency_manager - DEBUG - pywin32 modules are available
+2025-07-16 11:54:31,047 - src.core.dependency_manager - WARNING - Missing required package: pyyaml
+2025-07-16 11:54:31,119 - src.core.dependency_manager - DEBUG - Package psutil is installed
+2025-07-16 11:54:31,390 - src.core.dependency_manager - DEBUG - Package wmi is installed
+2025-07-16 11:54:33,760 - src.core.dependency_manager - INFO - Attempting to install pyyaml
+2025-07-16 11:54:40,501 - MainWindow - INFO - Loaded panel: Environment Variables
+2025-07-16 11:54:40,506 - MainWindow - INFO - Loaded panel: Registry Editor
+2025-07-16 11:54:40,510 - MainWindow - INFO - Loaded panel: Users & Groups
+2025-07-16 11:54:40,515 - MainWindow - INFO - Loaded panel: Services
+2025-07-16 11:54:40,521 - MainWindow - INFO - Loaded panel: Firewall
+2025-07-16 11:54:40,526 - MainWindow - INFO - Loaded panel: Software
+2025-07-16 11:54:40,533 - MainWindow - INFO - Loaded panel: Permissions
+2025-07-16 11:54:40,540 - MainWindow - INFO - Loaded panel: Applications
+2025-07-16 11:58:26,663 - __main__ - INFO - Requesting admin privileges
+2025-07-16 11:58:26,666 - src.core.privileges - INFO - Requesting admin privileges
+2025-07-16 11:58:29,224 - src.core.dependency_manager - DEBUG - Package PyQt6 is installed
+2025-07-16 11:58:29,227 - src.core.dependency_manager - DEBUG - pywin32 modules are available
+2025-07-16 11:58:29,236 - src.core.dependency_manager - WARNING - Missing required package: pyyaml
+2025-07-16 11:58:29,260 - src.core.dependency_manager - DEBUG - Package psutil is installed
+2025-07-16 11:58:29,370 - src.core.dependency_manager - DEBUG - Package wmi is installed
+2025-07-16 11:58:30,568 - src.core.dependency_manager - INFO - Attempting to install pyyaml
+2025-07-16 11:58:33,236 - MainWindow - INFO - Loaded panel: Environment Variables
+2025-07-16 11:58:33,239 - MainWindow - INFO - Loaded panel: Registry Editor
+2025-07-16 11:58:33,243 - MainWindow - INFO - Loaded panel: Users & Groups
+2025-07-16 11:58:33,246 - MainWindow - INFO - Loaded panel: Services
+2025-07-16 11:58:33,249 - MainWindow - INFO - Loaded panel: Firewall
+2025-07-16 11:58:33,252 - MainWindow - INFO - Loaded panel: Software
+2025-07-16 11:58:33,257 - MainWindow - INFO - Loaded panel: Permissions
+2025-07-16 11:58:33,261 - MainWindow - INFO - Loaded panel: Applications
+2025-07-16 12:08:50,081 - __main__ - INFO - Requesting admin privileges
+2025-07-16 12:08:50,084 - src.core.privileges - INFO - Requesting admin privileges
+2025-07-16 12:08:54,250 - src.core.dependency_manager - DEBUG - Package PyQt6 is installed
+2025-07-16 12:08:54,252 - src.core.dependency_manager - DEBUG - pywin32 modules are available
+2025-07-16 12:08:54,260 - src.core.dependency_manager - WARNING - Missing required package: pyyaml
+2025-07-16 12:08:54,262 - src.core.dependency_manager - DEBUG - Package psutil is installed
+2025-07-16 12:08:54,264 - src.core.dependency_manager - DEBUG - Package wmi is installed
+2025-07-16 12:08:56,107 - src.core.dependency_manager - INFO - Attempting to install pyyaml
+2025-07-16 12:08:57,788 - __main__ - ERROR - Unexpected error in main
+Traceback (most recent call last):
+  File "\\10.10.0.4\git\GitHub\Windows_System_Management_Tool\main.py", line 50, in main
+    window = MainWindow()
+  File "\\10.10.0.4\git\GitHub\Windows_System_Management_Tool\src\ui\main_window.py", line 31, in __init__
+    self.menu_handler = MenuHandler(self)
+                        ~~~~~~~~~~~^^^^^^
+  File "\\10.10.0.4\git\GitHub\Windows_System_Management_Tool\src\ui\main\menu_handler.py", line 18, in __init__
+    self.setup_menus()
+    ~~~~~~~~~~~~~~~~^^
+  File "\\10.10.0.4\git\GitHub\Windows_System_Management_Tool\src\ui\main\menu_handler.py", line 22, in setup_menus
+    self.setup_file_menu()
+    ~~~~~~~~~~~~~~~~~~~~^^
+  File "\\10.10.0.4\git\GitHub\Windows_System_Management_Tool\src\ui\main\menu_handler.py", line 32, in setup_file_menu
+    import_action.triggered.connect(self.main_window.import_config)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'MainWindow' object has no attribute 'import_config'
+2025-07-16 12:09:12,661 - __main__ - INFO - Requesting admin privileges
+2025-07-16 12:09:12,663 - src.core.privileges - INFO - Requesting admin privileges
+2025-07-16 12:09:16,380 - src.core.dependency_manager - DEBUG - Package PyQt6 is installed
+2025-07-16 12:09:16,382 - src.core.dependency_manager - DEBUG - pywin32 modules are available
+2025-07-16 12:09:16,390 - src.core.dependency_manager - WARNING - Missing required package: pyyaml
+2025-07-16 12:09:16,392 - src.core.dependency_manager - DEBUG - Package psutil is installed
+2025-07-16 12:09:16,394 - src.core.dependency_manager - DEBUG - Package wmi is installed
+2025-07-16 12:09:18,522 - src.core.dependency_manager - INFO - Attempting to install pyyaml
+2025-07-16 12:09:19,838 - __main__ - ERROR - Unexpected error in main
+Traceback (most recent call last):
+  File "z:\GitHub\Windows_System_Management_Tool\main.py", line 50, in main
+    window = MainWindow()
+  File "z:\GitHub\Windows_System_Management_Tool\src\ui\main_window.py", line 31, in __init__
+    self.menu_handler = MenuHandler(self)
+                        ~~~~~~~~~~~^^^^^^
+  File "z:\GitHub\Windows_System_Management_Tool\src\ui\main\menu_handler.py", line 18, in __init__
+    self.setup_menus()
+    ~~~~~~~~~~~~~~~~^^
+  File "z:\GitHub\Windows_System_Management_Tool\src\ui\main\menu_handler.py", line 22, in setup_menus
+    self.setup_file_menu()
+    ~~~~~~~~~~~~~~~~~~~~^^
+  File "z:\GitHub\Windows_System_Management_Tool\src\ui\main\menu_handler.py", line 32, in setup_file_menu
+    import_action.triggered.connect(self.main_window.import_config)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'MainWindow' object has no attribute 'import_config'
+2025-07-16 12:10:04,419 - src.core.dependency_manager - DEBUG - Package PyQt6 is installed
+2025-07-16 12:10:04,423 - src.core.dependency_manager - DEBUG - pywin32 modules are available
+2025-07-16 12:10:04,447 - src.core.dependency_manager - WARNING - Missing required package: pyyaml
+2025-07-16 12:10:04,449 - src.core.dependency_manager - DEBUG - Package psutil is installed
+2025-07-16 12:10:04,452 - src.core.dependency_manager - DEBUG - Package wmi is installed
+2025-07-16 12:10:06,015 - src.core.dependency_manager - INFO - Attempting to install pyyaml
+2025-07-16 12:10:07,486 - __main__ - ERROR - Unexpected error in main
+Traceback (most recent call last):
+  File "z:\GitHub\Windows_System_Management_Tool\main.py", line 50, in main
+    window = MainWindow()
+  File "z:\GitHub\Windows_System_Management_Tool\src\ui\main_window.py", line 31, in __init__
+    self.menu_handler = MenuHandler(self)
+                        ~~~~~~~~~~~^^^^^^
+  File "z:\GitHub\Windows_System_Management_Tool\src\ui\main\menu_handler.py", line 18, in __init__
+    self.setup_menus()
+    ~~~~~~~~~~~~~~~~^^
+  File "z:\GitHub\Windows_System_Management_Tool\src\ui\main\menu_handler.py", line 22, in setup_menus
+    self.setup_file_menu()
+    ~~~~~~~~~~~~~~~~~~~~^^
+  File "z:\GitHub\Windows_System_Management_Tool\src\ui\main\menu_handler.py", line 32, in setup_file_menu
+    import_action.triggered.connect(self.main_window.import_config)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'MainWindow' object has no attribute 'import_config'
+2025-07-16 12:11:11,658 - src.core.dependency_manager - DEBUG - Package PyQt6 is installed
+2025-07-16 12:11:11,660 - src.core.dependency_manager - DEBUG - pywin32 modules are available
+2025-07-16 12:11:11,691 - src.core.dependency_manager - WARNING - Missing required package: pyyaml
+2025-07-16 12:11:11,693 - src.core.dependency_manager - DEBUG - Package psutil is installed
+2025-07-16 12:11:11,701 - src.core.dependency_manager - DEBUG - Package wmi is installed
+2025-07-16 12:11:13,315 - src.core.dependency_manager - INFO - Attempting to install pyyaml
+2025-07-16 12:11:14,548 - __main__ - ERROR - Unexpected error in main
+Traceback (most recent call last):
+  File "z:\GitHub\Windows_System_Management_Tool\main.py", line 50, in main
+    window = MainWindow()
+  File "z:\GitHub\Windows_System_Management_Tool\src\ui\main_window.py", line 31, in __init__
+    self.menu_handler = MenuHandler(self)
+                        ~~~~~~~~~~~^^^^^^
+  File "z:\GitHub\Windows_System_Management_Tool\src\ui\main\menu_handler.py", line 18, in __init__
+    self.setup_menus()
+    ~~~~~~~~~~~~~~~~^^
+  File "z:\GitHub\Windows_System_Management_Tool\src\ui\main\menu_handler.py", line 22, in setup_menus
+    self.setup_file_menu()
+    ~~~~~~~~~~~~~~~~~~~~^^
+  File "z:\GitHub\Windows_System_Management_Tool\src\ui\main\menu_handler.py", line 37, in setup_file_menu
+    apply_action.triggered.connect(self.main_window.apply_config)
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'MainWindow' object has no attribute 'apply_config'
+2025-07-16 12:12:15,165 - src.core.dependency_manager - DEBUG - Package PyQt6 is installed
+2025-07-16 12:12:15,168 - src.core.dependency_manager - DEBUG - pywin32 modules are available
+2025-07-16 12:12:15,178 - src.core.dependency_manager - WARNING - Missing required package: pyyaml
+2025-07-16 12:12:15,180 - src.core.dependency_manager - DEBUG - Package psutil is installed
+2025-07-16 12:12:15,182 - src.core.dependency_manager - DEBUG - Package wmi is installed
+2025-07-16 12:12:16,601 - src.core.dependency_manager - INFO - Attempting to install pyyaml
+2025-07-16 12:12:17,763 - __main__ - ERROR - Unexpected error in main
+Traceback (most recent call last):
+  File "z:\GitHub\Windows_System_Management_Tool\main.py", line 50, in main
+    window = MainWindow()
+  File "z:\GitHub\Windows_System_Management_Tool\src\ui\main_window.py", line 31, in __init__
+    self.menu_handler = MenuHandler(self)
+                        ~~~~~~~~~~~^^^^^^
+  File "z:\GitHub\Windows_System_Management_Tool\src\ui\main\menu_handler.py", line 18, in __init__
+    self.setup_menus()
+    ~~~~~~~~~~~~~~~~^^
+  File "z:\GitHub\Windows_System_Management_Tool\src\ui\main\menu_handler.py", line 23, in setup_menus
+    self.setup_remote_menu()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "z:\GitHub\Windows_System_Management_Tool\src\ui\main\menu_handler.py", line 53, in setup_remote_menu
+    connect_action.triggered.connect(self.main_window.remote_handler.connect)
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'MainWindow' object has no attribute 'remote_handler'
+2025-07-16 12:13:14,041 - src.core.dependency_manager - DEBUG - Package PyQt6 is installed
+2025-07-16 12:13:14,043 - src.core.dependency_manager - DEBUG - pywin32 modules are available
+2025-07-16 12:13:14,053 - src.core.dependency_manager - WARNING - Missing required package: pyyaml
+2025-07-16 12:13:14,055 - src.core.dependency_manager - DEBUG - Package psutil is installed
+2025-07-16 12:13:14,057 - src.core.dependency_manager - DEBUG - Package wmi is installed
+2025-07-16 12:13:20,165 - src.core.dependency_manager - INFO - Attempting to install pyyaml
+2025-07-16 12:13:22,624 - __main__ - ERROR - Unexpected error in main
+Traceback (most recent call last):
+  File "z:\GitHub\Windows_System_Management_Tool\main.py", line 50, in main
+    window = MainWindow()
+  File "z:\GitHub\Windows_System_Management_Tool\src\ui\main_window.py", line 36, in __init__
+    self.setup_ui()
+    ~~~~~~~~~~~~~^^
+  File "z:\GitHub\Windows_System_Management_Tool\src\ui\main_window.py", line 104, in setup_ui
+    self.menubar = QMenuBar()
+                   ^^^^^^^^
+NameError: name 'QMenuBar' is not defined
+2025-07-16 12:14:17,221 - src.core.dependency_manager - DEBUG - Package PyQt6 is installed
+2025-07-16 12:14:17,223 - src.core.dependency_manager - DEBUG - pywin32 modules are available
+2025-07-16 12:14:17,235 - src.core.dependency_manager - WARNING - Missing required package: pyyaml
+2025-07-16 12:14:17,236 - src.core.dependency_manager - DEBUG - Package psutil is installed
+2025-07-16 12:14:17,239 - src.core.dependency_manager - DEBUG - Package wmi is installed
+2025-07-16 12:14:18,628 - src.core.dependency_manager - INFO - Attempting to install pyyaml
+2025-07-16 12:14:20,963 - __main__ - ERROR - Unexpected error in main
+Traceback (most recent call last):
+  File "z:\GitHub\Windows_System_Management_Tool\main.py", line 50, in main
+    window = MainWindow()
+  File "z:\GitHub\Windows_System_Management_Tool\src\ui\main_window.py", line 36, in __init__
+    self.setup_ui()
+    ~~~~~~~~~~~~~^^
+  File "z:\GitHub\Windows_System_Management_Tool\src\ui\main_window.py", line 108, in setup_ui
+    self.setup_menu()
+    ~~~~~~~~~~~~~~~^^
+  File "z:\GitHub\Windows_System_Management_Tool\src\ui\main_window.py", line 113, in setup_menu
+    file_menu = QMenu("File", self)
+                ^^^^^
+NameError: name 'QMenu' is not defined
+2025-07-16 12:15:44,784 - src.core.dependency_manager - DEBUG - Package PyQt6 is installed
+2025-07-16 12:15:44,807 - src.core.dependency_manager - DEBUG - pywin32 modules are available
+2025-07-16 12:15:44,981 - src.core.dependency_manager - WARNING - Missing required package: pyyaml
+2025-07-16 12:15:45,042 - src.core.dependency_manager - DEBUG - Package psutil is installed
+2025-07-16 12:15:45,077 - src.core.dependency_manager - DEBUG - Package wmi is installed
+2025-07-16 12:15:46,375 - src.core.dependency_manager - INFO - Attempting to install pyyaml
+2025-07-16 12:15:53,244 - src.ui.main_window - ERROR - Failed to import configuration: name 'QFileDialog' is not defined
+2025-07-16 12:16:21,821 - src.core.dependency_manager - DEBUG - Package PyQt6 is installed
+2025-07-16 12:16:21,824 - src.core.dependency_manager - DEBUG - pywin32 modules are available
+2025-07-16 12:16:21,835 - src.core.dependency_manager - WARNING - Missing required package: pyyaml
+2025-07-16 12:16:21,838 - src.core.dependency_manager - DEBUG - Package psutil is installed
+2025-07-16 12:16:21,841 - src.core.dependency_manager - DEBUG - Package wmi is installed
+2025-07-16 12:16:23,264 - src.core.dependency_manager - INFO - Attempting to install pyyaml
+2025-07-16 12:17:20,328 - src.core.dependency_manager - DEBUG - Package PyQt6 is installed
+2025-07-16 12:17:20,330 - src.core.dependency_manager - DEBUG - pywin32 modules are available
+2025-07-16 12:17:20,340 - src.core.dependency_manager - WARNING - Missing required package: pyyaml
+2025-07-16 12:17:20,342 - src.core.dependency_manager - DEBUG - Package psutil is installed
+2025-07-16 12:17:20,344 - src.core.dependency_manager - DEBUG - Package wmi is installed
+2025-07-16 12:17:21,572 - src.core.dependency_manager - INFO - Attempting to install pyyaml
+2025-07-16 12:19:38,333 - src.core.dependency_manager - DEBUG - Package PyQt6 is installed
+2025-07-16 12:19:38,335 - src.core.dependency_manager - DEBUG - pywin32 modules are available
+2025-07-16 12:19:38,344 - src.core.dependency_manager - WARNING - Missing required package: pyyaml
+2025-07-16 12:19:38,346 - src.core.dependency_manager - DEBUG - Package psutil is installed
+2025-07-16 12:19:38,348 - src.core.dependency_manager - DEBUG - Package wmi is installed
+2025-07-16 12:19:39,826 - src.core.dependency_manager - INFO - Attempting to install pyyaml
+2025-07-16 12:21:47,453 - src.core.dependency_manager - DEBUG - Package PyQt6 is installed
+2025-07-16 12:21:47,456 - src.core.dependency_manager - DEBUG - pywin32 modules are available
+2025-07-16 12:21:47,466 - src.core.dependency_manager - WARNING - Missing required package: pyyaml
+2025-07-16 12:21:47,469 - src.core.dependency_manager - DEBUG - Package psutil is installed
+2025-07-16 12:21:47,471 - src.core.dependency_manager - DEBUG - Package wmi is installed
+2025-07-16 12:21:49,587 - src.core.dependency_manager - INFO - Attempting to install pyyaml
+2025-07-16 12:23:07,655 - ConfigHandler - INFO - Loaded configuration from Z:/GitHub/Windows_System_Management_Tool/config/default.yaml
+2025-07-16 12:30:52,117 - src.core.dependency_manager - DEBUG - Package PyQt6 is installed
+2025-07-16 12:30:52,120 - src.core.dependency_manager - DEBUG - pywin32 modules are available
+2025-07-16 12:30:52,130 - src.core.dependency_manager - WARNING - Missing required package: pyyaml
+2025-07-16 12:30:52,133 - src.core.dependency_manager - DEBUG - Package psutil is installed
+2025-07-16 12:30:52,136 - src.core.dependency_manager - DEBUG - Package wmi is installed
+2025-07-16 12:30:53,176 - src.core.dependency_manager - INFO - Attempting to install pyyaml
+2025-07-16 12:32:32,104 - src.core.dependency_manager - DEBUG - Package PyQt6 is installed
+2025-07-16 12:32:32,114 - src.core.dependency_manager - DEBUG - pywin32 modules are available
+2025-07-16 12:32:32,126 - src.core.dependency_manager - WARNING - Missing required package: pyyaml
+2025-07-16 12:32:32,128 - src.core.dependency_manager - DEBUG - Package psutil is installed
+2025-07-16 12:32:32,131 - src.core.dependency_manager - DEBUG - Package wmi is installed
+2025-07-16 12:32:33,296 - src.core.dependency_manager - INFO - Attempting to install pyyaml
+2025-07-16 12:34:09,256 - src.core.dependency_manager - DEBUG - Package PyQt6 is installed
+2025-07-16 12:34:09,259 - src.core.dependency_manager - DEBUG - pywin32 modules are available
+2025-07-16 12:34:09,270 - src.core.dependency_manager - WARNING - Missing required package: pyyaml
+2025-07-16 12:34:09,273 - src.core.dependency_manager - DEBUG - Package psutil is installed
+2025-07-16 12:34:09,275 - src.core.dependency_manager - DEBUG - Package wmi is installed
+2025-07-16 12:34:10,601 - src.core.dependency_manager - INFO - Attempting to install pyyaml
+2025-07-16 12:34:29,310 - src.core.dependency_manager - DEBUG - Package PyQt6 is installed
+2025-07-16 12:34:29,313 - src.core.dependency_manager - DEBUG - pywin32 modules are available
+2025-07-16 12:34:29,321 - src.core.dependency_manager - WARNING - Missing required package: pyyaml
+2025-07-16 12:34:29,322 - src.core.dependency_manager - DEBUG - Package psutil is installed
+2025-07-16 12:34:29,324 - src.core.dependency_manager - DEBUG - Package wmi is installed
+2025-07-16 12:36:22,564 - src.core.dependency_manager - DEBUG - Package PyQt6 is installed
+2025-07-16 12:36:22,566 - src.core.dependency_manager - DEBUG - pywin32 modules are available
+2025-07-16 12:36:22,576 - src.core.dependency_manager - WARNING - Missing required package: pyyaml
+2025-07-16 12:36:22,578 - src.core.dependency_manager - DEBUG - Package psutil is installed
+2025-07-16 12:36:22,580 - src.core.dependency_manager - DEBUG - Package wmi is installed
+2025-07-16 12:36:24,377 - src.core.dependency_manager - INFO - Attempting to install pyyaml
+2025-07-16 12:36:44,914 - src.core.dependency_manager - DEBUG - Package PyQt6 is installed
+2025-07-16 12:36:44,916 - src.core.dependency_manager - DEBUG - pywin32 modules are available
+2025-07-16 12:36:44,928 - src.core.dependency_manager - WARNING - Missing required package: pyyaml
+2025-07-16 12:36:44,930 - src.core.dependency_manager - DEBUG - Package psutil is installed
+2025-07-16 12:36:44,933 - src.core.dependency_manager - DEBUG - Package wmi is installed
+2025-07-16 12:37:51,644 - src.core.dependency_manager - DEBUG - Package PyQt6 is installed
+2025-07-16 12:37:51,646 - src.core.dependency_manager - DEBUG - pywin32 modules are available
+2025-07-16 12:37:51,648 - src.core.dependency_manager - DEBUG - Package PyYAML is installed
+2025-07-16 12:37:51,650 - src.core.dependency_manager - DEBUG - Package psutil is installed
+2025-07-16 12:37:51,652 - src.core.dependency_manager - DEBUG - Package wmi is installed

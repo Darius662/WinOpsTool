@@ -46,3 +46,52 @@ class RemoteManager:
             bool: True if connected, False otherwise
         """
         return self.connection.is_connected()
+        
+    def refresh_connections(self):
+        """Refresh the list of saved connections."""
+        # For now, just ensure connection state is updated
+        pass
+        
+    def get_connections(self):
+        """Get list of saved connections.
+        
+        Returns:
+            list: List of RemoteConnection objects
+        """
+        # For now, just return current connection if connected
+        if self.is_connected():
+            return [self.connection]
+        return []
+        
+    def add_connection(self, name, hostname, username, password):
+        """Add a new remote connection.
+        
+        Args:
+            name: Display name for the connection
+            hostname: Remote hostname or IP
+            username: Username for authentication
+            password: Password for authentication
+            
+        Returns:
+            bool: True if connection was added successfully
+        """
+        try:
+            self.connect(hostname, username, password)
+            self.connection.name = name
+            return True
+        except Exception as e:
+            self.logger.error(f"Failed to add connection: {str(e)}")
+            return False
+            
+    def remove_connection(self, name):
+        """Remove a saved connection.
+        
+        Args:
+            name: Name of connection to remove
+            
+        Returns:
+            bool: True if connection was removed successfully
+        """
+        if self.is_connected() and self.connection.name == name:
+            self.disconnect()
+        return True

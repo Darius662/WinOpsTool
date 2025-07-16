@@ -9,6 +9,7 @@ class RemoteConnection:
     def __init__(self):
         """Initialize remote connection."""
         self.logger = setup_logger(self.__class__.__name__)
+        self.name = None
         self.host = None
         self.username = None
         self._connected = False
@@ -62,6 +63,7 @@ class RemoteConnection:
             except Exception as e:
                 self.logger.error(f"Disconnect error: {str(e)}")
             finally:
+                self.name = None
                 self.host = None
                 self.username = None
                 self._connected = False

@@ -23,7 +23,7 @@ class ToolbarHandler:
         # Import config
         import_action = QAction(QIcon("assets/import.png"), "Import Config", self.main_window)
         import_action.setStatusTip("Import configuration file")
-        import_action.triggered.connect(self.main_window.import_config)
+        import_action.triggered.connect(self.main_window.import_configuration)
         self.toolbar.addAction(import_action)
         
         # Apply config

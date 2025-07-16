@@ -35,6 +35,13 @@ def check_dependencies() -> Tuple[bool, List[str]]:
                 except ImportError:
                     missing_packages.append(package)
                     logger.warning('pywin32 modules are not available')
+            elif package == 'pyyaml':
+                try:
+                    import yaml
+                    logger.debug('Package PyYAML is installed')
+                except ImportError:
+                    missing_packages.append(package)
+                    logger.warning('Missing required package: PyYAML')
             else:
                 __import__(package)
                 logger.debug(f'Package {package} is installed')

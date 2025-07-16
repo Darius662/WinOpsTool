@@ -2,7 +2,7 @@
 import sys
 from PyQt6.QtWidgets import QApplication, QMainWindow, QTabWidget, QWidget, QVBoxLayout
 from src.core.logger import setup_logger
-from src.core.privileges import check_admin
+from src.core.privileges import is_admin
 from .menu_handler import MenuHandler
 from .toolbar_handler import ToolbarHandler
 from .status_handler import StatusHandler
@@ -10,14 +10,14 @@ from .remote_handler import RemoteHandler
 from .help_handler import HelpHandler
 
 # Import panels
-from src.ui.panels.environment.panel import EnvironmentPanel
-from src.ui.panels.registry.panel import RegistryPanel
-from src.ui.panels.users.panel import UsersPanel
-from src.ui.panels.services.panel import ServicesPanel
-from src.ui.panels.firewall.panel import FirewallPanel
-from src.ui.panels.software.panel import SoftwarePanel
-from src.ui.panels.permissions.panel import PermissionsPanel
-from src.ui.panels.applications.panel import ApplicationsPanel
+from src.ui.panels.environment_panel import EnvironmentPanel
+from src.ui.panels.registry_panel import RegistryPanel
+from src.ui.panels.users_panel import UsersPanel
+from src.ui.panels.services_panel import ServicesPanel
+from src.ui.panels.firewall_panel import FirewallPanel
+from src.ui.panels.software_panel import SoftwarePanel
+from src.ui.panels.permissions_panel import PermissionsPanel
+from src.ui.panels.applications_panel import ApplicationsPanel
 
 class MainWindow(QMainWindow):
     """Main window for the System Management Tool."""
@@ -27,7 +27,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         
         # Check for admin privileges
-        if not check_admin():
+        if not is_admin():
             raise PermissionError("This tool requires administrator privileges.")
             
         self.logger = setup_logger(self.__class__.__name__)

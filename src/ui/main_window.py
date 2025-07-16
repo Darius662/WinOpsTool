@@ -1,255 +1,114 @@
 """Main application window."""
 import sys
 from PyQt6.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QTabWidget, 
-                             QMenuBar, QMenu, QFileDialog, QMessageBox, QApplication,
-                             QTextEdit)
-from PyQt6.QtGui import QAction
-from PyQt6.QtCore import Qt
+    QApplication, QMenuBar, QMessageBox, QMenu, QFileDialog)
 from src.core.logger import setup_logger
-from src.core.remote_manager import RemoteManager
-from src.core.config import APP_NAME
-from .dialogs.connection_dialog import ConnectionDialog
+from src.core.privileges import is_admin
+from src.ui.help.help_window import HelpWindow
+from src.ui.main.menu_handler import MenuHandler
+from src.ui.main.remote_handler import RemoteHandler
+from src.ui.main.config_handler import ConfigHandler
+from src.ui.main.help_handler import HelpHandler
+from src.ui.dialogs.connection_dialog import ConnectionDialog
 
 logger = setup_logger(__name__)
 
-class HelpWindow(QMainWindow):
-    """Help window for System Management Tool."""
+class MainWindow(QMainWindow):
+    """Main application window."""
+    
     def __init__(self):
+        # Check for admin privileges
+        if not is_admin():
+            raise PermissionError("This tool requires administrator privileges.")
+            
+        # Initialize QApplication if not already done
+        if not QApplication.instance():
+            app = QApplication(sys.argv)
+            
         super().__init__()
-        self.setWindowTitle("System Management Tool Help")
-        self.setMinimumSize(800, 600)
+        
+        self.logger = logger
+        
+        # Create handlers in dependency order
+        self.remote_handler = RemoteHandler(self)
+        self.config_handler = ConfigHandler(self)
+        self.help_handler = HelpHandler(self)
+        self.menu_handler = MenuHandler(self)  # MenuHandler depends on other handlers
+        
+        self.setup_ui()
+        
+    def setup_ui(self):
+        """Set up the main window UI components."""
+        self.setWindowTitle("Windows System Management Tool")
+        self.setMinimumSize(1024, 768)
         
         # Create central widget and layout
         central = QWidget()
         self.setCentralWidget(central)
         layout = QVBoxLayout(central)
         
-        # Create tabs
-        tabs = QTabWidget()
-        layout.addWidget(tabs)
+        # Create tab widget
+        self.tab_widget = QTabWidget()
+        layout.addWidget(self.tab_widget)
         
-        # Overview tab
-        overview = QWidget()
-        overview_layout = QVBoxLayout(overview)
-        overview_text = QTextEdit()
-        overview_text.setReadOnly(True)
-        overview_text.setHtml("""
-        <h2>Windows System Management Tool</h2>
-        <p>A powerful tool for managing Windows systems locally and remotely. This application allows you 
-        to configure and manage multiple aspects of Windows systems through a modern graphical interface.</p>
-        
-        <h3>Key Features</h3>
-        <ul>
-            <li>Local system configuration</li>
-            <li>Remote PC management</li>
-            <li>Configuration import/export</li>
-            <li>File transfer capabilities</li>
-            <li>Multi-PC operations</li>
-        </ul>
-        
-        <h3>Basic Usage</h3>
-        <ol>
-            <li>Use the tabs to access different management features</li>
-            <li>Configure settings as needed</li>
-            <li>Apply changes locally or to remote PCs</li>
-            <li>Import/export configurations for reuse</li>
-        </ol>
-        
-        <h3>Remote Management</h3>
-        <p>To manage remote PCs:</p>
-        <ol>
-            <li>Use Remote -> Manage Connections to add PCs</li>
-            <li>Configure settings in any tab</li>
-            <li>Use Remote -> Apply to All Connected PCs</li>
-        </ol>
-        """)
-        overview_layout.addWidget(overview_text)
-        tabs.addTab(overview, "Overview")
-        
-        # Features tab
-        features = QWidget()
-        features_layout = QVBoxLayout(features)
-        features_text = QTextEdit()
-        features_text.setReadOnly(True)
-        features_text.setHtml("""
-        <h2>Features Guide</h2>
-        
-        <h3>Environment Variables</h3>
-        <p>Manage system and user environment variables:</p>
-        <ul>
-            <li>View current variables</li>
-            <li>Add/modify/delete variables</li>
-            <li>Apply to remote PCs</li>
-        </ul>
-        
-        <h3>Registry Editor</h3>
-        <p>Windows Registry management:</p>
-        <ul>
-            <li>Browse registry structure</li>
-            <li>Add/modify/delete values</li>
-            <li>Import/export registry settings</li>
-        </ul>
-        
-        <h3>Users & Groups</h3>
-        <p>User account and group management:</p>
-        <ul>
-            <li>Create/modify user accounts</li>
-            <li>Manage group memberships</li>
-            <li>Set account properties</li>
-        </ul>
-        
-        <h3>Services</h3>
-        <p>Windows services control:</p>
-        <ul>
-            <li>View service status</li>
-            <li>Start/stop services</li>
-            <li>Change startup type</li>
-        </ul>
-        
-        <h3>Firewall</h3>
-        <p>Windows Firewall configuration:</p>
-        <ul>
-            <li>View existing rules</li>
-            <li>Create new rules</li>
-            <li>Modify rule properties</li>
-        </ul>
-        
-        <h3>Software</h3>
-        <p>Software management:</p>
-        <ul>
-            <li>Install applications</li>
-            <li>Uninstall software</li>
-            <li>Silent installation support</li>
-        </ul>
-        
-        <h3>Permissions</h3>
-        <p>File system permissions:</p>
-        <ul>
-            <li>View current permissions</li>
-            <li>Modify access rights</li>
-            <li>Set ownership</li>
-        </ul>
-        
-        <h3>Applications</h3>
-        <p>Application management:</p>
-        <ul>
-            <li>Configure startup items</li>
-            <li>Manage running processes</li>
-            <li>Set application properties</li>
-        </ul>
-        """)
-        features_layout.addWidget(features_text)
-        tabs.addTab(features, "Features")
-        
-        # Remote Management tab
-        remote = QWidget()
-        remote_layout = QVBoxLayout(remote)
-        remote_text = QTextEdit()
-        remote_text.setReadOnly(True)
-        remote_text.setHtml("""
-        <h2>Remote Management Guide</h2>
-        
-        <h3>Managing Connections</h3>
-        <p>To manage remote PCs:</p>
-        <ol>
-            <li>Open Remote -> Manage Connections</li>
-            <li>Add remote PC details (hostname/IP)</li>
-            <li>Test connection</li>
-            <li>Save connection details</li>
-        </ol>
-        
-        <h3>File Transfer</h3>
-        <p>To transfer files to remote PCs:</p>
-        <ol>
-            <li>Open Remote -> Transfer Files</li>
-            <li>Select source files</li>
-            <li>Choose destination</li>
-            <li>Start transfer</li>
-        </ol>
-        
-        <h3>Applying Changes</h3>
-        <p>To apply changes to remote PCs:</p>
-        <ol>
-            <li>Configure settings in any tab</li>
-            <li>Use Remote -> Apply to All Connected PCs</li>
-            <li>Confirm the action</li>
-            <li>Review results</li>
-        </ol>
-        
-        <h3>Best Practices</h3>
-        <ul>
-            <li>Always test connections before applying changes</li>
-            <li>Use configuration files for consistent deployment</li>
-            <li>Review logs for troubleshooting</li>
-            <li>Back up settings before major changes</li>
-        </ul>
-        """)
-        remote_layout.addWidget(remote_text)
-        tabs.addTab(remote, "Remote Management")
-
-
-class MainWindow(QMainWindow):
-    """Main application window."""
-    
-    def __init__(self):
-        # Initialize QApplication if not already done
-        if not QApplication.instance():
-            app = QApplication(sys.argv)
-            
-        super().__init__()
-        self.logger = setup_logger(self.__class__.__name__)
-        self.remote_manager = RemoteManager()
-        self.setWindowTitle("Windows System Management Tool")
-        
-        # Store panel references
+        # Add feature panels
         self.panels = {}
+        
+        # Environment Variables panel
+        from .panels.environment_panel import EnvironmentPanel
+        env_panel = EnvironmentPanel(self)
+        self.tab_widget.addTab(env_panel, "Environment Variables")
+        self.panels["Environment Variables"] = env_panel
+        
+        # Registry Editor panel
+        from .panels.registry_panel import RegistryPanel
+        reg_panel = RegistryPanel(self)
+        self.tab_widget.addTab(reg_panel, "Registry Editor")
+        self.panels["Registry Editor"] = reg_panel
+        
+        # Users & Groups panel
+        from .panels.users_panel import UsersPanel
+        users_panel = UsersPanel(self)
+        self.tab_widget.addTab(users_panel, "Users & Groups")
+        self.panels["Users & Groups"] = users_panel
+        
+        # Services panel
+        from .panels.services_panel import ServicesPanel
+        services_panel = ServicesPanel(self)
+        self.tab_widget.addTab(services_panel, "Services")
+        self.panels["Services"] = services_panel
+        
+        # Firewall panel
+        from .panels.firewall_panel import FirewallPanel
+        firewall_panel = FirewallPanel(self)
+        self.tab_widget.addTab(firewall_panel, "Firewall")
+        self.panels["Firewall"] = firewall_panel
+        
+        # Software panel
+        from .panels.software_panel import SoftwarePanel
+        software_panel = SoftwarePanel(self)
+        self.tab_widget.addTab(software_panel, "Software")
+        self.panels["Software"] = software_panel
+        
+        # Permissions panel
+        from .panels.permissions_panel import PermissionsPanel
+        perms_panel = PermissionsPanel(self)
+        self.tab_widget.addTab(perms_panel, "Permissions")
+        self.panels["Permissions"] = perms_panel
+        
+        # Applications panel
+        from .panels.applications_panel import ApplicationsPanel
+        apps_panel = ApplicationsPanel(self)
+        self.tab_widget.addTab(apps_panel, "Applications")
+        self.panels["Applications"] = apps_panel
         
         # Create menu bar
         self.menubar = QMenuBar()
         self.setMenuBar(self.menubar)
         
-        # Set up UI
-        self.setup_ui()
-        
         # Set up menu
         self.setup_menu()
         
-    def setup_ui(self):
-        """Set up the main window UI components."""
-        # Create tab widget
-        self.tab_widget = QTabWidget()
-        self.setCentralWidget(self.tab_widget)
-        
-        # Import panels
-        from .panels.environment_panel import EnvironmentPanel
-        from .panels.registry_panel import RegistryPanel
-        from .panels.users_panel import UsersPanel
-        from .panels.services_panel import ServicesPanel
-        from .panels.firewall_panel import FirewallPanel
-        from .panels.software_panel import SoftwarePanel
-        from .panels.permissions_panel import PermissionsPanel
-        from .panels.applications_panel import ApplicationsPanel
-        
-        panels = [
-            ("Environment Variables", EnvironmentPanel(self)),
-            ("Registry Editor", RegistryPanel(self)),
-            ("Users & Groups", UsersPanel(self)),
-            ("Services", ServicesPanel(self)),
-            ("Firewall", FirewallPanel(self)),
-            ("Software", SoftwarePanel(self)),
-            ("Permissions", PermissionsPanel(self)),
-            ("Applications", ApplicationsPanel(self))
-        ]
-        
-        for title, panel in panels:
-            try:
-                if isinstance(panel, QWidget):
-                    self.tab_widget.addTab(panel, title)
-                    self.panels[title] = panel
-                    self.logger.info(f"Loaded panel: {title}")
-            except Exception as e:
-                self.logger.error(f"Failed to load panel {title}: {str(e)}")
-                
     def setup_menu(self):
         """Set up the menu bar."""
         # File menu
@@ -293,13 +152,13 @@ class MainWindow(QMainWindow):
         
     def show_connections(self):
         """Show the connections management dialog."""
-        dialog = ConnectionDialog(self.remote_manager, self)
+        dialog = ConnectionDialog(self.remote_handler, self)
         dialog.exec()
         
     def show_file_transfer(self):
         """Show the file transfer dialog."""
         from .dialogs.file_transfer_dialog import FileTransferDialog
-        dialog = FileTransferDialog(self.remote_manager, self)
+        dialog = FileTransferDialog(self.remote_handler, self)
         dialog.exec()
         
     def import_configuration(self):
@@ -468,8 +327,7 @@ class MainWindow(QMainWindow):
         
     def show_help(self):
         """Show the help window."""
-        self.help_window = HelpWindow()
-        self.help_window.show()
+        self.help_handler.show_help()
         
     def show_about(self):
         """Show about dialog."""
@@ -491,7 +349,7 @@ class MainWindow(QMainWindow):
         panel_name = self.tab_widget.tabText(self.tab_widget.currentIndex())
         
         # Get list of connected PCs
-        connected_pcs = [pc for pc in self.remote_manager.get_connections() if pc.is_connected]
+        connected_pcs = [pc for pc in self.remote_handler.get_connections() if pc.is_connected]
         if not connected_pcs:
             QMessageBox.warning(self, "Warning", "No connected PCs available")
             return
@@ -508,7 +366,7 @@ class MainWindow(QMainWindow):
             try:
                 # Each panel should implement an apply_remote method
                 if hasattr(current_panel, 'apply_remote'):
-                    results = self.remote_manager.execute_on_all(current_panel.apply_remote)
+                    results = self.remote_handler.execute_on_all(current_panel.apply_remote)
                     
                     # Show results
                     success = sum(1 for r in results.values() if r)
@@ -533,3 +391,37 @@ class MainWindow(QMainWindow):
                     "Error",
                     f"Failed to apply changes to remote PCs: {str(e)}"
                 )
+
+    def update_remote_state(self, connected):
+        """Update UI elements based on remote connection state.
+        
+        Args:
+            connected: True if connected to remote system, False otherwise
+        """
+        # Update panel states
+        for i in range(self.tab_widget.count()):
+            panel = self.tab_widget.widget(i)
+            if hasattr(panel, 'update_remote_state'):
+                panel.update_remote_state(connected)
+                
+    def apply_config(self):
+        """Apply current configuration to the system."""
+        try:
+            current_panel = self.tab_widget.currentWidget()
+            if not current_panel:
+                return
+                
+            # Each panel should implement an apply_config method
+            if hasattr(current_panel, 'apply_config'):
+                current_panel.apply_config()
+                self.logger.info(f"Configuration applied for {self.tab_widget.tabText(self.tab_widget.currentIndex())}")
+            else:
+                self.logger.warning(f"Panel {self.tab_widget.tabText(self.tab_widget.currentIndex())} does not support configuration application")
+                
+        except Exception as e:
+            self.logger.error(f"Failed to apply configuration: {str(e)}")
+            QMessageBox.critical(
+                self,
+                "Error",
+                f"Failed to apply configuration: {str(e)}"
+            )

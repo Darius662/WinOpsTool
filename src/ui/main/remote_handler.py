@@ -21,21 +21,14 @@ class RemoteHandler:
         
     def connect(self):
         """Show connection dialog and establish remote connection."""
-        dialog = ConnectionDialog(self.main_window)
+        dialog = ConnectionDialog(self.remote_manager, self.main_window)
         if dialog.exec():
-            host, username, password = dialog.get_credentials()
-            try:
-                self.remote_manager.connect(host, username, password)
-                self.main_window.status_handler.set_connection_status(True, host)
-                self.main_window.status_handler.set_status(f"Connected to {host}")
+            # Connection is handled by the dialog itself
+            if self.remote_manager.is_connected():
+                self.main_window.status_handler.set_connection_status(True, self.remote_manager.connection.host)
+                self.main_window.status_handler.set_status(f"Connected to {self.remote_manager.connection.host}")
                 self.enable_remote_features()
-            except Exception as e:
-                self.logger.error(f"Failed to connect: {str(e)}")
-                QMessageBox.critical(
-                    self.main_window,
-                    "Connection Failed",
-                    f"Failed to connect to {host}: {str(e)}"
-                )
+
                 
     def disconnect(self):
         """Disconnect from remote system."""
@@ -82,3 +75,40 @@ class RemoteHandler:
     def is_connected(self):
         """Check if connected to remote system."""
         return self.remote_manager.is_connected()
+        
+    def refresh_connections(self):
+        """Refresh the list of saved connections."""
+        return self.remote_manager.refresh_connections()
+        
+    def get_connections(self):
+        """Get list of saved connections.
+        
+        Returns:
+            list: List of RemoteConnection objects
+        """
+        return self.remote_manager.get_connections()
+        
+    def add_connection(self, name, hostname, username, password):
+        """Add a new remote connection.
+        
+        Args:
+            name: Display name for the connection
+            hostname: Remote hostname or IP
+            username: Username for authentication
+            password: Password for authentication
+            
+        Returns:
+            bool: True if connection was added successfully
+        """
+        return self.remote_manager.add_connection(name, hostname, username, password)
+        
+    def remove_connection(self, name):
+        """Remove a saved connection.
+        
+        Args:
+            name: Name of connection to remove
+            
+        Returns:
+            bool: True if connection was removed successfully
+        """
+        return self.remote_manager.remove_connection(name)
