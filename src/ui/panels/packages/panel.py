@@ -1,12 +1,29 @@
 """Windows Package management panel."""
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QPushButton,
                           QLineEdit, QLabel, QMessageBox)
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QThread, pyqtSignal
 from src.core.logger import setup_logger
 from src.ui.base.base_panel import BasePanel
 from .tree_widget import PackagesTree
 from .dialogs import WingetSearchDialog
 from .manager import PackageManager
+
+class ProgramsWorker(QThread):
+    """Background worker for loading programs."""
+    programs_loaded = pyqtSignal(list)
+    error_occurred = pyqtSignal(str)
+    
+    def __init__(self, manager):
+        super().__init__()
+        self.manager = manager
+        
+    def run(self):
+        """Load programs in background thread."""
+        try:
+            programs = self.manager.get_installed_programs()
+            self.programs_loaded.emit(programs)
+        except Exception as e:
+            self.error_occurred.emit(str(e))
 
 class PackagesPanel(BasePanel):
     """Panel for managing Windows installed programs and packages."""
@@ -20,12 +37,17 @@ class PackagesPanel(BasePanel):
         super().__init__(parent)
         self.logger = setup_logger(self.__class__.__name__)
         self.manager = PackageManager()
-        self.setup_ui()
-        self.refresh_programs()
+        self.worker = None
+        
+        # Defer initial refresh with longer delay to reduce resource contention
+        # This will prevent blocking the UI during startup
+        from PyQt6.QtCore import QTimer
+        QTimer.singleShot(5000, self.delayed_start)
         
     def setup_ui(self):
         """Set up the panel UI."""
-        layout = QVBoxLayout(self)
+        # Use the main_layout from BasePanel instead of creating a new layout
+        layout = self.main_layout
         
         # Search controls
         search_layout = QHBoxLayout()
@@ -64,12 +86,29 @@ class PackagesPanel(BasePanel):
         self.uninstall_button.setEnabled(has_selection)
         
     def refresh_programs(self):
-        """Refresh the programs list."""
+        """Refresh the programs list using background thread."""
         try:
-            # Clear and repopulate tree
+            # Don't start new worker if one is already running
+            if self.worker and self.worker.isRunning():
+                return
+                
+            # Clear tree and show loading state
             self.programs_tree.clear_programs()
-            programs = self.manager.get_installed_programs()
             
+            # Create and start worker thread
+            self.worker = ProgramsWorker(self.manager)
+            self.worker.programs_loaded.connect(self.on_programs_loaded)
+            self.worker.error_occurred.connect(self.on_programs_error)
+            self.worker.start()
+            
+            self.logger.info("Started loading programs in background")
+        except Exception as e:
+            self.logger.error(f"Failed to start programs refresh: {str(e)}")
+            QMessageBox.critical(self, "Error", "Failed to start programs refresh")
+            
+    def on_programs_loaded(self, programs):
+        """Handle programs loaded from background thread."""
+        try:
             for program in programs:
                 self.programs_tree.add_program(
                     program['name'],
@@ -84,10 +123,14 @@ class PackagesPanel(BasePanel):
             if self.search_edit.text():
                 self.filter_programs(self.search_edit.text())
                 
-            self.logger.info("Refreshed programs list")
+            self.logger.info(f"Loaded {len(programs)} programs successfully")
         except Exception as e:
-            self.logger.error(f"Failed to refresh programs: {str(e)}")
-            QMessageBox.critical(self, "Error", "Failed to refresh programs list")
+            self.logger.error(f"Failed to populate programs tree: {str(e)}")
+            
+    def on_programs_error(self, error_msg):
+        """Handle error from background thread."""
+        self.logger.error(f"Failed to load programs: {error_msg}")
+        QMessageBox.critical(self, "Error", f"Failed to load programs: {error_msg}")
             
     def filter_programs(self, text):
         """Filter programs by name or publisher.
@@ -179,3 +222,16 @@ class PackagesPanel(BasePanel):
                         "Error",
                         f"Failed to install package: {str(e)}"
                     )
+                    
+    def delayed_start(self):
+        """Delayed initialization to prevent blocking the UI during startup."""
+        self.logger.info('Starting delayed initialization of PackagesPanel')
+        self.refresh_programs()
+        self.logger.info('PackagesPanel initialization complete')
+        
+    def setup_connections(self):
+        """Set up signal-slot connections."""
+        # Connections already set up in setup_ui method
+        # This method is required by BasePanel but implementation is kept here
+        # for consistency with the BasePanel interface
+        pass

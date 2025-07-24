@@ -73,6 +73,27 @@ class ConfigManagerWindow(QMainWindow):
 
         self.applications_tab = ApplicationsTab(self.config_handler)
         self.tab_widget.addTab(self.applications_tab, "Applications")
+        
+        # Add configuration tabs for system management areas
+        from .tabs.disk_tab import DiskTab
+        self.disk_tab = DiskTab(self.config_handler)
+        self.tab_widget.addTab(self.disk_tab, "Disk")
+        
+        from .tabs.drivers_tab import DriversTab
+        self.drivers_tab = DriversTab(self.config_handler)
+        self.tab_widget.addTab(self.drivers_tab, "Drivers")
+        
+        from .tabs.network_tab import NetworkTab
+        self.network_tab = NetworkTab(self.config_handler)
+        self.tab_widget.addTab(self.network_tab, "Network")
+        
+        from .tabs.packages_tab import PackagesTab
+        self.packages_tab = PackagesTab(self.config_handler)
+        self.tab_widget.addTab(self.packages_tab, "Packages")
+        
+        from .tabs.processes_tab import ProcessesTab
+        self.processes_tab = ProcessesTab(self.config_handler)
+        self.tab_widget.addTab(self.processes_tab, "Processes")
 
     def setup_menu(self):
         """Set up the menu bar."""

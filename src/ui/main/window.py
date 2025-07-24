@@ -2,6 +2,7 @@
 import sys
 from PyQt6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QApplication
 from PyQt6.QtGui import QIcon
+from PyQt6.QtCore import Qt
 import os.path
 from src.core.logger import setup_logger
 from src.core.privileges import is_admin
@@ -45,17 +46,25 @@ class MainWindow(QMainWindow):
     def setup_ui(self):
         """Set up the main window UI."""
         self.setWindowTitle("WinOpsTool")
+        
+        # Set proper window size and make it resizable
         self.setMinimumSize(1024, 768)
+        self.resize(1200, 900)  # Set default size larger than minimum
+        
+        # Enable window resizing and improve performance
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.WindowMaximizeButtonHint | Qt.WindowType.WindowMinimizeButtonHint)
         
         # Set window icon
         icon_path = os.path.join('assets', 'WinOpsTool.ico')
         if os.path.exists(icon_path):
             self.setWindowIcon(QIcon(icon_path))
         
-        # Create central widget and layout
+        # Create central widget and layout with proper margins
         central = QWidget()
         self.setCentralWidget(central)
         layout = QVBoxLayout(central)
+        layout.setContentsMargins(5, 5, 5, 5)  # Reduce margins for better space usage
+        layout.setSpacing(2)  # Reduce spacing for better performance
         
         # Add panel manager's tab widget
         layout.addWidget(self.panel_manager.tab_widget)

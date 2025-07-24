@@ -27,11 +27,6 @@ class ProcessesList(QWidget):
         self._setup_ui()
         self._connect_signals()
         
-        # Auto-refresh timer
-        self.refresh_timer = QTimer()
-        self.refresh_timer.timeout.connect(self.refresh_processes)
-        self.refresh_timer.start(5000)  # Refresh every 5 seconds
-        
         # Initial load
         self.refresh_processes()
         

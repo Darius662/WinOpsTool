@@ -46,10 +46,10 @@ class ProcessesTab(QWidget):
         self.end_tree_btn.clicked.connect(self.end_process_tree)
         self.refresh_btn.clicked.connect(self.refresh_processes)
         
-        # Auto-refresh timer
-        self.refresh_timer = QTimer()
-        self.refresh_timer.timeout.connect(self.refresh_processes)
-        self.refresh_timer.start(5000)  # Refresh every 5 seconds
+        # Auto-refresh timer removed - refresh only happens manually via button
+        # self.refresh_timer = QTimer()
+        # self.refresh_timer.timeout.connect(self.refresh_processes)
+        # Timer not started - refresh only on manual button click
         
         # Initial load
         self.refresh_processes()

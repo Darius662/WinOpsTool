@@ -43,19 +43,33 @@ class DriverManager:
             # Get drivers from WMI
             for driver in self.wmi.Win32_SystemDriver():
                 try:
+                    # Safely extract driver properties with fallbacks
+                    name = getattr(driver, 'Name', 'Unknown')
+                    display_name = getattr(driver, 'DisplayName', name)
+                    description = getattr(driver, 'Description', '') or ''
+                    start_mode = getattr(driver, 'StartMode', None)
+                    state = getattr(driver, 'State', None)
+                    path_name = getattr(driver, 'PathName', '')
+                    service_type = getattr(driver, 'ServiceType', None)
+                    manufacturer = getattr(driver, 'Manufacturer', None) or 'Unknown'
+                    error_control = getattr(driver, 'ErrorControl', None)
+                    
                     drivers.append({
-                        'name': driver.Name,
-                        'display_name': driver.DisplayName,
-                        'description': driver.Description or "",
-                        'start_type': self.START_TYPES.get(driver.StartMode, 'Unknown'),
-                        'state': self.STATES.get(driver.State, 'Unknown'),
-                        'path': driver.PathName,
-                        'service_type': driver.ServiceType,
-                        'manufacturer': driver.Manufacturer or "Unknown",
-                        'error_control': driver.ErrorControl
+                        'name': name,
+                        'display_name': display_name,
+                        'description': description,
+                        'start_type': self.START_TYPES.get(start_mode, 'Unknown'),
+                        'state': self.STATES.get(state, 'Unknown'),
+                        'path': path_name,
+                        'service_type': service_type,
+                        'manufacturer': manufacturer,
+                        'error_control': error_control
                     })
                 except Exception as e:
-                    self.logger.warning(f"Failed to get details for driver {driver.Name}: {str(e)}")
+                    # Only log debug instead of warning for missing driver details
+                    # as this is common for some system drivers
+                    driver_name = getattr(driver, 'Name', 'Unknown')
+                    self.logger.debug(f"Skipping driver {driver_name} due to missing details: {str(e)}")
                     continue
                     
             return sorted(drivers, key=lambda d: d['name'])
@@ -108,24 +122,40 @@ class DriverManager:
                     win32service.CloseServiceHandle(sc_handle)
                     
             except Exception as e:
-                self.logger.warning(f"Failed to get dependencies for {name}: {str(e)}")
+                self.logger.debug(f"Failed to get dependencies for {name}: {str(e)}")
+                
+            # Safely extract driver properties with fallbacks
+            driver_name = getattr(driver, 'Name', name)
+            display_name = getattr(driver, 'DisplayName', driver_name)
+            description = getattr(driver, 'Description', '') or ''
+            start_mode = getattr(driver, 'StartMode', None)
+            state = getattr(driver, 'State', None)
+            path_name = getattr(driver, 'PathName', '')
+            service_type = getattr(driver, 'ServiceType', None)
+            manufacturer = getattr(driver, 'Manufacturer', None) or 'Unknown'
+            error_control = getattr(driver, 'ErrorControl', None)
+            caption = getattr(driver, 'Caption', '')
+            started = getattr(driver, 'Started', None)
+            start_name = getattr(driver, 'StartName', '')
+            system_name = getattr(driver, 'SystemName', '')
+            tag_id = getattr(driver, 'TagId', None)
                 
             return {
-                'name': driver.Name,
-                'display_name': driver.DisplayName,
-                'description': driver.Description or "",
-                'start_type': self.START_TYPES.get(driver.StartMode, 'Unknown'),
-                'state': self.STATES.get(driver.State, 'Unknown'),
-                'path': driver.PathName,
-                'service_type': driver.ServiceType,
-                'manufacturer': driver.Manufacturer or "Unknown",
-                'error_control': driver.ErrorControl,
+                'name': driver_name,
+                'display_name': display_name,
+                'description': description,
+                'start_type': self.START_TYPES.get(start_mode, 'Unknown'),
+                'state': self.STATES.get(state, 'Unknown'),
+                'path': path_name,
+                'service_type': service_type,
+                'manufacturer': manufacturer,
+                'error_control': error_control,
                 'dependencies': dependencies,
-                'caption': driver.Caption,
-                'started': driver.Started,
-                'start_name': driver.StartName,
-                'system_name': driver.SystemName,
-                'tag_id': driver.TagId
+                'caption': caption,
+                'started': started,
+                'start_name': start_name,
+                'system_name': system_name,
+                'tag_id': tag_id
             }
             
         except Exception as e:
