@@ -15,6 +15,7 @@ from src.ui.config_manager.tabs.firewall_tab import FirewallTab
 from src.ui.config_manager.tabs.software_tab import SoftwareTab
 from src.ui.config_manager.tabs.permissions_tab import PermissionsTab
 from src.ui.config_manager.tabs.applications_tab import ApplicationsTab
+from src.ui.config_manager.tabs.welcome_tab import WelcomeTab
 
 class ConfigManagerWindow(QMainWindow):
     """Main window for the WinOpsInit."""
@@ -45,6 +46,10 @@ class ConfigManagerWindow(QMainWindow):
         layout.addWidget(self.tab_widget)
 
         # Add tabs
+        # Welcome tab first
+        self.welcome_tab = WelcomeTab(self.config_handler)
+        self.tab_widget.addTab(self.welcome_tab, "Welcome")
+        
         self.environment_tab = EnvironmentTab(self.config_handler)
         self.tab_widget.addTab(self.environment_tab, "Environment Variables")
 

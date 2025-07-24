@@ -21,6 +21,12 @@ class PanelManager:
         
     def setup_panels(self):
         """Set up all feature panels."""
+        # Welcome panel
+        from ..panels.welcome import WelcomePanel
+        welcome_panel = WelcomePanel(self.parent)
+        self.tab_widget.addTab(welcome_panel, "Welcome")
+        self.panels["Welcome"] = welcome_panel
+        
         # Environment Variables panel
         from ..panels.environment import EnvironmentPanel
         env_panel = EnvironmentPanel(self.parent)
