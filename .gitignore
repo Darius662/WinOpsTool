@@ -6,6 +6,7 @@ dist/
 *.pyo
 *.pyd
 __pycache__/
+*.exe
 
 # Virtual environment
 venv/

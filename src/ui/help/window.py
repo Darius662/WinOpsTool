@@ -22,7 +22,7 @@ class HelpWindow(QMainWindow):
         
     def setup_ui(self):
         """Set up the help window UI."""
-        self.setWindowTitle("Help - Windows System Management Tool")
+        self.setWindowTitle("Help - WinOpsTool")
         self.setMinimumSize(800, 600)
         
         # Create central widget and layout

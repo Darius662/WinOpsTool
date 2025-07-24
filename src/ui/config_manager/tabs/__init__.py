@@ -1,1 +1,1 @@
-"""Configuration Manager tabs package."""
+"""WinOpsInit tabs package."""

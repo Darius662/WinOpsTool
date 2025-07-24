@@ -1,4 +1,4 @@
-"""Configuration handler for Configuration Manager."""
+"""Configuration handler for WinOpsInit."""
 import yaml
 from PyQt6.QtWidgets import QFileDialog, QMessageBox
 from src.core.logger import setup_logger

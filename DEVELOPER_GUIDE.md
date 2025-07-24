@@ -1,6 +1,6 @@
-# Windows System Management Tool - Developer Guide
+# WinOpsTool - Developer Guide
 
-This comprehensive guide is intended for developers who want to understand, maintain, or extend the Windows System Management Tool. It provides detailed information about the project structure, architecture patterns, key components, and development guidelines.
+This comprehensive guide is intended for developers who want to understand, maintain, or extend the WinOpsTool. It provides detailed information about the project structure, architecture patterns, key components, and development guidelines.
 
 ## Table of Contents
 
@@ -17,10 +17,10 @@ This comprehensive guide is intended for developers who want to understand, main
 
 ## Project Overview
 
-The Windows System Management Tool is a comprehensive GUI application for managing Windows systems locally and remotely. It consists of two main applications:
+The WinOpsTool is a comprehensive GUI application for managing Windows systems locally and remotely. It consists of two main applications:
 
-1. **System Management Tool** (`main.py`): The primary application with multiple panels for different system management tasks.
-2. **Configuration Manager** (`config_manager.py`): A tool for creating and managing configuration files that can be imported into the main application.
+1. **WinOpsTool** (`main.py`): The primary application with multiple panels for different system management tasks.
+2. **WinOpsInit** (`config_manager.py`): A tool for creating and managing configuration files that can be imported into the main application.
 
 The project is built using PyQt6 for the UI and leverages various Windows APIs (through libraries like pywin32, psutil, etc.) for system management operations.
 
@@ -29,7 +29,7 @@ The project is built using PyQt6 for the UI and leverages various Windows APIs (
 ```
 Windows_System_Management_Tool/
 ├── main.py                     # Main application entry point
-├── config_manager.py           # Configuration Manager entry point
+├── config_manager.py           # WinOpsInit entry point
 ├── build.py                    # Script for building executables
 ├── requirements.txt            # Python dependencies
 ├── README.md                   # User documentation
@@ -68,7 +68,7 @@ Windows_System_Management_Tool/
         ├── main/               # Main window components
         │   ├── window.py       # Main application window
         │   └── help_handler.py # Help system handler
-        ├── config_manager/     # Configuration Manager UI
+        ├── config_manager/     # WinOpsInit UI
         │   ├── main_window.py
         │   ├── config_handler.py
         │   └── tabs/           # Configuration tabs
@@ -111,7 +111,7 @@ Windows_System_Management_Tool/
 
 ## Architecture Patterns
 
-The Windows System Management Tool follows several key architecture patterns to ensure maintainability, testability, and clean separation of concerns.
+The WinOpsTool follows several key architecture patterns to ensure maintainability, testability, and clean separation of concerns.
 
 ### 1. Model-View-Controller (MVC) Pattern
 
@@ -331,7 +331,7 @@ When adding new configuration options:
 1. Update the schema in `src/core/config_schema.py`
 2. Add validation in `src/core/config/validation.py`
 3. Update default configuration in `src/core/config/defaults.py`
-4. Update the Configuration Manager UI if needed
+4. Update the WinOpsInit UI if needed
 
 ## Testing Guidelines
 
@@ -357,7 +357,7 @@ When adding new configuration options:
 3. Create panel class inheriting from `BasePanel`
 4. Add panel to main window in `src/ui/main/window.py`
 5. Add configuration schema in `src/core/config_schema.py`
-6. Add configuration tab in Configuration Manager if needed
+6. Add configuration tab in WinOpsInit if needed
 
 ### Adding a New Button Component
 
@@ -372,7 +372,7 @@ When adding new configuration options:
 1. Update `src/core/config_schema.py`
 2. Update validation in `src/core/config/validation.py`
 3. Update default configuration in `src/core/config/defaults.py`
-4. Update Configuration Manager UI if needed
+4. Update WinOpsInit UI if needed
 
 ## Troubleshooting
 

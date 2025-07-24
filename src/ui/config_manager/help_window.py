@@ -1,11 +1,11 @@
-"""Help window for Configuration Manager."""
+"""Help window for WinOpsInit."""
 from PyQt6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QTabWidget, QTextEdit
 
 class HelpWindow(QMainWindow):
-    """Help window for Configuration Manager."""
+    """Help window for WinOpsInit."""
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Configuration Manager Help")
+        self.setWindowTitle("WinOpsInit Help")
         self.setMinimumSize(800, 600)
         
         # Create central widget and layout
@@ -23,8 +23,8 @@ class HelpWindow(QMainWindow):
         overview_text = QTextEdit()
         overview_text.setReadOnly(True)
         overview_text.setHtml("""
-        <h2>Configuration Manager</h2>
-        <p>The Configuration Manager is a tool for creating and managing system configuration files 
+        <h2>WinOpsInit</h2>
+        <p>WinOpsInit is a tool for creating and managing system configuration files 
         that can be imported into the main System Management Tool.</p>
         
         <h3>Key Features</h3>
@@ -32,14 +32,14 @@ class HelpWindow(QMainWindow):
             <li>Create and edit configuration files in YAML format</li>
             <li>Configure multiple system aspects in one place</li>
             <li>Save and load configurations</li>
-            <li>Import configurations into main System Management Tool</li>
+            <li>Import configurations into main WinOpsTool</li>
         </ul>
         
         <h3>Basic Usage</h3>
         <ol>
             <li>Use the tabs to configure different aspects of the system</li>
             <li>Save your configuration using File -> Save Config</li>
-            <li>Import the saved configuration file in the main System Management Tool</li>
+            <li>Import the saved configuration file in the main WinOpsTool</li>
         </ol>
         """)
         overview_layout.addWidget(overview_text)

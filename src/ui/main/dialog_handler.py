@@ -34,8 +34,8 @@ class DialogHandler:
         """Show about dialog."""
         QMessageBox.about(
             self.parent,
-            "About System Management Tool",
-            """<h3>Windows System Management Tool</h3>
+            "About WinOpsTool",
+            """<h3>WinOpsTool</h3>
             <p>Version 1.0</p>
             <p>A powerful tool for managing Windows systems locally and remotely.</p>
             <p>Part of the Windows System Management Suite.</p>"""

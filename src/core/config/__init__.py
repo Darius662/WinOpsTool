@@ -2,7 +2,7 @@
 from .manager import ConfigManager
 
 # Application constants
-APP_NAME = "Windows System Management Tool"
+APP_NAME = "WinOpsTool"
 APP_VERSION = "1.0.0"
 CONFIG_FILE = "config.yaml"
 

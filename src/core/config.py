@@ -14,7 +14,7 @@ for directory in [LOG_DIR, CONFIG_DIR, BACKUP_DIR]:
     directory.mkdir(exist_ok=True)
 
 # Application settings
-APP_NAME = "System Management Tool"
+APP_NAME = "WinOpsTool"
 APP_VERSION = "1.0.0"
 
 # Logging configuration

@@ -1,1 +1,1 @@
-"""Configuration Manager package."""
+"""WinOpsInit package."""

@@ -1,7 +1,7 @@
 """Help window content."""
 
 OVERVIEW_CONTENT = """
-<h2>Windows System Management Tool</h2>
+<h2>WinOpsTool</h2>
 <p>A powerful tool for managing Windows systems locally and remotely. This application allows you 
 to configure and manage multiple aspects of Windows systems through a modern graphical interface.</p>
 

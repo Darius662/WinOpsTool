@@ -9,7 +9,7 @@ class ConfigManager:
     """Handles configuration loading and saving."""
     
     def __init__(self):
-        """Initialize configuration manager."""
+        """Initialize WinOpsInit configuration manager."""
         self.logger = logging.getLogger(self.__class__.__name__)
         self.config = get_default_config()
         self.observers = []

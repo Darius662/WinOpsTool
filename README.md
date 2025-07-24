@@ -1,8 +1,8 @@
-# Windows System Management Tool
+# WinOpsTool
 
 This suite consists of two complementary applications for comprehensive Windows system management:
 
-## 1. System Management Tool (main.py)
+## 1. WinOpsTool (main.py)
 
 A powerful GUI application for managing and configuring Windows systems locally and remotely.
 
@@ -28,9 +28,9 @@ A powerful GUI application for managing and configuring Windows systems locally 
 - Elevated privileges handling
 - Modern Qt-based interface
 
-## 2. Configuration Manager (config_manager.py)
+## 2. WinOpsInit (config_manager.py)
 
-A dedicated tool for creating and managing configuration files that can be imported into the main System Management Tool.
+A dedicated tool for creating and managing configuration files that can be imported into the main WinOpsTool.
 
 ### Features
 - Environment Variables Configuration
@@ -94,7 +94,7 @@ To create standalone executables:
    ```
 3. Find the executables in the `dist` directory:
    - `main.exe` - System Management Tool
-   - `config_manager.exe` - Configuration Manager
+   - `config_manager.exe` - WinOpsInit
 
 ## Usage
 
@@ -120,9 +120,9 @@ To create standalone executables:
    - Add remote PC connections
    - Apply changes to multiple systems
 
-### Configuration Manager
+### WinOpsInit
 
-1. Launch the Configuration Manager:
+1. Launch WinOpsInit:
    ```bash
    python config_manager.py
    ```
@@ -137,7 +137,7 @@ To create standalone executables:
 
 - Stored in YAML format
 - Default template provided in `config/default.yaml`
-- Can be edited manually or through the Configuration Manager
+- Can be edited manually or through WinOpsInit
 - Support all configurable aspects of the system
 
 ## Architecture

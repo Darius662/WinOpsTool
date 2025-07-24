@@ -1,4 +1,4 @@
-"""Configuration schema for the Windows System Management Tool."""
+"""Configuration schema for the WinOpsTool."""
 
 CONFIG_SCHEMA = {
     "environment_variables": {

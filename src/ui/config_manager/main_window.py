@@ -1,8 +1,9 @@
-"""Main window for Configuration Manager."""
+"""Main window for WinOpsInit."""
 import sys
 from PyQt6.QtWidgets import (QApplication, QMainWindow, QTabWidget, QWidget,
                           QVBoxLayout, QMenuBar, QMenu, QMessageBox)
-from PyQt6.QtGui import QAction
+from PyQt6.QtGui import QAction, QIcon
+import os.path
 from src.core.logger import setup_logger
 from src.ui.config_manager.help_window import HelpWindow
 from src.ui.config_manager.config_handler import ConfigHandler
@@ -16,7 +17,7 @@ from src.ui.config_manager.tabs.permissions_tab import PermissionsTab
 from src.ui.config_manager.tabs.applications_tab import ApplicationsTab
 
 class ConfigManagerWindow(QMainWindow):
-    """Main window for the Configuration Manager."""
+    """Main window for the WinOpsInit."""
     def __init__(self):
         super().__init__()
         self.logger = setup_logger(self.__class__.__name__)
@@ -26,8 +27,13 @@ class ConfigManagerWindow(QMainWindow):
 
     def setup_ui(self):
         """Set up the user interface."""
-        self.setWindowTitle("Configuration Manager")
+        self.setWindowTitle("WinOpsInit")
         self.setMinimumSize(800, 600)
+        
+        # Set window icon
+        icon_path = os.path.join('assets', 'WinOpsInit.ico')
+        if os.path.exists(icon_path):
+            self.setWindowIcon(QIcon(icon_path))
 
         # Create central widget and layout
         central = QWidget()
@@ -110,8 +116,8 @@ class ConfigManagerWindow(QMainWindow):
         """Show about dialog."""
         QMessageBox.about(
             self,
-            "About Configuration Manager",
-            """<h3>Windows System Management Tool - Configuration Manager</h3>
+            "About WinOpsInit",
+            """<h3>WinOpsTool - WinOpsInit</h3>
             <p>Version 1.0</p>
             <p>A tool for creating and managing system configuration files.</p>
             <p>Part of the Windows System Management Suite.</p>"""

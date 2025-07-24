@@ -43,7 +43,7 @@ class MainWindow(QMainWindow):
         
     def setup_ui(self):
         """Set up the user interface."""
-        self.setWindowTitle("Windows System Management Tool")
+        self.setWindowTitle("WinOpsTool")
         self.setMinimumSize(1024, 768)
         
         # Create central widget and layout

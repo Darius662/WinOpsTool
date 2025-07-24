@@ -1,6 +1,8 @@
 """Main application window."""
 import sys
 from PyQt6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QApplication
+from PyQt6.QtGui import QIcon
+import os.path
 from src.core.logger import setup_logger
 from src.core.privileges import is_admin
 from .panel_manager import PanelManager
@@ -42,8 +44,13 @@ class MainWindow(QMainWindow):
         
     def setup_ui(self):
         """Set up the main window UI."""
-        self.setWindowTitle("Windows System Management Tool")
+        self.setWindowTitle("WinOpsTool")
         self.setMinimumSize(1024, 768)
+        
+        # Set window icon
+        icon_path = os.path.join('assets', 'WinOpsTool.ico')
+        if os.path.exists(icon_path):
+            self.setWindowIcon(QIcon(icon_path))
         
         # Create central widget and layout
         central = QWidget()

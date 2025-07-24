@@ -1,4 +1,4 @@
-# Default configuration template for Windows System Management Tool
+# Default configuration template for WinOpsTool
 # Copy this file and modify according to your needs
 
 environment_variables:
