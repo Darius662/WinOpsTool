@@ -4,6 +4,7 @@
 import sys
 from pathlib import Path
 from PyQt6.QtWidgets import QApplication, QMessageBox
+from PyQt6.QtCore import Qt
 from src.core.logger import setup_logger
 from src.core.dependencies import check_dependencies, install_dependencies
 from src.core.privileges import is_admin, request_admin_privileges
@@ -17,9 +18,24 @@ def main():
     """Main entry point."""
     try:
         # Initialize Qt application first
+        logger.info('Initializing Qt application')
         app = QApplication(sys.argv)
+        
+        # Optimize Qt application for better performance
         app.setStyle('Fusion')
         app.setApplicationName(APP_NAME)
+        
+        # Enable high DPI scaling for better display on modern monitors
+        try:
+            app.setAttribute(Qt.AA_EnableHighDpiScaling, True)
+            app.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
+            # Optimize graphics performance
+            app.setAttribute(Qt.AA_UseDesktopOpenGL, True)
+        except AttributeError:
+            # Fallback for older Qt versions or different attribute names
+            logger.debug('Some Qt attributes not available, continuing without them')
+        
+        logger.info('Qt application initialized with performance optimizations')
         
         # Check for admin privileges
         if not is_admin():
@@ -47,8 +63,11 @@ def main():
                 return 1
 
         # Create and show main window
+        logger.info('Creating main window')
         window = MainWindow()
+        logger.info('Main window created, showing window')
         window.show()
+        logger.info('Main window shown')
         
         # Start event loop
         return app.exec()

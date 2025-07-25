@@ -25,6 +25,7 @@ class PackageManager:
             list: List of program dictionaries with properties
         """
         programs = []
+        max_programs_per_hive = 500  # Limit to prevent excessive loading
         
         for root, path in self.UNINSTALL_PATHS:
             try:
@@ -32,49 +33,64 @@ class PackageManager:
                 
                 try:
                     index = 0
-                    while True:
+                    hive_programs = 0
+                    while hive_programs < max_programs_per_hive:
                         try:
                             # Get subkey name
                             subkey_name = winreg.EnumKey(key, index)
-                            subkey = winreg.OpenKey(key, subkey_name)
                             
                             try:
-                                # Get program details
-                                name = self._get_value(subkey, 'DisplayName')
-                                if not name:  # Skip entries without display name
-                                    continue
+                                subkey = winreg.OpenKey(key, subkey_name)
+                                
+                                try:
+                                    # Get program details with timeout protection
+                                    name = self._get_value(subkey, 'DisplayName')
+                                    if not name or len(name.strip()) == 0:  # Skip entries without display name
+                                        continue
                                     
-                                # Get other properties
-                                version = self._get_value(subkey, 'DisplayVersion')
-                                publisher = self._get_value(subkey, 'Publisher')
-                                install_date = self._get_value(subkey, 'InstallDate')
-                                install_location = self._get_value(subkey, 'InstallLocation')
-                                uninstall_string = self._get_value(subkey, 'UninstallString')
-                                
-                                programs.append({
-                                    'name': name,
-                                    'version': version,
-                                    'publisher': publisher,
-                                    'install_date': install_date,
-                                    'install_location': install_location,
-                                    'uninstall_string': uninstall_string,
-                                    'registry_key': subkey_name
-                                })
-                                
-                            finally:
-                                winreg.CloseKey(subkey)
+                                    # Skip system components and updates
+                                    if any(skip in name.lower() for skip in ['hotfix', 'security update', 'kb', 'microsoft visual c++']):
+                                        continue
+                                        
+                                    # Get other properties
+                                    version = self._get_value(subkey, 'DisplayVersion')
+                                    publisher = self._get_value(subkey, 'Publisher')
+                                    install_date = self._get_value(subkey, 'InstallDate')
+                                    install_location = self._get_value(subkey, 'InstallLocation')
+                                    uninstall_string = self._get_value(subkey, 'UninstallString')
+                                    
+                                    programs.append({
+                                        'name': name,
+                                        'version': version,
+                                        'publisher': publisher,
+                                        'install_date': install_date,
+                                        'install_location': install_location,
+                                        'uninstall_string': uninstall_string,
+                                        'registry_key': subkey_name
+                                    })
+                                    
+                                    hive_programs += 1
+                                    
+                                finally:
+                                    winreg.CloseKey(subkey)
+                                    
+                            except WindowsError:
+                                # Skip problematic entries
+                                pass
                                 
                             index += 1
                             
                         except WindowsError:
+                            # No more entries
                             break
                             
                 finally:
                     winreg.CloseKey(key)
                     
             except WindowsError as e:
-                self.logger.warning(f"Failed to read registry key {path}: {str(e)}")
+                self.logger.debug(f"Failed to read registry key {path}: {str(e)}")
                 
+        self.logger.info(f"Found {len(programs)} installed programs")
         return sorted(programs, key=lambda p: p['name'].lower())
         
     def _get_value(self, key, name):

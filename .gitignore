@@ -27,6 +27,7 @@ logs/
 *.old
 *.bak
 *~
+placeholder
 
 # Windows specific
 Thumbs.db

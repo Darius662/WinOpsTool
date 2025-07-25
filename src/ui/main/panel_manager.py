@@ -75,6 +75,48 @@ class PanelManager:
         self.tab_widget.addTab(apps_panel, "Applications")
         self.panels["Applications"] = apps_panel
         
+        # Disk panel
+        from ..panels.disk import DiskPanel
+        disk_panel = DiskPanel(self.parent)
+        self.tab_widget.addTab(disk_panel, "Disk")
+        self.panels["Disk"] = disk_panel
+        
+        # Drivers panel
+        from ..panels.drivers import DriversPanel
+        drivers_panel = DriversPanel(self.parent)
+        self.tab_widget.addTab(drivers_panel, "Drivers")
+        self.panels["Drivers"] = drivers_panel
+        
+        # Network panel
+        from ..panels.network import NetworkPanel
+        network_panel = NetworkPanel(self.parent)
+        self.tab_widget.addTab(network_panel, "Network")
+        self.panels["Network"] = network_panel
+        
+        # Packages panel
+        from ..panels.packages import PackagesPanel
+        packages_panel = PackagesPanel(self.parent)
+        self.tab_widget.addTab(packages_panel, "Packages")
+        self.panels["Packages"] = packages_panel
+        
+        # Processes panel
+        from ..panels.processes import ProcessesPanel
+        processes_panel = ProcessesPanel(self.parent)
+        self.tab_widget.addTab(processes_panel, "Processes")
+        self.panels["Processes"] = processes_panel
+        
+        # Scheduler panel
+        from ..panels.scheduler import SchedulerPanel
+        scheduler_panel = SchedulerPanel(self.parent)
+        self.tab_widget.addTab(scheduler_panel, "Task Scheduler")
+        self.panels["Task Scheduler"] = scheduler_panel
+        
+        # Events panel
+        from ..panels.events import EventsPanel
+        events_panel = EventsPanel(self.parent)
+        self.tab_widget.addTab(events_panel, "Event Viewer")
+        self.panels["Event Viewer"] = events_panel
+        
     def get_current_panel(self):
         """Get currently active panel.
         

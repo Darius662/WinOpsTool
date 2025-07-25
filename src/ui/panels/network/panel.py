@@ -20,19 +20,19 @@ class NetworkPanel(BasePanel):
         super().__init__(parent)
         self.logger = setup_logger(self.__class__.__name__)
         self.manager = NetworkManager()
-        self.setup_ui()
         
         # Set up refresh timer (2 seconds)
         self.refresh_timer = QTimer(self)
         self.refresh_timer.timeout.connect(self.refresh_all)
-        self.refresh_timer.start(2000)
         
-        # Initial refresh
-        self.refresh_all()
+        # Defer initial refresh and timer start
+        # This will prevent blocking the UI during startup
+        QTimer.singleShot(4000, self.delayed_start)
         
     def setup_ui(self):
         """Set up the panel UI."""
-        layout = QVBoxLayout(self)
+        # Use the main_layout from BasePanel instead of creating a new layout
+        layout = self.main_layout
         
         # Tab widget
         self.tab_widget = QTabWidget()
@@ -211,3 +211,17 @@ class NetworkPanel(BasePanel):
         if stats:
             dialog = InterfaceStatsDialog(self, name, stats)
             dialog.exec()
+            
+    def delayed_start(self):
+        """Delayed initialization to prevent blocking the UI during startup."""
+        self.logger.info('Starting delayed initialization of NetworkPanel')
+        self.refresh_all()
+        # Auto-refresh timer removed - refresh only happens manually via button
+        self.logger.info('NetworkPanel initialization complete')
+        
+    def setup_connections(self):
+        """Set up signal-slot connections."""
+        # Connections already set up in setup_ui method
+        # This method is required by BasePanel but implementation is kept here
+        # for consistency with the BasePanel interface
+        pass

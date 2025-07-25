@@ -1,11 +1,12 @@
 """Windows Disk management panel."""
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QPushButton,
-                          QLineEdit, QLabel, QTabWidget)
+                          QLineEdit, QLabel, QTabWidget, QMessageBox)
 from PyQt6.QtCore import QTimer
 from src.core.logger import setup_logger
 from src.ui.base.base_panel import BasePanel
 from .tree_widget import DisksTree, VolumesTree
 from .dialogs import DiskPerformanceDialog, VolumeInfoDialog
+from .network_drive_dialog import NetworkDriveDialog
 from .manager import DiskManager
 
 class DiskPanel(BasePanel):
@@ -20,19 +21,19 @@ class DiskPanel(BasePanel):
         super().__init__(parent)
         self.logger = setup_logger(self.__class__.__name__)
         self.manager = DiskManager()
-        self.setup_ui()
         
         # Set up refresh timer (5 seconds)
         self.refresh_timer = QTimer(self)
         self.refresh_timer.timeout.connect(self.refresh_all)
-        self.refresh_timer.start(5000)
         
-        # Initial refresh
-        self.refresh_all()
+        # Defer initial refresh and timer start
+        # This will prevent blocking the UI during startup
+        QTimer.singleShot(1500, self.delayed_start)
         
     def setup_ui(self):
         """Set up the panel UI."""
-        layout = QVBoxLayout(self)
+        # Use the main_layout from BasePanel instead of creating a new layout
+        layout = self.main_layout
         
         # Tab widget
         self.tab_widget = QTabWidget()
@@ -85,6 +86,15 @@ class DiskPanel(BasePanel):
         self.info_button.clicked.connect(self.view_volume_info)
         volume_controls.addWidget(self.info_button)
         
+        self.add_network_button = QPushButton("Add Network Drive")
+        self.add_network_button.clicked.connect(self.add_network_drive)
+        volume_controls.addWidget(self.add_network_button)
+        
+        self.disconnect_network_button = QPushButton("Disconnect Drive")
+        self.disconnect_network_button.clicked.connect(self.disconnect_network_drive)
+        self.disconnect_network_button.setEnabled(False)
+        volume_controls.addWidget(self.disconnect_network_button)
+        
         self.volume_refresh = QPushButton("Refresh")
         self.volume_refresh.clicked.connect(self.refresh_volumes)
         volume_controls.addWidget(self.volume_refresh)
@@ -111,6 +121,14 @@ class DiskPanel(BasePanel):
         """Update button enabled states based on volume selection."""
         has_selection = bool(self.volumes_tree.selectedItems())
         self.info_button.setEnabled(has_selection)
+        
+        # Only enable disconnect button for network drives
+        if has_selection:
+            selected_item = self.volumes_tree.selectedItems()[0]
+            drive_type = selected_item.text(2)  # Type column
+            self.disconnect_network_button.setEnabled(drive_type == "Network Drive")
+        else:
+            self.disconnect_network_button.setEnabled(False)
         
     def refresh_all(self):
         """Refresh both disks and volumes."""
@@ -237,3 +255,86 @@ class DiskPanel(BasePanel):
         if info:
             dialog = VolumeInfoDialog(self, mountpoint, info)
             dialog.exec()
+            
+    def delayed_start(self):
+        """Delayed initialization to prevent blocking the UI during startup."""
+        self.logger.info('Starting delayed initialization of DiskPanel')
+        self.refresh_all()
+        # Auto-refresh timer removed - refresh only happens manually via button
+        self.logger.info('DiskPanel initialization complete')
+        
+    def setup_connections(self):
+        """Set up signal-slot connections."""
+        # Connections already set up in setup_ui method
+        # This method is required by BasePanel but implementation is kept here
+        # for consistency with the BasePanel interface
+        pass
+        
+    def add_network_drive(self):
+        """Open dialog to add a network drive."""
+        dialog = NetworkDriveDialog(self)
+        if dialog.exec():
+            values = dialog.get_values()
+            try:
+                result = self.manager.map_network_drive(
+                    values['network_path'],
+                    values['drive_letter'],
+                    values['use_windows_credentials'],
+                    values['username'],
+                    values['password'],
+                    values['reconnect']
+                )
+                
+                if result['success']:
+                    QMessageBox.information(self, "Success", 
+                                         f"Network drive {values['drive_letter']} mapped successfully.")
+                    self.refresh_volumes()
+                else:
+                    QMessageBox.warning(self, "Error", 
+                                      f"Failed to map network drive: {result['error']}")
+            except Exception as e:
+                self.logger.error(f"Error mapping network drive: {str(e)}")
+                QMessageBox.critical(self, "Error", 
+                                   f"Error mapping network drive: {str(e)}")
+                                   
+    def disconnect_network_drive(self):
+        """Disconnect selected network drive."""
+        if not self.volumes_tree.selectedItems():
+            return
+            
+        selected_item = self.volumes_tree.selectedItems()[0]
+        drive_letter = selected_item.text(0)  # Drive letter column
+        drive_type = selected_item.text(2)    # Type column
+        
+        # Verify it's a network drive
+        if drive_type != "Network Drive":
+            QMessageBox.warning(self, "Error", 
+                              f"{drive_letter} is not a network drive.")
+            return
+            
+        # Confirm disconnection
+        reply = QMessageBox.question(self, "Disconnect Network Drive",
+                                   f"Are you sure you want to disconnect {drive_letter}?",
+                                   QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+                                   
+        if reply == QMessageBox.StandardButton.Yes:
+            try:
+                # Call manager to disconnect
+                result = self.manager.disconnect_network_drive(drive_letter)
+                
+                if result['success']:
+                    # Check if there was a warning
+                    if 'warning' in result:
+                        QMessageBox.information(self, "Information", 
+                                     f"{result['warning']}")
+                    else:
+                        QMessageBox.information(self, "Success", 
+                                     f"Network drive {drive_letter} disconnected successfully.")
+                    self.refresh_volumes()
+                else:
+                    QMessageBox.warning(self, "Error", 
+                              f"Failed to disconnect network drive: {result['error']}")
+            except Exception as e:
+                self.logger.error(f"Error disconnecting network drive: {str(e)}")
+                QMessageBox.critical(self, "Error", 
+                           f"Error disconnecting network drive: {str(e)}")

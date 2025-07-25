@@ -19,14 +19,16 @@ class DriversPanel(BasePanel):
         super().__init__(parent)
         self.logger = setup_logger(self.__class__.__name__)
         self.manager = DriverManager()
-        self.setup_ui()
         
-        # Initial refresh
-        self.refresh_drivers()
+        # Defer initial refresh
+        # This will prevent blocking the UI during startup
+        from PyQt6.QtCore import QTimer
+        QTimer.singleShot(3000, self.delayed_start)
         
     def setup_ui(self):
         """Set up the panel UI."""
-        layout = QVBoxLayout(self)
+        # Use the main_layout from BasePanel instead of creating a new layout
+        layout = self.main_layout
         
         # Create tree widget
         self.tree = DriversTree()
@@ -234,3 +236,16 @@ class DriversPanel(BasePanel):
                 "Error",
                 f"Failed to refresh drivers: {str(e)}"
             )
+    
+    def delayed_start(self):
+        """Delayed initialization to prevent blocking the UI during startup."""
+        self.logger.info('Starting delayed initialization of DriversPanel')
+        self.refresh_drivers()
+        self.logger.info('DriversPanel initialization complete')
+        
+    def setup_connections(self):
+        """Set up signal-slot connections."""
+        # Connections already set up in setup_ui method
+        # This method is required by BasePanel but implementation is kept here
+        # for consistency with the BasePanel interface
+        pass
