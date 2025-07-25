@@ -94,6 +94,14 @@ class ConfigManagerWindow(QMainWindow):
         from .tabs.processes_tab import ProcessesTab
         self.processes_tab = ProcessesTab(self.config_handler)
         self.tab_widget.addTab(self.processes_tab, "Processes")
+        
+        from .tabs.scheduler_tab import SchedulerTab
+        self.scheduler_tab = SchedulerTab(self.config_handler)
+        self.tab_widget.addTab(self.scheduler_tab, "Task Scheduler")
+        
+        from .tabs.events_tab import EventsTab
+        self.events_tab = EventsTab(self.config_handler)
+        self.tab_widget.addTab(self.events_tab, "Event Viewer")
 
     def setup_menu(self):
         """Set up the menu bar."""

@@ -14,6 +14,8 @@ from .drivers_tab import DriversTab
 from .network_tab import NetworkTab
 from .packages_tab import PackagesTab
 from .processes_tab import ProcessesTab
+from .scheduler_tab import SchedulerTab
+from .events_tab import EventsTab
 
 __all__ = [
     'WelcomeTab',
@@ -29,5 +31,7 @@ __all__ = [
     'DriversTab',
     'NetworkTab',
     'PackagesTab',
-    'ProcessesTab'
+    'ProcessesTab',
+    'SchedulerTab',
+    'EventsTab'
 ]

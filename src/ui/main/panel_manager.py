@@ -105,6 +105,18 @@ class PanelManager:
         self.tab_widget.addTab(processes_panel, "Processes")
         self.panels["Processes"] = processes_panel
         
+        # Scheduler panel
+        from ..panels.scheduler import SchedulerPanel
+        scheduler_panel = SchedulerPanel(self.parent)
+        self.tab_widget.addTab(scheduler_panel, "Task Scheduler")
+        self.panels["Task Scheduler"] = scheduler_panel
+        
+        # Events panel
+        from ..panels.events import EventsPanel
+        events_panel = EventsPanel(self.parent)
+        self.tab_widget.addTab(events_panel, "Event Viewer")
+        self.panels["Event Viewer"] = events_panel
+        
     def get_current_panel(self):
         """Get currently active panel.
         
