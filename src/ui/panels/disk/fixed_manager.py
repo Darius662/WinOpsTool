@@ -24,107 +24,6 @@ class DiskManager(QObject):
         self.logger = logging.getLogger(self.__class__.__name__)
         self.volumes = []
     
-    def get_volumes(self):
-        """Get the list of volumes (compatibility wrapper).
-        
-        Returns:
-            list: List of volume information dictionaries
-        """
-        return self.refresh_volumes()
-        
-    def get_drive_letters_info(self):
-        """Get information about available and used drive letters.
-        
-        Returns:
-            dict: Dictionary with keys:
-                - all_letters: List of all possible drive letters (A-Z)
-                - used_letters: List of currently used drive letters
-                - available_letters: List of available drive letters
-        """
-        try:
-            # Get all possible drive letters (A-Z)
-            all_letters = [f"{chr(i)}:" for i in range(65, 91)]  # A-Z
-            
-            # Get used drive letters from psutil
-            used_letters = []
-            for partition in psutil.disk_partitions(all=True):
-                if partition.device and len(partition.device) >= 2:
-                    drive_letter = partition.device[:2]  # Get drive letter with colon
-                    used_letters.append(drive_letter)
-            
-            # Calculate available letters
-            available_letters = [letter for letter in all_letters if letter not in used_letters]
-            
-            return {
-                'all_letters': all_letters,
-                'used_letters': used_letters,
-                'available_letters': available_letters
-            }
-        except Exception as e:
-            self.logger.error(f"Error getting drive letters info: {str(e)}")
-            # Fallback to default values
-            return {
-                'all_letters': [f"{chr(i)}:" for i in range(65, 91)],
-                'used_letters': [],
-                'available_letters': [f"{chr(i)}:" for i in range(65, 91)]
-            }
-    
-    def get_disks(self):
-        """Get the list of physical disks (compatibility wrapper).
-        
-        Returns:
-            list: List of physical disk information dictionaries
-        """
-        import wmi
-        
-        try:
-            disks = []
-            c = wmi.WMI()
-            
-            # Create a mapping of disk index to disk object
-            disk_map = {}
-            for disk in c.Win32_DiskDrive():
-                disk_index = disk.Index
-                disk_map[disk_index] = disk
-                
-                # Initialize disk info
-                disk_info = {
-                    'name': disk.Caption,
-                    'model': disk.Model,
-                    'size': int(disk.Size) if disk.Size else 0,
-                    'interface': disk.InterfaceType if hasattr(disk, 'InterfaceType') else 'Unknown',
-                    'serial': disk.SerialNumber if hasattr(disk, 'SerialNumber') else 'Unknown',
-                    'status': disk.Status if hasattr(disk, 'Status') else 'Unknown',
-                    'firmware': disk.FirmwareRevision if hasattr(disk, 'FirmwareRevision') else 'Unknown',
-                    'partitions': []  # Initialize empty partitions list
-                }
-                disks.append(disk_info)
-            
-            # Get partition information and associate with disks
-            for partition in c.Win32_DiskPartition():
-                try:
-                    disk_index = int(partition.DiskIndex)
-                    if disk_index in disk_map:
-                        # Find the corresponding disk in our list
-                        for disk in disks:
-                            if disk['name'] == disk_map[disk_index].Caption:
-                                # Add partition info
-                                partition_info = {
-                                    'name': partition.Name,
-                                    'type': partition.Type,
-                                    'size': int(partition.Size) if partition.Size else 0,
-                                    'bootable': partition.Bootable if hasattr(partition, 'Bootable') else False
-                                }
-                                disk['partitions'].append(partition_info)
-                except Exception as e:
-                    self.logger.warning(f"Error processing partition {partition.Name}: {str(e)}")
-                    continue
-                
-            return disks
-        except Exception as e:
-            self.logger.error(f"Error getting physical disks: {str(e)}")
-            return []
-        
     def refresh_volumes(self):
         """Refresh the list of volumes.
         
@@ -139,27 +38,13 @@ class DiskManager(QObject):
             partitions = psutil.disk_partitions(all=True)
             
             for partition in partitions:
-                # Determine volume type based on available information
-                volume_type = 'Local Disk'
-                if partition.fstype == 'NTFS' and (partition.opts and 'remote' in partition.opts.lower()):
-                    volume_type = 'Network Drive'
-                elif partition.mountpoint == 'C:\\':
-                    volume_type = 'System Drive'
-                elif not partition.fstype:
-                    volume_type = 'Unknown'
-                elif 'cdrom' in partition.opts.lower() if partition.opts else False:
-                    volume_type = 'CD/DVD'
-                elif 'removable' in partition.opts.lower() if partition.opts else False:
-                    volume_type = 'Removable Drive'
-                
                 volume = {
                     'device': partition.device,
                     'mountpoint': partition.mountpoint,
                     'fstype': partition.fstype,
                     'opts': partition.opts,
                     'is_network_drive': False,
-                    'network_path': None,
-                    'type': volume_type  # Add the type field
+                    'network_path': None
                 }
                 
                 # Add usage information if available
@@ -447,39 +332,12 @@ class DiskManager(QObject):
         """
         try:
             # Ensure drive letter format is correct
-            if not drive_letter:
-                return {
-                    'success': False,
-                    'error': "No drive letter specified"
-                }
-                
-            # Normalize drive letter format (ensure it has a colon and no trailing backslash)
-            drive_letter = drive_letter.strip()
             if len(drive_letter) == 1:
                 drive_letter = f"{drive_letter}:"
-            elif drive_letter.endswith('\\'):
-                drive_letter = drive_letter[:-1]
-            
-            # Check if the drive is actually mapped first
-            check_process = subprocess.run(
-                ["net", "use"],
-                capture_output=True,
-                text=True
-            )
-            
-            # If the drive isn't in the output, it's not mapped
-            if drive_letter.upper() not in check_process.stdout.upper():
-                self.logger.warning(f"Drive {drive_letter} is not mapped as a network drive")
-                # Still return success to avoid confusing the user with error messages
-                # when the end result is what they wanted (drive not mapped)
-                return {
-                    'success': True,
-                    'warning': f"Drive {drive_letter} is not mapped as a network drive"
-                }
             
             # Use net use to disconnect
             process = subprocess.run(
-                ["net", "use", drive_letter, "/delete", "/y"],  # Added /y to suppress confirmation
+                ["net", "use", drive_letter, "/delete"],
                 capture_output=True,
                 text=True
             )
@@ -494,21 +352,12 @@ class DiskManager(QObject):
                 
             # Check if the operation was successful
             if process.returncode != 0:
-                # Some errors are actually warnings and the drive was still disconnected
-                if "The network connection could not be found" in stdout:
-                    self.logger.info(f"Drive {drive_letter} was already disconnected")
-                    # Still return success since the end state is what the user wanted
-                    return {
-                        'success': True,
-                        'warning': "The drive was already disconnected"
-                    }
-                else:
-                    self.logger.error(f"Failed to disconnect network drive: {stdout if stdout else stderr}")
-                    self.error_occurred.emit(f"Failed to disconnect network drive: {stdout if stdout else stderr}")
-                    return {
-                        'success': False,
-                        'error': stdout if stdout else stderr
-                    }
+                self.logger.error(f"Failed to disconnect network drive: {stderr}")
+                self.error_occurred.emit(f"Failed to disconnect network drive: {stderr}")
+                return {
+                    'success': False,
+                    'error': stderr
+                }
             else:
                 self.logger.info(f"Disconnected network drive {drive_letter}")
                 

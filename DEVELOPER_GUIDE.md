@@ -382,6 +382,7 @@ When adding new configuration options:
 2. **Signals Not Working**: Verify connections in `setup_connections()`
 3. **Configuration Not Loading**: Check schema and validation
 4. **Windows API Errors**: Check for admin privileges and API availability
+5. **Logging Issues**: Check log level settings in the Settings dialog or directly in `src/core/logging_config.py`
 
 ### Debugging Tips
 

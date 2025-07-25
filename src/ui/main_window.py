@@ -112,41 +112,43 @@ class MainWindow(QMainWindow):
     def setup_menu(self):
         """Set up the menu bar."""
         # File menu
-        file_menu = QMenu("File", self)
-        self.menubar.addMenu(file_menu)
+        file_menu = self.menubar.addMenu("File")
         
-        # File actions
-        import_config = file_menu.addAction("Import Configuration...")
-        import_config.triggered.connect(self.import_configuration)
+        # Import Configuration
+        import_action = file_menu.addAction("Import Configuration")
+        import_action.triggered.connect(self.import_configuration)
         
-        file_menu.addSeparator()
-        
+        # Exit action
         exit_action = file_menu.addAction("Exit")
         exit_action.triggered.connect(self.close)
         
-        # Remote menu
-        remote_menu = QMenu("Remote", self)
-        self.menubar.addMenu(remote_menu)
+        # Tools menu
+        tools_menu = self.menubar.addMenu("Tools")
         
-        # Remote actions
-        manage_connections = remote_menu.addAction("Manage Connections...")
-        manage_connections.triggered.connect(self.show_connections)
+        # Connections
+        connections_action = tools_menu.addAction("Connections")
+        connections_action.triggered.connect(self.show_connections)
         
-        transfer_files = remote_menu.addAction("Transfer Files...")
-        transfer_files.triggered.connect(self.show_file_transfer)
+        # File Transfer
+        file_transfer_action = tools_menu.addAction("File Transfer")
+        file_transfer_action.triggered.connect(self.show_file_transfer)
         
-        remote_menu.addSeparator()
+        # Settings
+        settings_action = tools_menu.addAction("Settings")
+        settings_action.triggered.connect(self.show_settings)
         
-        apply_all = remote_menu.addAction("Apply to All Connected PCs")
-        apply_all.triggered.connect(self.apply_to_all)
+        # Apply to All
+        apply_action = tools_menu.addAction("Apply to All Connected PCs")
+        apply_action.triggered.connect(self.apply_to_all)
         
         # Help menu
-        help_menu = QMenu("Help", self)
-        self.menubar.addMenu(help_menu)
+        help_menu = self.menubar.addMenu("Help")
         
-        help_action = help_menu.addAction("Help Contents")
+        # Help action
+        help_action = help_menu.addAction("Help")
         help_action.triggered.connect(self.show_help)
         
+        # About action
         about_action = help_menu.addAction("About")
         about_action.triggered.connect(self.show_about)
         
@@ -339,6 +341,12 @@ class MainWindow(QMainWindow):
             <p>A powerful tool for managing Windows systems locally and remotely.</p>
             <p>Part of the Windows System Management Suite.</p>"""
         )
+        
+    def show_settings(self):
+        """Show the settings dialog."""
+        from src.ui.dialogs.settings_dialog import SettingsDialog
+        settings_dialog = SettingsDialog(self)
+        settings_dialog.exec()
         
     def apply_to_all(self):
         """Apply current panel's changes to all connected PCs."""

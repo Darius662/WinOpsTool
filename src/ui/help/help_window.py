@@ -132,6 +132,63 @@ class HelpWindow(QMainWindow):
             <li>Auto-refresh capabilities for real-time monitoring</li>
         </ul>
         
+        <h3>Disk Management</h3>
+        <p>Disk and volume management:</p>
+        <ul>
+            <li>View disk and volume information</li>
+            <li>Map network drives with custom or Windows credentials</li>
+            <li>Disconnect network drives</li>
+            <li>Monitor disk health and status</li>
+        </ul>
+        
+        <h3>Drivers</h3>
+        <p>Driver management:</p>
+        <ul>
+            <li>View installed drivers</li>
+            <li>Check driver status and details</li>
+            <li>Manage driver operations</li>
+        </ul>
+        
+        <h3>Network</h3>
+        <p>Network configuration:</p>
+        <ul>
+            <li>View network adapters</li>
+            <li>Monitor connection status</li>
+            <li>Configure network settings</li>
+        </ul>
+        
+        <h3>Packages</h3>
+        <p>Package management:</p>
+        <ul>
+            <li>View installed packages</li>
+            <li>Package information and details</li>
+            <li>Manage package operations</li>
+        </ul>
+        
+        <h3>Processes</h3>
+        <p>Process management:</p>
+        <ul>
+            <li>Detailed process information</li>
+            <li>Process monitoring</li>
+            <li>Process control operations</li>
+        </ul>
+        
+        <h3>Task Scheduler</h3>
+        <p>Windows Task Scheduler management:</p>
+        <ul>
+            <li>View scheduled tasks</li>
+            <li>Create and modify tasks</li>
+            <li>Enable/disable scheduled tasks</li>
+        </ul>
+        
+        <h3>Event Viewer</h3>
+        <p>Windows Event Log viewer:</p>
+        <ul>
+            <li>Browse hierarchical event logs</li>
+            <li>View event details</li>
+            <li>Filter events by criteria</li>
+        </ul>
+        
         <h3>Remote Management</h3>
         <p>Remote PC features:</p>
         <ul>
@@ -146,6 +203,14 @@ class HelpWindow(QMainWindow):
             <li>Import settings</li>
             <li>Export settings</li>
             <li>Apply to multiple PCs</li>
+        </ul>
+        
+        <h3>Settings</h3>
+        <p>Application settings:</p>
+        <ul>
+            <li>Log level configuration (DEBUG, INFO, WARNING, ERROR, CRITICAL)</li>
+            <li>View log file location</li>
+            <li>Apply settings changes in real-time</li>
         </ul>
         """)
         features_layout.addWidget(features_text)

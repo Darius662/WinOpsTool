@@ -1,5 +1,9 @@
 # WinOpsTool
 
+<p align="center">
+  <img src="assets/WinOpsTool.png" alt="WinOpsTool Logo" width="200">
+</p>
+
 This suite consists of two complementary applications for comprehensive Windows system management:
 
 ## 1. WinOpsTool (main.py)
@@ -17,9 +21,32 @@ A powerful GUI application for managing and configuring Windows systems locally 
 - Application Management
   - Processes monitoring and control
   - Startup items management
+- Disk Management
+  - Volume information
+  - Network drive mapping
+  - Disk details and health
+- Drivers Management
+  - Driver information and status
+  - Driver operations
+- Network Management
+  - Network adapter configuration
+  - Connection status
+- Packages Management
+  - Installed packages information
+  - Package operations
+- Process Management
+  - Detailed process information
+  - Process control
+- Task Scheduler
+  - View and manage scheduled tasks
+  - Create and modify tasks
+- Event Viewer
+  - Browse Windows event logs
+  - Filter and view event details
 - Remote PC Management
 - Configuration Import
 - Logging and Error Handling
+- User-configurable log level
 
 ### Key Capabilities
 - Apply changes to multiple remote PCs simultaneously
@@ -29,6 +56,10 @@ A powerful GUI application for managing and configuring Windows systems locally 
 - Modern Qt-based interface
 
 ## 2. WinOpsInit (config_manager.py)
+
+<p align="center">
+  <img src="assets/WinOpsInit.png" alt="WinOpsInit Logo" width="200">
+</p>
 
 A dedicated tool for creating and managing configuration files that can be imported into the main WinOpsTool.
 
@@ -191,6 +222,7 @@ All panels follow the same consistent pattern:
 ## Troubleshooting
 
 - Check the logs directory for detailed logs
+- Adjust log verbosity via Tools -> Settings to control the amount of log information
 - Use Help -> Help Contents for detailed documentation
 - Ensure all dependencies are correctly installed
 - Verify administrator privileges
