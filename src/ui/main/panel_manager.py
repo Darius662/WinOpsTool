@@ -117,6 +117,12 @@ class PanelManager:
         self.tab_widget.addTab(events_panel, "Event Viewer")
         self.panels["Event Viewer"] = events_panel
         
+        # Credentials panel
+        from ..panels.credentials import CredentialsPanel
+        credentials_panel = CredentialsPanel(self.parent)
+        self.tab_widget.addTab(credentials_panel, "Credentials")
+        self.panels["Credentials"] = credentials_panel
+        
     def get_current_panel(self):
         """Get currently active panel.
         
