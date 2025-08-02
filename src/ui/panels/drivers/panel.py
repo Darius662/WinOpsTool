@@ -20,6 +20,10 @@ class DriversPanel(BasePanel):
         self.logger = setup_logger(self.__class__.__name__)
         self.manager = DriverManager()
         
+        # Initialize imported config items
+        self.imported_config_items = set()
+        self.current_config = None
+        
         # Defer initial refresh
         # This will prevent blocking the UI during startup
         from PyQt6.QtCore import QTimer
@@ -249,3 +253,249 @@ class DriversPanel(BasePanel):
         # This method is required by BasePanel but implementation is kept here
         # for consistency with the BasePanel interface
         pass
+        
+    def apply_config(self, config):
+        """Apply configuration to the panel.
+        
+        Args:
+            config: Dictionary containing configuration data
+            
+        Returns:
+            bool: True if configuration was applied successfully, False otherwise
+        """
+        self.logger.info("Applying drivers panel configuration")
+        
+        if not isinstance(config, dict):
+            self.logger.error("Invalid configuration format")
+            return False
+            
+        try:
+            # Process configuration
+            if 'drivers' not in config:
+                self.logger.warning("No drivers panel configuration found")
+                return False
+                
+            drivers_config = config['drivers']
+            success = True
+            
+            # Apply driver startup type configuration if available
+            if 'driver_settings' in drivers_config and isinstance(drivers_config['driver_settings'], list):
+                self.logger.info(f"Found {len(drivers_config['driver_settings'])} driver settings in configuration")
+                
+                # Process each driver setting
+                for driver_config in drivers_config['driver_settings']:
+                    if not isinstance(driver_config, dict):
+                        self.logger.warning("Skipping invalid driver configuration")
+                        continue
+                        
+                    # Check required fields
+                    if 'name' not in driver_config:
+                        self.logger.warning("Skipping driver setting without name")
+                        continue
+                        
+                    name = driver_config['name']
+                    
+                    # Apply startup type if specified
+                    if 'start_type' in driver_config:
+                        start_type = driver_config['start_type']
+                        if not self.manager.set_startup_type(name, start_type):
+                            self.logger.warning(f"Failed to set startup type for driver: {name}")
+                            success = False
+                    
+                    # Apply state if specified (start/stop)
+                    if 'state' in driver_config:
+                        state = driver_config['state']
+                        if state.lower() == 'running':
+                            if not self.manager.start_driver(name):
+                                self.logger.warning(f"Failed to start driver: {name}")
+                                success = False
+                        elif state.lower() == 'stopped':
+                            if not self.manager.stop_driver(name):
+                                self.logger.warning(f"Failed to stop driver: {name}")
+                                success = False
+                
+                # Refresh drivers list to reflect changes
+                self.refresh_drivers()
+                
+                # Clear imported config items since they've been applied
+                self.imported_config_items.clear()
+                self.current_config = None
+            
+            return success
+            
+        except Exception as e:
+            self.logger.error(f"Error applying drivers panel configuration: {str(e)}")
+            return False
+            
+    def export_config(self):
+        """Export panel configuration.
+        
+        Returns:
+            dict: Dictionary containing panel configuration
+        """
+        self.logger.info("Exporting drivers panel configuration")
+        
+        try:
+            # Get driver settings
+            driver_settings = []
+            
+            # Get all drivers from the tree
+            for i in range(self.tree.topLevelItemCount()):
+                item = self.tree.topLevelItem(i)
+                name, _, _, start_type, state = self.tree.get_driver(item)
+                
+                # Only export non-virtual drivers
+                if not self.tree.is_virtual_item(item):
+                    driver_settings.append({
+                        'name': name,
+                        'start_type': start_type,
+                        'state': state
+                    })
+            
+            # Create configuration dictionary
+            config = {
+                'drivers': {
+                    'driver_settings': driver_settings
+                }
+            }
+            
+            return config
+            
+        except Exception as e:
+            self.logger.error(f"Error exporting drivers panel configuration: {str(e)}")
+            return {'drivers': {}}
+            
+    def mark_config_items(self, config):
+        """Mark items from configuration for highlighting without applying changes.
+        
+        This method identifies and marks driver settings from the configuration
+        that would be modified by apply_config(), but does not actually
+        apply any changes to the system. Items will be visually highlighted in the UI.
+        
+        Args:
+            config: Dictionary containing configuration data
+            
+        Returns:
+            bool: True if items were marked successfully, False otherwise
+        """
+        self.logger.info("Marking drivers panel configuration items")
+        
+        # Clear previous imported items
+        self.imported_config_items.clear()
+        
+        if not isinstance(config, dict):
+            self.logger.error("Invalid configuration format")
+            return False
+            
+        try:
+            # Check if drivers section exists
+            if 'drivers' not in config:
+                self.logger.warning("No drivers panel configuration found")
+                return False
+                
+            # Store the current configuration for use in virtual driver items
+            self.current_config = config
+                
+            drivers_config = config['drivers']
+            
+            # Process driver settings configuration if available
+            if 'driver_settings' in drivers_config and isinstance(drivers_config['driver_settings'], list):
+                self.logger.info(f"Found {len(drivers_config['driver_settings'])} driver settings in configuration")
+                
+                # Get existing drivers for comparison
+                existing_drivers = {}
+                for i in range(self.tree.topLevelItemCount()):
+                    item = self.tree.topLevelItem(i)
+                    name, display_name, manufacturer, start_type, state = self.tree.get_driver(item)
+                    existing_drivers[name] = {
+                        'item': item,
+                        'display_name': display_name,
+                        'manufacturer': manufacturer,
+                        'start_type': start_type,
+                        'state': state
+                    }
+                
+                # Process each driver setting
+                for driver_config in drivers_config['driver_settings']:
+                    if not isinstance(driver_config, dict):
+                        self.logger.warning("Skipping invalid driver configuration")
+                        continue
+                        
+                    # Check required fields
+                    if 'name' not in driver_config:
+                        self.logger.warning("Skipping driver setting without name")
+                        continue
+                        
+                    name = driver_config['name']
+                    
+                    # Mark this driver as imported from config for highlighting
+                    self.mark_as_imported_config(f"drivers:driver:{name}")
+                    
+                    # If driver exists, highlight it
+                    if name in existing_drivers:
+                        item = existing_drivers[name]['item']
+                        self.tree.highlight_item(item)
+                    else:
+                        # Add virtual driver if it doesn't exist in the system
+                        self.add_virtual_driver(driver_config)
+                
+                return True
+                
+            # If no specific configurations were found, return False
+            self.logger.warning("No driver settings configuration found")
+            return False
+            
+        except Exception as e:
+            self.logger.error(f"Error marking drivers panel configuration items: {str(e)}")
+            return False
+    
+    def mark_as_imported_config(self, item):
+        """Mark an item as imported from config for highlighting.
+        
+        Args:
+            item: Item to mark
+        """
+        self.imported_config_items.add(item)
+        
+    def is_imported_config_item(self, item):
+        """Check if an item is marked as imported from config.
+        
+        Args:
+            item: Item to check
+            
+        Returns:
+            bool: True if item is marked as imported, False otherwise
+        """
+        return item in self.imported_config_items
+        
+    def add_virtual_driver(self, driver_config):
+        """Add a virtual driver from imported configuration.
+        
+        Args:
+            driver_config: Dictionary containing driver configuration
+            
+        Returns:
+            QTreeWidgetItem: Created tree item or None if failed
+        """
+        try:
+            name = driver_config['name']
+            
+            # Use provided values or defaults
+            display_name = driver_config.get('display_name', name)
+            manufacturer = driver_config.get('manufacturer', 'Unknown')
+            start_type = driver_config.get('start_type', 'Auto')
+            
+            # Add virtual driver to tree
+            item = self.tree.add_virtual_driver(
+                name,
+                display_name,
+                manufacturer,
+                start_type
+            )
+            
+            self.logger.info(f"Added virtual driver: {name}")
+            return item
+            
+        except Exception as e:
+            self.logger.error(f"Failed to add virtual driver: {str(e)}")
+            return None

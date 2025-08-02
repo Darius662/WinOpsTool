@@ -2,7 +2,7 @@
 """Entry point for the WinOpsTool."""
 
 import sys
-from pathlib import Path
+import os
 from PyQt6.QtWidgets import QApplication, QMessageBox
 from PyQt6.QtCore import Qt
 from src.core.logger import setup_logger
@@ -64,7 +64,7 @@ def main():
 
         # Create and show main window
         logger.info('Creating main window')
-        window = MainWindow()
+        window = MainWindow()  
         logger.info('Main window created, showing window')
         window.show()
         logger.info('Main window shown')

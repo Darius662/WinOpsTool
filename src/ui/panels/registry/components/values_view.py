@@ -123,6 +123,52 @@ class ValuesView(QTreeWidget):
         else:
             return str(value)
     
+    def add_virtual_value(self, name, value, reg_type):
+        """Add a virtual registry value that doesn't exist in the system yet.
+        
+        This creates a visual entry for a registry value from the imported configuration
+        that doesn't exist in the system yet. The entry will be highlighted.
+        
+        Args:
+            name: Registry value name
+            value: Registry value
+            reg_type: Registry value type (string name, e.g., 'REG_SZ')
+            
+        Returns:
+            The created tree item
+        """
+        try:
+            # Format value for display based on type
+            if isinstance(value, str) and reg_type in ['REG_SZ', 'REG_EXPAND_SZ']:
+                value_str = value
+            elif isinstance(value, int) and reg_type == 'REG_DWORD':
+                value_str = f"0x{value:08x}"
+            elif isinstance(value, int) and reg_type == 'REG_QWORD':
+                value_str = f"0x{value:016x}"
+            elif isinstance(value, list) and reg_type == 'REG_MULTI_SZ':
+                value_str = ';'.join(value)
+            elif isinstance(value, bytes) and reg_type == 'REG_BINARY':
+                value_str = ' '.join(f'{b:02x}' for b in value)
+            else:
+                value_str = str(value)
+            
+            # Create value item
+            item = QTreeWidgetItem([name if name else "(Default)", reg_type, value_str])
+            
+            # Apply special styling for imported items
+            for col in range(3):
+                item.setBackground(col, Qt.GlobalColor.cyan)
+                item.setForeground(col, Qt.GlobalColor.darkBlue)
+                item.setFont(col, self.font())
+                item.setToolTip(col, "Imported from configuration file")
+                
+            self.addTopLevelItem(item)
+            return item
+            
+        except Exception as e:
+            self.logger.error(f"Error adding virtual registry value: {str(e)}")
+            return None
+    
     def _get_reg_type_name(self, reg_type):
         """Get registry type name from type value.
         

@@ -1,0 +1,44 @@
+applications:
+  processes:
+    start: []
+    stop: []
+  startup: []
+environment_variables:
+  system:
+    test: test
+  user:
+    test_user: test_user
+firewall:
+  inbound: []
+  outbound: []
+permissions:
+- inherit: false
+  owner: false
+  path: C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Git\Git Bash.lnk
+  permissions:
+  - Full Control
+  user: everyone
+- inherit: false
+  owner: false
+  path: C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Git
+  permissions:
+  - Full Control
+  user: Everyone
+registry: []
+services: []
+software:
+  install: []
+  uninstall: []
+users:
+  create:
+  - description: test user
+    fullname: test
+    groups:
+    - Administrator
+    password: '327487'
+    username: test
+  groups:
+  - description: tg for tool
+    members:
+    - test
+    name: test group

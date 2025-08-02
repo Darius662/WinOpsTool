@@ -16,6 +16,9 @@ class WelcomePanel(BasePanel):
         self.logger = logger
         super().__init__(parent)
         
+        # Initialize imported config items
+        self.imported_config_items = set()
+        
     def setup_ui(self):
         """Set up the welcome panel UI."""
         # Create a scroll area
@@ -107,3 +110,114 @@ class WelcomePanel(BasePanel):
         content_layout.addWidget(version_label)
         
         return content_widget
+        
+    def apply_config(self, config):
+        """Apply configuration to the panel.
+        
+        Args:
+            config: Dictionary containing configuration data
+            
+        Returns:
+            bool: True if configuration was applied successfully, False otherwise
+        """
+        self.logger.info("Applying welcome panel configuration")
+        
+        if not isinstance(config, dict):
+            self.logger.error("Invalid configuration format")
+            return False
+            
+        try:
+            # Process configuration
+            if 'welcome' not in config:
+                self.logger.warning("No welcome panel configuration found")
+                return False
+                
+            # The welcome panel is primarily informational and doesn't have
+            # configurable settings that need to be applied
+            # This method exists to satisfy the BasePanel interface
+            self.logger.info("Welcome panel configuration processed (no actions required)")
+            return True
+            
+        except Exception as e:
+            self.logger.error(f"Error applying welcome panel configuration: {str(e)}")
+            return False
+            
+    def export_config(self):
+        """Export panel configuration.
+        
+        Returns:
+            dict: Dictionary containing panel configuration
+        """
+        self.logger.info("Exporting welcome panel configuration")
+        
+        try:
+            # The welcome panel doesn't have any configurable settings to export
+            # Return an empty configuration dictionary with the panel key
+            config = {
+                'welcome': {}
+            }
+            
+            return config
+            
+        except Exception as e:
+            self.logger.error(f"Error exporting welcome panel configuration: {str(e)}")
+            return {'welcome': {}}
+
+    def mark_config_items(self, config):
+        """Mark items from configuration for highlighting without applying changes.
+        
+        This method identifies and marks items from the configuration
+        that would be modified by apply_config(), but does not actually
+        apply any changes to the system. Items will be visually highlighted in the UI.
+        
+        For the WelcomePanel, this is a placeholder implementation since there are no
+        configurable items that need to be highlighted.
+        
+        Args:
+            config: Dictionary containing configuration data
+            
+        Returns:
+            bool: True if items were marked successfully, False otherwise
+        """
+        self.logger.info("Marking welcome panel configuration items (no action required)")
+        
+        # Clear previous imported items
+        self.imported_config_items.clear()
+        
+        if not isinstance(config, dict):
+            self.logger.error("Invalid configuration format")
+            return False
+            
+        try:
+            # Check if welcome section exists
+            if 'welcome' not in config:
+                self.logger.warning("No welcome panel configuration found")
+                return False
+                
+            # The welcome panel is primarily informational and doesn't have
+            # configurable settings that need to be highlighted
+            self.logger.info("Welcome panel configuration processed (no highlighting required)")
+            return True
+            
+        except Exception as e:
+            self.logger.error(f"Error marking welcome panel configuration items: {str(e)}")
+            return False
+    
+    def mark_as_imported_config(self, item):
+        """Mark an item as imported from config for highlighting.
+        
+        Args:
+            item: Item to mark
+        """
+        self.imported_config_items.add(item)
+        
+    def is_imported_config_item(self, item):
+        """Check if an item is marked as imported from config.
+        
+        Args:
+            item: Item to check
+            
+        Returns:
+            bool: True if item is marked as imported, False otherwise
+        """
+        return item in self.imported_config_items

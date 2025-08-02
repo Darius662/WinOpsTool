@@ -6,7 +6,7 @@
 
 This suite consists of two complementary applications for comprehensive Windows system management:
 
-## 1. WinOpsTool (main.py)
+## 1. WinOpsTool (WinOpsTool.py)
 
 A powerful GUI application for managing and configuring Windows systems locally and remotely.
 
@@ -44,18 +44,24 @@ A powerful GUI application for managing and configuring Windows systems locally 
   - Browse Windows event logs
   - Filter and view event details
 - Remote PC Management
-- Configuration Import
+- Configuration Import/Export
+  - Import YAML configuration files for automated setup
+  - Export current settings to YAML configuration files
+  - Visual highlighting of imported configuration items
+  - Virtual entries for configuration items not present in the system
 - Logging and Error Handling
 - User-configurable log level
 
 ### Key Capabilities
 - Apply changes to multiple remote PCs simultaneously
 - Import configuration files for automated setup
+- Export current settings to configuration files
+- Visual distinction of imported configuration items and virtual entries
 - Backup and restore system settings
 - Elevated privileges handling
 - Modern Qt-based interface
 
-## 2. WinOpsInit (config_manager.py)
+## 2. WinOpsInit (WinOpsInit.py)
 
 <p align="center">
   <img src="assets/WinOpsInit.png" alt="WinOpsInit Logo" width="200">
@@ -168,8 +174,47 @@ To create standalone executables:
 
 - Stored in YAML format
 - Default template provided in `config/default.yaml`
+- Test configuration available in `config/test_config.yaml`
 - Can be edited manually or through WinOpsInit
 - Support all configurable aspects of the system
+- Imported configuration items are visually highlighted in the UI (cyan background, dark blue text)
+- Virtual entries are created for configuration items that don't exist in the system
+- Configuration is loaded manually by the user and only applied when explicitly requested
+- All panels support configuration import/export and highlighting
+
+### Configuration Format
+
+Configuration files use a structured YAML format with sections for each panel:
+
+```yaml
+# Example configuration structure
+users:
+  create:
+    - username: testuser
+      fullname: Test User
+      description: Test user account
+      password: SecurePassword123
+      groups:
+        - Users
+  groups:
+    - name: TestGroup
+      description: Test group
+      members:
+        - testuser
+
+services:
+  - name: Spooler
+    start_type: Auto
+    state: Running
+
+environment_variables:
+  system:
+    - name: TEST_VAR
+      value: test_value
+  user:
+    - name: USER_VAR
+      value: user_value
+```
 
 ## Architecture
 

@@ -131,6 +131,81 @@ class InterfacesTree(QTreeWidget):
         """
         items = self.findItems(name, Qt.MatchFlag.MatchExactly, 0)
         return items[0] if items else None
+        
+    def add_virtual_interface(self, name, type="Unknown", manufacturer="", mac="", ipv4="", ipv6="",
+                            speed=0, mtu=0, up=False):
+        """Add a virtual network interface entry from imported configuration.
+        
+        A virtual interface represents an interface from the imported configuration
+        that doesn't exist in the system yet or needs to be modified. It will be 
+        highlighted to indicate it's from the imported configuration.
+        
+        Args:
+            name: Interface name
+            type: Adapter type
+            manufacturer: Manufacturer
+            mac: MAC address
+            ipv4: IPv4 address
+            ipv6: IPv6 address
+            speed: Speed in Mbps
+            mtu: MTU size
+            up: Whether interface is up
+            
+        Returns:
+            QTreeWidgetItem: Created tree item
+        """
+        item = QTreeWidgetItem([
+            name,
+            type,
+            manufacturer,
+            mac,
+            ipv4,
+            ipv6,
+            str(speed) if speed > 0 else "Unknown",
+            str(mtu) if mtu > 0 else "Unknown",
+            "Up (Virtual)" if up else "Down (Virtual)",
+            "N/A",  # Sent MB
+            "N/A"   # Received MB
+        ])
+        
+        # Right-align numeric columns
+        item.setTextAlignment(6, Qt.AlignmentFlag.AlignRight)  # Speed
+        item.setTextAlignment(7, Qt.AlignmentFlag.AlignRight)  # MTU
+        item.setTextAlignment(9, Qt.AlignmentFlag.AlignRight)  # Sent
+        item.setTextAlignment(10, Qt.AlignmentFlag.AlignRight) # Received
+        
+        # Apply highlighting for virtual item
+        self.highlight_item(item, is_virtual=True)
+        
+        self.addTopLevelItem(item)
+        return item
+    
+    def highlight_item(self, item, is_virtual=False):
+        """Highlight an item to indicate it's from imported configuration.
+        
+        Args:
+            item: QTreeWidgetItem to highlight
+            is_virtual: Whether this is a virtual entry (not in system yet)
+        """
+        for col in range(self.columnCount()):
+            item.setBackground(col, Qt.GlobalColor.cyan)
+            item.setForeground(col, Qt.GlobalColor.darkBlue)
+            
+            if is_virtual:
+                item.setToolTip(col, "Virtual interface from configuration file (not applied yet)")
+            else:
+                item.setToolTip(col, "Imported from configuration file")
+    
+    def get_all_items(self):
+        """Get all items in the tree.
+        
+        Returns:
+            list: List of all QTreeWidgetItems
+        """
+        items = []
+        for i in range(self.topLevelItemCount()):
+            items.append(self.topLevelItem(i))
+        return items
 
 
 class ConnectionsTree(QTreeWidget):
@@ -200,6 +275,89 @@ class ConnectionsTree(QTreeWidget):
         
         self.addTopLevelItem(item)
         return item
+        
+    def add_virtual_connection(self, protocol, local_address, remote_address,
+                             status="Unknown", pid="N/A", process="Virtual"):
+        """Add a virtual network connection entry from imported configuration.
+        
+        A virtual connection represents a connection from the imported configuration
+        that doesn't exist in the system yet. It will be highlighted to indicate
+        it's from the imported configuration.
+        
+        Args:
+            protocol: Protocol (TCP/UDP)
+            local_address: Local address:port
+            remote_address: Remote address:port
+            status: Connection status
+            pid: Process ID
+            process: Process name
+            
+        Returns:
+            QTreeWidgetItem: Created tree item
+        """
+        item = QTreeWidgetItem([
+            protocol,
+            local_address,
+            remote_address,
+            status,
+            pid,
+            process
+        ])
+        
+        # Right-align PID column
+        item.setTextAlignment(4, Qt.AlignmentFlag.AlignRight)
+        
+        # Apply highlighting for virtual item
+        self.highlight_item(item, is_virtual=True)
+        
+        self.addTopLevelItem(item)
+        return item
+    
+    def highlight_item(self, item, is_virtual=False):
+        """Highlight an item to indicate it's from imported configuration.
+        
+        Args:
+            item: QTreeWidgetItem to highlight
+            is_virtual: Whether this is a virtual entry (not in system yet)
+        """
+        for col in range(self.columnCount()):
+            item.setBackground(col, Qt.GlobalColor.cyan)
+            item.setForeground(col, Qt.GlobalColor.darkBlue)
+            
+            if is_virtual:
+                item.setToolTip(col, "Virtual connection from configuration file (not applied yet)")
+            else:
+                item.setToolTip(col, "Imported from configuration file")
+    
+    def get_all_items(self):
+        """Get all items in the tree.
+        
+        Returns:
+            list: List of all QTreeWidgetItems
+        """
+        items = []
+        for i in range(self.topLevelItemCount()):
+            items.append(self.topLevelItem(i))
+        return items
+        
+    def find_connection(self, protocol, local_address, remote_address):
+        """Find a connection by protocol and addresses.
+        
+        Args:
+            protocol: Protocol (TCP/UDP)
+            local_address: Local address:port
+            remote_address: Remote address:port
+            
+        Returns:
+            QTreeWidgetItem: Found item or None
+        """
+        for i in range(self.topLevelItemCount()):
+            item = self.topLevelItem(i)
+            if (item.text(0) == protocol and 
+                item.text(1) == local_address and 
+                item.text(2) == remote_address):
+                return item
+        return None
         
     def clear_connections(self):
         """Clear all connections from the tree."""

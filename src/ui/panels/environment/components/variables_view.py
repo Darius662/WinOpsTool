@@ -156,6 +156,54 @@ class VariablesView(QWidget):
         self.user_tree.clear()
         self.system_tree.clear()
         
+    def add_virtual_user_variable(self, name, value):
+        """Add a virtual user variable that doesn't exist in the system yet.
+        
+        This creates a visual entry for a variable from the imported configuration
+        that doesn't exist in the system yet. The entry will be highlighted.
+        
+        Args:
+            name: Variable name
+            value: Variable value
+            
+        Returns:
+            The created tree item
+        """
+        item = self.user_tree.add_variable(name, value)
+        
+        # Apply special styling for imported items
+        for col in range(2):
+            item.setBackground(col, Qt.GlobalColor.cyan)
+            item.setForeground(col, Qt.GlobalColor.darkBlue)
+            item.setFont(col, self.font())
+            item.setToolTip(col, "Imported from configuration file")
+            
+        return item
+        
+    def add_virtual_system_variable(self, name, value):
+        """Add a virtual system variable that doesn't exist in the system yet.
+        
+        This creates a visual entry for a variable from the imported configuration
+        that doesn't exist in the system yet. The entry will be highlighted.
+        
+        Args:
+            name: Variable name
+            value: Variable value
+            
+        Returns:
+            The created tree item
+        """
+        item = self.system_tree.add_variable(name, value)
+        
+        # Apply special styling for imported items
+        for col in range(2):
+            item.setBackground(col, Qt.GlobalColor.cyan)
+            item.setForeground(col, Qt.GlobalColor.darkBlue)
+            item.setFont(col, self.font())
+            item.setToolTip(col, "Imported from configuration file")
+            
+        return item
+        
     def has_selection(self):
         """Check if any tree has a selection.
         

@@ -69,6 +69,45 @@ class ServiceOperations:
             self.logger.error(f"Failed to refresh services: {str(e)}")
             if self.dialog_factory:
                 self.dialog_factory.show_error("Failed to refresh services list")
+    
+    def refresh_services_with_highlighting(self):
+        """Refresh the services list with highlighting for imported items."""
+        try:
+            # Clear and repopulate tree
+            if not self.services_tree:
+                self.logger.error("Services tree not initialized")
+                return
+                
+            self.services_tree.clear_services()
+            services = self.manager.get_services()
+            
+            for service in services:
+                # Check if this service was imported from configuration
+                is_imported = False
+                if hasattr(self.panel, 'is_imported_config_item'):
+                    is_imported = self.panel.is_imported_config_item(f"service:{service['name']}")
+                
+                # Add service to tree with highlighting if imported
+                self.services_tree.add_service(
+                    service['name'],
+                    service['display_name'],
+                    service['description'],
+                    service['state'],
+                    service['start_type'],
+                    service['path'],
+                    service['account'],
+                    is_imported=is_imported
+                )
+                
+            # Reapply filter if search text exists
+            if hasattr(self.panel, 'search_edit') and self.panel.search_edit.text():
+                self.filter_services(self.panel.search_edit.text())
+                
+            self.logger.info("Refreshed services list with highlighting")
+        except Exception as e:
+            self.logger.error(f"Failed to refresh services: {str(e)}")
+            if self.dialog_factory:
+                self.dialog_factory.show_error("Failed to refresh services list")
             
     def filter_services(self, text):
         """Filter services by name or display name.
