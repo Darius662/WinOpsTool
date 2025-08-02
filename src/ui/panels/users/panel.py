@@ -437,35 +437,53 @@ class UsersPanel(BasePanel):
     def refresh_lists(self):
         """Refresh users and groups lists."""
         try:
-            # Clear trees
+            # Clear existing lists
             self.users_tree.clear_users()
             self.groups_tree.clear_groups()
             
-            # Refresh users
-            for user in self.user_manager.get_users():
+            # Get users and groups
+            users = self.user_manager.get_users()
+            groups = self.group_manager.get_groups()
+            
+            # Add users to tree
+            for user in users:
+                # Skip system accounts
+                if user['name'].endswith('$'):
+                    continue
+                    
+                # Check if this user was imported from configuration
+                is_imported = self.is_imported_config_item(f"user:{user['name']}")
+                
+                # Add user to tree with highlighting if imported
                 self.users_tree.add_user(
                     user['name'],
                     user.get('full_name', ''),
                     user.get('comment', ''),
-                    bool(user.get('flags', 0) & win32netcon.UF_ACCOUNTDISABLE)
+                    bool(user.get('flags', 0) & win32netcon.UF_ACCOUNTDISABLE),
+                    is_imported=is_imported
                 )
-                    
-            # Refresh groups
-            for group in self.group_manager.get_groups():
+                
+            # Add groups to tree
+            for group in groups:
+                # Check if this group was imported from configuration
+                is_imported = self.is_imported_config_item(f"group:{group['name']}")
+                
+                # Add group to tree with highlighting if imported
                 self.groups_tree.add_group(
                     group['name'],
                     group.get('comment', ''),
-                    group.get('members', [])
+                    group.get('members', []),
+                    is_imported=is_imported
                 )
-                    
+                
             self.logger.info("Refreshed users and groups lists")
             
         except Exception as e:
-            self.logger.error(f"Failed to refresh lists: {str(e)}")
+            self.logger.error(f"Error refreshing users and groups lists: {str(e)}")
             QMessageBox.critical(
                 self,
                 "Error",
-                f"Failed to refresh lists: {str(e)}"
+                f"Error refreshing users and groups lists: {str(e)}"
             )
             
     def update_remote_state(self, connected):
@@ -476,3 +494,300 @@ class UsersPanel(BasePanel):
         """
         # Enable/disable controls based on connection state
         self.setEnabled(not connected)  # Disable local user management when remote
+        
+    def apply_config(self, config):
+        """Apply configuration to the panel.
+        
+        Args:
+            config: Dictionary containing configuration data
+            
+        Returns:
+            bool: True if configuration was applied successfully, False otherwise
+        """
+        self.logger.info("Applying users and groups configuration")
+        
+        try:
+            success = False
+            
+            # Process users configuration
+            if 'users' in config and isinstance(config['users'], dict) and 'create' in config['users']:
+                user_list = config['users']['create']
+                if isinstance(user_list, list):
+                    for user_config in user_list:
+                        if not isinstance(user_config, dict):
+                            continue
+                            
+                        # Check required fields
+                        if 'username' not in user_config:
+                            self.logger.warning("Skipping user without username")
+                            continue
+                            
+                        username = user_config['username']
+                        fullname = user_config.get('fullname', '')
+                        description = user_config.get('description', '')
+                        password = user_config.get('password', '')
+                        groups = user_config.get('groups', [])
+                        
+                        # Check if user exists
+                        user_exists = self.user_manager.user_exists(username)
+                        
+                        if user_exists:
+                            # Update existing user
+                            self.logger.info(f"Updating existing user: {username}")
+                            result = self.user_manager.update_user(
+                                username,
+                                fullname=fullname,
+                                description=description,
+                                groups=groups
+                            )
+                            
+                            if not result:
+                                self.logger.warning(f"Failed to update user: {username}")
+                        else:
+                            # Create new user
+                            self.logger.info(f"Creating new user: {username}")
+                            result = self.user_manager.add_user(
+                                username,
+                                password=password,
+                                fullname=fullname,
+                                description=description,
+                                groups=groups
+                            )
+                            
+                            if not result:
+                                self.logger.warning(f"Failed to create user: {username}")
+                        
+                        # Mark this user as imported from config for highlighting
+                        if result:
+                            self.mark_as_imported_config(f"user:{username}")
+                        
+                        success = success or result
+            
+            # Process groups configuration
+            if 'users' in config and isinstance(config['users'], dict) and 'groups' in config['users']:
+                group_list = config['users']['groups']
+                if isinstance(group_list, list):
+                    for group_config in group_list:
+                        if not isinstance(group_config, dict):
+                            continue
+                            
+                        # Check required fields
+                        if 'name' not in group_config:
+                            self.logger.warning("Skipping group without name")
+                            continue
+                            
+                        name = group_config['name']
+                        description = group_config.get('description', '')
+                        members = group_config.get('members', [])
+                        
+                        # Check if group exists
+                        group_exists = self.group_manager.group_exists(name)
+                        
+                        if group_exists:
+                            # Update existing group
+                            self.logger.info(f"Updating existing group: {name}")
+                            result = self.group_manager.update_group(
+                                name,
+                                description=description,
+                                members=members
+                            )
+                            
+                            if not result:
+                                self.logger.warning(f"Failed to update group: {name}")
+                        else:
+                            # Create new group
+                            self.logger.info(f"Creating new group: {name}")
+                            result = self.group_manager.add_group(
+                                name,
+                                description=description,
+                                members=members
+                            )
+                            
+                            if not result:
+                                self.logger.warning(f"Failed to create group: {name}")
+                        
+                        # Mark this group as imported from config for highlighting
+                        if result:
+                            self.mark_as_imported_config(f"group:{name}")
+                        
+                        success = success or result
+            
+            # Refresh the view to show updated users and groups
+            self.refresh_lists()
+            return success
+            
+        except Exception as e:
+            self.logger.error(f"Error applying users and groups configuration: {str(e)}")
+            return False
+            
+    def export_config(self):
+        """Export panel configuration.
+        
+        Returns:
+            dict: Dictionary containing panel configuration
+        """
+        self.logger.info("Exporting users and groups configuration")
+        
+        try:
+            config = {
+                'users': [],
+                'groups': []
+            }
+            
+            # Export users (excluding built-in and system accounts)
+            for user in self.user_manager.get_users():
+                # Skip system accounts
+                if user['name'].endswith('$') or user['name'] in ['Administrator', 'Guest', 'DefaultAccount']:
+                    continue
+                    
+                user_config = {
+                    'name': user['name'],
+                    'full_name': user.get('full_name', ''),
+                    'description': user.get('comment', ''),
+                    'disabled': bool(user.get('flags', 0) & win32netcon.UF_ACCOUNTDISABLE)
+                }
+                
+                config['users'].append(user_config)
+                
+            # Export groups (excluding built-in and system groups)
+            for group in self.group_manager.get_groups():
+                # Skip system groups
+                if group['name'] in ['Administrators', 'Users', 'Guests', 'Power Users']:
+                    continue
+                    
+                group_config = {
+                    'name': group['name'],
+                    'description': group.get('comment', ''),
+                    'members': group.get('members', [])
+                }
+                
+                config['groups'].append(group_config)
+                
+            return config
+            
+        except Exception as e:
+            self.logger.error(f"Error exporting users and groups configuration: {str(e)}")
+            return {'users': [], 'groups': []}
+
+    def mark_config_items(self, config):
+        """Mark items from configuration for highlighting without applying changes.
+        
+        This method identifies and marks users and groups from the configuration
+        that would be created or modified by apply_config(), but does not actually
+        apply any changes to the system. Items will be visually highlighted in the UI.
+        
+        Args:
+            config: Dictionary containing configuration data
+            
+        Returns:
+            bool: True if items were marked successfully, False otherwise
+        """
+        self.logger.info("Marking users and groups from configuration for highlighting")
+        
+        try:
+            # Clear previous imported items
+            self.imported_config_items.clear()
+            
+            if not isinstance(config, dict):
+                self.logger.error("Invalid configuration format")
+                return False
+                
+            # Extract users configuration
+            users_config = config.get('users', {})
+            
+            if not users_config:
+                self.logger.warning("No users configuration found")
+                return True
+                
+            # Mark users to be created
+            if 'create' in users_config and isinstance(users_config['create'], list):
+                for user_config in users_config['create']:
+                    if isinstance(user_config, dict):
+                        # The config file uses 'username' key
+                        username = user_config.get('username')
+                        if username:
+                            self.mark_as_imported_config(f"user:{username}")
+                            self.logger.info(f"Marked user for creation: {username}")
+            
+            # Mark users to be modified
+            if 'modify' in users_config and isinstance(users_config['modify'], list):
+                for user_config in users_config['modify']:
+                    if isinstance(user_config, dict) and 'username' in user_config:
+                        username = user_config['username']
+                        self.mark_as_imported_config(f"user:{username}")
+                        self.logger.info(f"Marked user for modification: {username}")
+            
+            # Mark users to be deleted
+            if 'delete' in users_config and isinstance(users_config['delete'], list):
+                for username in users_config['delete']:
+                    if isinstance(username, str):
+                        self.mark_as_imported_config(f"user:{username}")
+                        self.logger.info(f"Marked user for deletion: {username}")
+            
+            # Mark groups to be created or modified
+            if 'groups' in users_config and isinstance(users_config['groups'], list):
+                for group_config in users_config['groups']:
+                    if isinstance(group_config, dict) and 'name' in group_config:
+                        name = group_config['name']
+                        self.mark_as_imported_config(f"group:{name}")
+                        self.logger.info(f"Marked group: {name}")
+            
+            # Refresh the view to show highlighted users and groups
+            self.refresh_lists()
+            
+            # Check if we need to create virtual entries for users/groups that don't exist yet
+            self.add_virtual_entries_for_config(users_config)
+            
+            return True
+            
+        except Exception as e:
+            self.logger.error(f"Error marking users and groups from configuration: {str(e)}")
+            return False
+            
+    def add_virtual_entries_for_config(self, users_config):
+        """Add virtual entries for users and groups that don't exist yet.
+        
+        This method adds entries to the UI for users and groups that are in the
+        configuration but don't exist in the system yet.
+        
+        Args:
+            users_config: Dictionary containing users configuration
+        """
+        try:
+            # Add virtual entries for users to be created
+            if 'create' in users_config and isinstance(users_config['create'], list):
+                for user_config in users_config['create']:
+                    if isinstance(user_config, dict):
+                        username = user_config.get('username')
+                        if username:
+                            # Check if user already exists in the system
+                            if not self.user_manager.user_exists(username):
+                                # Add virtual entry for user
+                                self.users_tree.add_user(
+                                    username,
+                                    user_config.get('fullname', ''),
+                                    user_config.get('description', ''),
+                                    False,  # Not disabled
+                                    is_imported=True  # Mark as imported
+                                )
+                                self.logger.info(f"Added virtual entry for user: {username}")
+            
+            # Add virtual entries for groups to be created
+            if 'groups' in users_config and isinstance(users_config['groups'], list):
+                for group_config in users_config['groups']:
+                    if isinstance(group_config, dict):
+                        name = group_config.get('name')
+                        if name:
+                            # Check if group already exists in the system
+                            if not self.group_manager.group_exists(name):
+                                # Add virtual entry for group
+                                self.groups_tree.add_group(
+                                    name,
+                                    group_config.get('description', ''),
+                                    group_config.get('members', []),
+                                    is_imported=True  # Mark as imported
+                                )
+                                self.logger.info(f"Added virtual entry for group: {name}")
+                                
+        except Exception as e:
+            self.logger.error(f"Error adding virtual entries for configuration: {str(e)}")

@@ -1,6 +1,7 @@
 """Tree widget for Windows Services."""
 from PyQt6.QtWidgets import QTreeWidget, QTreeWidgetItem
 from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QFont
 from src.core.logger import setup_logger
 
 class ServicesTree(QTreeWidget):
@@ -44,7 +45,7 @@ class ServicesTree(QTreeWidget):
         self.sortByColumn(1, Qt.SortOrder.AscendingOrder)
         
     def add_service(self, name, display_name, description, state,
-                  start_type, path, account):
+                  start_type, path, account, is_imported=False):
         """Add a service to the tree.
         
         Args:
@@ -55,6 +56,7 @@ class ServicesTree(QTreeWidget):
             start_type: Startup type
             path: Binary path
             account: Account name
+            is_imported: Whether this service was imported from configuration
             
         Returns:
             QTreeWidgetItem: Created tree item
@@ -68,21 +70,44 @@ class ServicesTree(QTreeWidget):
             path,
             account
         ])
+        
+        # Apply special styling for imported items
+        if is_imported:
+            for col in range(7):
+                item.setBackground(col, Qt.GlobalColor.cyan)
+                item.setForeground(col, Qt.GlobalColor.darkBlue)
+                item.setFont(col, self.font())
+                item.setToolTip(col, "Imported from configuration file")
+                
         self.addTopLevelItem(item)
         return item
         
-    def update_service(self, item, state=None, start_type=None):
+    def update_service(self, item, state=None, start_type=None, is_imported=None):
         """Update a service in the tree.
         
         Args:
             item: QTreeWidgetItem to update
             state: New state (optional)
             start_type: New startup type (optional)
+            is_imported: Whether this service was imported from configuration
         """
         if state is not None:
             item.setText(3, state)
         if start_type is not None:
             item.setText(4, start_type)
+            
+        # Apply special styling for imported items
+        if is_imported is not None:
+            for col in range(7):
+                if is_imported:
+                    item.setBackground(col, Qt.GlobalColor.cyan)
+                    item.setForeground(col, Qt.GlobalColor.darkBlue)
+                    item.setFont(col, self.font())
+                    item.setToolTip(col, "Imported from configuration file")
+                else:
+                    item.setBackground(col, Qt.GlobalColor.transparent)
+                    item.setForeground(col, Qt.GlobalColor.black)
+                    item.setToolTip(col, "")
             
     def get_service(self, item):
         """Get service details from tree item.

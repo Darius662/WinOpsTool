@@ -46,6 +46,11 @@ class EventsPanel(BasePanel):
             'max_events': 100
         }
         self.load_worker = None
+        
+        # Initialize imported config items
+        self.imported_config_items = set()
+        self.current_config = None
+        
         super().__init__(parent)
         
     def setup_ui(self):
@@ -446,3 +451,234 @@ class EventsPanel(BasePanel):
                 self.load_worker.wait()
         except Exception as e:
             self.logger.error(f"Error during cleanup: {e}")
+            
+    def apply_config(self, config):
+        """Apply configuration to the panel.
+        
+        Args:
+            config: Dictionary containing configuration data
+            
+        Returns:
+            bool: True if configuration was applied successfully, False otherwise
+        """
+        self.logger.info("Applying events panel configuration")
+        
+        if not isinstance(config, dict):
+            self.logger.error("Invalid configuration format")
+            return False
+            
+        try:
+            # Process configuration
+            if 'events' not in config:
+                self.logger.warning("No events panel configuration found")
+                return False
+                
+            events_config = config['events']
+            success = True
+            
+            # Apply event filter settings if available
+            if 'filter_settings' in events_config and isinstance(events_config['filter_settings'], dict):
+                filter_settings = events_config['filter_settings']
+                
+                # Update filter settings
+                if 'hours_back' in filter_settings:
+                    self.filter_settings['hours_back'] = filter_settings['hours_back']
+                    
+                if 'max_events' in filter_settings:
+                    self.filter_settings['max_events'] = filter_settings['max_events']
+                    
+                if 'level_filter' in filter_settings:
+                    self.filter_settings['level_filter'] = filter_settings['level_filter']
+                
+                # Refresh events with new filter settings
+                self.refresh_events()
+            
+            # Apply log selection if available
+            if 'current_log' in events_config:
+                log_name = events_config['current_log']
+                # Find the log in the tree and select it
+                for i in range(self.logs_tree.topLevelItemCount()):
+                    item = self.logs_tree.topLevelItem(i)
+                    if self._find_log_item_by_name(item, log_name):
+                        # Log found, select it
+                        self.current_log = log_name
+                        self.refresh_events()
+                        break
+            
+            # Clear imported config items since they've been applied
+            self.imported_config_items.clear()
+            self.current_config = None
+            
+            return success
+            
+        except Exception as e:
+            self.logger.error(f"Error applying events panel configuration: {str(e)}")
+            return False
+            
+    def export_config(self):
+        """Export panel configuration.
+        
+        Returns:
+            dict: Dictionary containing panel configuration
+        """
+        self.logger.info("Exporting events panel configuration")
+        
+        try:
+            # Create configuration dictionary
+            config = {
+                'events': {
+                    'current_log': self.current_log,
+                    'filter_settings': {
+                        'hours_back': self.filter_settings.get('hours_back', 24),
+                        'max_events': self.filter_settings.get('max_events', 100),
+                        'level_filter': self.filter_settings.get('level_filter', [1, 2, 3, 4])
+                    }
+                }
+            }
+            
+            return config
+            
+        except Exception as e:
+            self.logger.error(f"Error exporting events panel configuration: {str(e)}")
+            return {'events': {}}
+            
+    def mark_config_items(self, config):
+        """Mark items from configuration for highlighting without applying changes.
+        
+        This method identifies and marks event settings from the configuration
+        that would be modified by apply_config(), but does not actually
+        apply any changes to the system. Items will be visually highlighted in the UI.
+        
+        Args:
+            config: Dictionary containing configuration data
+            
+        Returns:
+            bool: True if items were marked successfully, False otherwise
+        """
+        self.logger.info("Marking events panel configuration items")
+        
+        # Clear previous imported items
+        self.imported_config_items.clear()
+        
+        if not isinstance(config, dict):
+            self.logger.error("Invalid configuration format")
+            return False
+            
+        try:
+            # Check if events section exists
+            if 'events' not in config:
+                self.logger.warning("No events panel configuration found")
+                return False
+                
+            # Store the current configuration for use in virtual event items
+            self.current_config = config
+                
+            events_config = config['events']
+            
+            # Mark filter settings if available
+            if 'filter_settings' in events_config:
+                self.mark_as_imported_config("events:filter_settings")
+                
+            # Mark current log selection if available
+            if 'current_log' in events_config:
+                self.mark_as_imported_config(f"events:log:{events_config['current_log']}")
+                
+            # Process event filters configuration if available
+            if 'event_filters' in events_config and isinstance(events_config['event_filters'], list):
+                self.logger.info(f"Found {len(events_config['event_filters'])} event filters in configuration")
+                
+                # Process each event filter
+                for event_filter in events_config['event_filters']:
+                    if not isinstance(event_filter, dict):
+                        self.logger.warning("Skipping invalid event filter configuration")
+                        continue
+                        
+                    # Mark this event filter as imported from config for highlighting
+                    filter_id = event_filter.get('id', 'unknown')
+                    self.mark_as_imported_config(f"events:filter:{filter_id}")
+            
+            # Process virtual events if available
+            if 'virtual_events' in events_config and isinstance(events_config['virtual_events'], list):
+                self.logger.info(f"Found {len(events_config['virtual_events'])} virtual events in configuration")
+                
+                # Add virtual events to the tree
+                for event_data in events_config['virtual_events']:
+                    if not isinstance(event_data, dict):
+                        self.logger.warning("Skipping invalid virtual event configuration")
+                        continue
+                        
+                    # Add virtual event
+                    self.add_virtual_event(event_data)
+                    
+                    # Mark this event as imported from config for highlighting
+                    event_id = event_data.get('id', 'unknown')
+                    self.mark_as_imported_config(f"events:event:{event_id}")
+                
+            return True
+            
+        except Exception as e:
+            self.logger.error(f"Error marking events panel configuration items: {str(e)}")
+            return False
+    
+    def mark_as_imported_config(self, item):
+        """Mark an item as imported from config for highlighting.
+        
+        Args:
+            item: Item to mark
+        """
+        self.imported_config_items.add(item)
+        
+    def is_imported_config_item(self, item):
+        """Check if an item is marked as imported from config.
+        
+        Args:
+            item: Item to check
+            
+        Returns:
+            bool: True if item is marked as imported, False otherwise
+        """
+        return item in self.imported_config_items
+        
+    def add_virtual_event(self, event_data):
+        """Add a virtual event from imported configuration.
+        
+        Args:
+            event_data: Dictionary containing event data
+            
+        Returns:
+            QTreeWidgetItem: Created tree item or None if failed
+        """
+        try:
+            # Add virtual event to tree
+            item = self.event_tree.add_virtual_event(event_data)
+            
+            if item:
+                self.logger.info(f"Added virtual event: {event_data.get('id', 'unknown')}")
+            
+            return item
+            
+        except Exception as e:
+            self.logger.error(f"Failed to add virtual event: {str(e)}")
+            return None
+            
+    def _find_log_item_by_name(self, item, name):
+        """Recursively find a log item by name in the logs tree.
+        
+        Args:
+            item: QTreeWidgetItem to start search from
+            name: Log name to find
+            
+        Returns:
+            QTreeWidgetItem: Found item or None
+        """
+        # Check if this item matches
+        if item.text(0) == name:
+            return item
+            
+        # Check children
+        for i in range(item.childCount()):
+            found = self._find_log_item_by_name(item.child(i), name)
+            if found:
+                return found
+                
+        return None

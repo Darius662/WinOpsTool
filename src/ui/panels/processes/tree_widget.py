@@ -46,7 +46,7 @@ class ProcessesTree(QTreeWidget):
         self.sortByColumn(2, Qt.SortOrder.DescendingOrder)  # Sort by CPU % by default
         
     def add_process(self, pid, name, cpu_percent, memory_percent,
-                  status, threads, username, priority):
+                  status, threads, username, priority, highlight=False):
         """Add a process to the tree.
         
         Args:
@@ -58,6 +58,7 @@ class ProcessesTree(QTreeWidget):
             threads: Thread count
             username: User name
             priority: Priority class
+            highlight: Whether to highlight this item as imported from config
             
         Returns:
             QTreeWidgetItem: Created tree item
@@ -78,6 +79,53 @@ class ProcessesTree(QTreeWidget):
         item.setTextAlignment(2, Qt.AlignmentFlag.AlignRight)  # CPU %
         item.setTextAlignment(3, Qt.AlignmentFlag.AlignRight)  # Memory %
         item.setTextAlignment(5, Qt.AlignmentFlag.AlignRight)  # Threads
+        
+        # Apply highlighting if this is an imported config item
+        if highlight:
+            for col in range(self.columnCount()):
+                item.setBackground(col, Qt.GlobalColor.cyan)
+                item.setForeground(col, Qt.GlobalColor.darkBlue)
+                item.setToolTip(col, "Imported from configuration file")
+        
+        self.addTopLevelItem(item)
+        return item
+        
+    def add_virtual_process(self, name, priority):
+        """Add a virtual process entry that doesn't exist in the system yet.
+        
+        This creates a visual entry for a process from the imported configuration
+        that doesn't exist in the system yet. The entry will be highlighted.
+        
+        Args:
+            name: Process name
+            priority: Priority class
+            
+        Returns:
+            QTreeWidgetItem: Created tree item
+        """
+        # Use placeholder values for virtual process
+        item = QTreeWidgetItem([
+            "N/A",  # PID
+            name,
+            "N/A",  # CPU %
+            "N/A",  # Memory %
+            "Not Running",  # Status
+            "N/A",  # Threads
+            "N/A",  # Username
+            priority
+        ])
+        
+        # Right-align numeric columns
+        item.setTextAlignment(0, Qt.AlignmentFlag.AlignRight)  # PID
+        item.setTextAlignment(2, Qt.AlignmentFlag.AlignRight)  # CPU %
+        item.setTextAlignment(3, Qt.AlignmentFlag.AlignRight)  # Memory %
+        item.setTextAlignment(5, Qt.AlignmentFlag.AlignRight)  # Threads
+        
+        # Apply highlighting for virtual item
+        for col in range(self.columnCount()):
+            item.setBackground(col, Qt.GlobalColor.cyan)
+            item.setForeground(col, Qt.GlobalColor.darkBlue)
+            item.setToolTip(col, "Virtual entry from configuration file (not currently running)")
         
         self.addTopLevelItem(item)
         return item

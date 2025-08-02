@@ -122,3 +122,60 @@ class StartupTree(QTreeWidget):
             if item.text(2) == location:
                 return item
         return None
+
+    def add_virtual_entry(self, name, command, location, entry_type):
+        """Add a virtual startup entry to the tree.
+        
+        A virtual entry represents an entry from the imported configuration
+        that doesn't exist in the system yet. It will be highlighted to
+        indicate it's from the imported configuration.
+        
+        Args:
+            name: Entry name
+            command: Command or path
+            location: Registry key or folder
+            entry_type: Type (Registry, Shortcut, Service)
+            
+        Returns:
+            QTreeWidgetItem: Created tree item
+        """
+        item = QTreeWidgetItem([
+            name,
+            command,
+            location,
+            entry_type,
+            "Virtual (Not Applied)"
+        ])
+        
+        # Apply highlighting for virtual item
+        self.highlight_item(item, is_virtual=True)
+        
+        self.addTopLevelItem(item)
+        return item
+        
+    def highlight_item(self, item, is_virtual=False):
+        """Highlight an item to indicate it's from imported configuration.
+        
+        Args:
+            item: QTreeWidgetItem to highlight
+            is_virtual: Whether this is a virtual entry (not in system yet)
+        """
+        for col in range(self.columnCount()):
+            item.setBackground(col, Qt.GlobalColor.cyan)
+            item.setForeground(col, Qt.GlobalColor.darkBlue)
+            
+            if is_virtual:
+                item.setToolTip(col, "Virtual entry from configuration file (not in system yet)")
+            else:
+                item.setToolTip(col, "Imported from configuration file")
+    
+    def get_all_items(self):
+        """Get all items in the tree.
+        
+        Returns:
+            list: List of all QTreeWidgetItems
+        """
+        items = []
+        for i in range(self.topLevelItemCount()):
+            items.append(self.topLevelItem(i))
+        return items

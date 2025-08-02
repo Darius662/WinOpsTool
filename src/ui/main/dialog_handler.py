@@ -100,7 +100,12 @@ class DialogHandler:
         return filename
         
     def import_configuration(self):
-        """Import and apply configuration from a YAML file."""
+        """Import configuration from a YAML file without applying changes.
+        
+        This method loads the configuration from a YAML file and updates the UI
+        to show what would be changed, but does not apply the changes to the system.
+        The changes will only be applied when the user selects "Apply Config" from the menu.
+        """
         filename = self.get_open_filename(
             "Import Configuration",
             "YAML files (*.yaml *.yml);;All files (*.*)"
@@ -116,22 +121,17 @@ class DialogHandler:
             if not isinstance(config, dict):
                 raise ValueError("Invalid configuration format")
                 
-            # Apply configuration to current panel
-            current_panel = self.parent.panel_manager.get_current_panel()
-            if not current_panel:
-                return
-                
-            panel_name = self.parent.panel_manager.get_current_panel_name()
+            # Store the configuration in the main window
+            self.parent.set_config(config)
             
-            if hasattr(current_panel, 'apply_config'):
-                current_panel.apply_config(config)
-                self.logger.info(f"Configuration imported for {panel_name}")
-            else:
-                self.logger.warning(f"Panel {panel_name} does not support configuration import")
-                self.show_error(
-                    "Warning",
-                    f"The {panel_name} panel does not support configuration import"
-                )
+            self.logger.info(f"Configuration imported from {filename}")
+            QMessageBox.information(
+                self.parent,
+                "Configuration Imported",
+                f"Configuration has been imported from {filename}.\n\n"
+                "Items that would be changed are now highlighted in each panel.\n"
+                "To apply these changes, select 'Apply Config' from the File menu."
+            )
                 
         except Exception as e:
             self.logger.error(f"Failed to import configuration: {str(e)}")
@@ -139,3 +139,97 @@ class DialogHandler:
                 "Error",
                 f"Failed to import configuration: {str(e)}"
             )
+            
+    def export_configuration(self):
+        """Export configuration to a YAML file."""
+        filename, _ = QFileDialog.getSaveFileName(
+            self.parent,
+            "Export Configuration",
+            "",
+            "YAML files (*.yaml);;All files (*.*)"
+        )
+        
+        if not filename:
+            return
+            
+        try:
+            # Get configuration from all panels
+            config = {}
+            
+            for panel_name, panel in self.parent.panel_manager.panels.items():
+                if hasattr(panel, 'export_config'):
+                    panel_config = panel.export_config()
+                    if panel_config:
+                        # Map panel names to config sections
+                        if "Environment Variables" in panel_name:
+                            config["environment_variables"] = panel_config.get("environment_variables", {})
+                        elif "Registry Editor" in panel_name:
+                            config["registry"] = panel_config.get("registry", {})
+                        elif "Users & Groups" in panel_name:
+                            config["users"] = panel_config.get("users", {})
+                        elif "Services" in panel_name:
+                            config["services"] = panel_config.get("services", {})
+                        elif "Firewall" in panel_name:
+                            config["firewall"] = panel_config.get("firewall_rules", {})
+                        elif "Software" in panel_name:
+                            config["software"] = panel_config.get("software", {})
+                        elif "Permissions" in panel_name:
+                            config["permissions"] = panel_config.get("permissions", {})
+                        elif "Applications" in panel_name:
+                            config["applications"] = panel_config.get("applications", {})
+                        elif "Packages" in panel_name:
+                            config["packages"] = panel_config.get("software", {})
+            
+            # Write configuration to file
+            with open(filename, 'w') as f:
+                yaml.dump(config, f, default_flow_style=False)
+                
+            self.logger.info(f"Configuration exported to {filename}")
+            QMessageBox.information(
+                self.parent,
+                "Configuration Exported",
+                f"Configuration has been exported to {filename}"
+            )
+                
+        except Exception as e:
+            self.logger.error(f"Failed to export configuration: {str(e)}")
+            self.show_error(
+                "Error",
+                f"Failed to export configuration: {str(e)}"
+            )
+            
+    def confirm_action(self, title, message):
+        """Show confirmation dialog for an action.
+        
+        Args:
+            title: Dialog title
+            message: Confirmation message
+            
+        Returns:
+            bool: True if user confirmed, False otherwise
+        """
+        reply = QMessageBox.question(
+            self.parent,
+            title,
+            message,
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+        )
+        return reply == QMessageBox.StandardButton.Yes
+        
+    def show_info(self, title, message):
+        """Show information dialog.
+        
+        Args:
+            title: Dialog title
+            message: Information message
+        """
+        QMessageBox.information(self.parent, title, message)
+        
+    def show_warning(self, title, message):
+        """Show warning dialog.
+        
+        Args:
+            title: Dialog title
+            message: Warning message
+        """
+        QMessageBox.warning(self.parent, title, message)
