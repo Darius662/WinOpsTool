@@ -25,6 +25,10 @@ class EnvironmentPanel(BasePanel):
         self.logger = setup_logger(self.__class__.__name__)
         self.manager = EnvironmentManager()
         
+        # Initialize remote mode attributes
+        self.remote_mode = False
+        self.remote_manager = None
+        
         # Initialize base class (this will call setup_ui)
         super().__init__(main_window)
         
@@ -89,14 +93,189 @@ class EnvironmentPanel(BasePanel):
         """Refresh environment variables list."""
         self.variable_ops.refresh_variables()
         
-    def update_remote_state(self, connected):
-        """Update UI based on remote connection state.
+    def set_remote_mode(self, remote_mode, remote_manager=None):
+        """Set remote mode and update data accordingly.
         
         Args:
-            connected: True if connected to remote system, False otherwise
+            remote_mode: True if in remote mode, False for local mode
+            remote_manager: RemoteManager instance for remote operations
         """
-        # Enable/disable controls based on connection state
-        self.setEnabled(not connected)  # Disable local env vars when remote
+        self.logger.debug(f"Setting remote mode to {remote_mode}")
+        self.logger.debug(f"Remote manager: {remote_manager}")
+        if remote_manager:
+            self.logger.debug(f"Remote manager is_connected: {remote_manager.is_connected()}")
+        
+        # Set remote mode and manager
+        self.remote_mode = remote_mode
+        self.remote_manager = remote_manager
+        
+        # Clear current data
+        self.clear_data()
+        
+        # Load data for the new mode
+        self.load_data()
+    
+    def load_data(self):
+        """Load environment variables data."""
+        self.logger.debug(f"Loading data (remote mode: {self.remote_mode})")
+        if self.remote_mode and self.remote_manager:
+            self.load_remote_data()
+        else:
+            self.load_local_data()
+    
+    def clear_data(self):
+        """Clear all data in the panel."""
+        self.logger.debug("Clearing environment variables data")
+        if self.variables_view:
+            self.variables_view.clear()
+        
+    def load_local_data(self):
+        """Load environment variables from the local system."""
+        self.logger.debug("Loading local environment variables")
+        try:
+            # Get environment variables from local system
+            user_vars_dict = self.manager.get_user_variables()
+            system_vars_dict = self.manager.get_system_variables()
+            
+            # Convert dictionaries to lists of dictionaries with 'name' and 'value' keys
+            user_vars = [{'name': name, 'value': value} for name, value in user_vars_dict.items()]
+            system_vars = [{'name': name, 'value': value} for name, value in system_vars_dict.items()]
+            
+            # Update the view
+            self.variables_view.update_variables(user_vars, system_vars)
+            self.update_button_states()
+        except Exception as e:
+            self.logger.error(f"Error loading local environment variables: {str(e)}")
+            self.show_error(f"Failed to load environment variables: {str(e)}")
+    
+    def load_remote_data(self):
+        """Load environment variables from the remote system."""
+        self.logger.debug("Loading remote environment variables")
+        if not self.remote_manager:
+            self.logger.error("No remote manager available")
+            self.show_error("No remote connection available")
+            return
+            
+        # Check if remote manager is connected
+        # This works with both RemoteManager and PSRemoteManager
+        try:
+            if not self.remote_manager.is_connected():
+                self.logger.error("Remote manager is not connected")
+                self.show_error("No remote connection available")
+                return
+        except Exception as e:
+            self.logger.error(f"Error checking remote connection: {str(e)}")
+            self.show_error("Error checking remote connection")
+            return
+            
+        try:
+            # Get user variables from remote system
+            user_vars = []
+            system_vars = []
+            
+            # Execute PowerShell to get environment variables remotely
+            ps_script = """
+            $userVars = [Environment]::GetEnvironmentVariables('User') | ConvertTo-Json
+            $systemVars = [Environment]::GetEnvironmentVariables('Machine') | ConvertTo-Json
+            $result = @{
+                'UserVars' = $userVars
+                'SystemVars' = $systemVars
+            } | ConvertTo-Json
+            return $result
+            """
+            
+            result = self.remote_manager.process_manager.execute_powershell(ps_script)
+            if result and result.get('success', False):
+                import json
+                data = json.loads(result.get('output', '{}'))
+                
+                # Parse user variables
+                if 'UserVars' in data:
+                    user_vars_dict = json.loads(data['UserVars'])
+                    user_vars = [{'name': name, 'value': value} for name, value in user_vars_dict.items()]
+                
+                # Parse system variables
+                if 'SystemVars' in data:
+                    system_vars_dict = json.loads(data['SystemVars'])
+                    system_vars = [{'name': name, 'value': value} for name, value in system_vars_dict.items()]
+                
+                # Update the view
+                self.variables_view.update_variables(user_vars, system_vars)
+                self.update_button_states()
+            else:
+                error = result.get('error', 'Unknown error') if result else 'No result returned'
+                self.logger.error(f"Error getting remote environment variables: {error}")
+                self.show_error(f"Failed to get remote environment variables: {error}")
+        except Exception as e:
+            self.logger.error(f"Error loading remote environment variables: {str(e)}")
+            self.show_error(f"Failed to load remote environment variables: {str(e)}")
+    
+    def save_local_data(self):
+        """Save environment variables to the local system."""
+        # This is handled by individual operations (add, edit, delete)
+        pass
+    
+    def save_remote_data(self):
+        """Save environment variables to the remote system."""
+        # This is handled by individual operations (add, edit, delete)
+        pass
+    
+    def apply_remote(self, remote_connection):
+        """Apply environment variable changes to a remote system.
+        
+        Args:
+            remote_connection: RemoteConnection instance
+            
+        Returns:
+            bool: True if changes were applied successfully, False otherwise
+        """
+        self.logger.info(f"Applying environment variables to remote system: {remote_connection.host}")
+        
+        try:
+            # Get current configuration
+            config = self.export_config()
+            
+            # Apply configuration to remote system using PowerShell
+            ps_script = """
+            param($ConfigJson)
+            
+            $config = ConvertFrom-Json $ConfigJson
+            
+            # Apply user variables
+            if ($config.environment_variables.user) {
+                foreach ($var in $config.environment_variables.user.PSObject.Properties) {
+                    [Environment]::SetEnvironmentVariable($var.Name, $var.Value, 'User')
+                }
+            }
+            
+            # Apply system variables
+            if ($config.environment_variables.system) {
+                foreach ($var in $config.environment_variables.system.PSObject.Properties) {
+                    [Environment]::SetEnvironmentVariable($var.Name, $var.Value, 'Machine')
+                }
+            }
+            
+            return $true
+            """
+            
+            import json
+            config_json = json.dumps(config)
+            
+            result = remote_connection.process_manager.execute_powershell(
+                ps_script, 
+                parameters=[config_json]
+            )
+            
+            if result and result.get('success', False):
+                return True
+            else:
+                error = result.get('error', 'Unknown error') if result else 'No result returned'
+                self.logger.error(f"Error applying environment variables to remote system: {error}")
+                return False
+                
+        except Exception as e:
+            self.logger.error(f"Error applying environment variables to remote system: {str(e)}")
+            return False
         
     def apply_config(self, config):
         """Apply configuration to the panel.
@@ -244,8 +423,8 @@ class EnvironmentPanel(BasePanel):
         """
         try:
             # Get current environment variables
-            current_user_vars = {var['name']: var for var in self.manager.get_user_variables()}
-            current_system_vars = {var['name']: var for var in self.manager.get_system_variables()}
+            current_user_vars = self.manager.get_user_variables()
+            current_system_vars = self.manager.get_system_variables()
             
             # Add virtual entries for user variables
             if 'user' in env_vars and isinstance(env_vars['user'], dict):

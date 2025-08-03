@@ -143,16 +143,34 @@ class PanelManager:
         """
         return self.tab_widget.tabText(self.tab_widget.currentIndex())
         
-    def update_remote_state(self, connected):
-        """Update all panels' remote state.
+    def update_remote_state(self, connected, remote_manager=None):
+        """Update all panels' remote state and trigger data reload.
         
         Args:
             connected: True if connected to remote system
+            remote_manager: RemoteManager instance for remote operations
         """
-        for i in range(self.tab_widget.count()):
-            panel = self.tab_widget.widget(i)
-            if hasattr(panel, 'update_remote_state'):
-                panel.update_remote_state(connected)
+        self.logger.info(f"Updating all panels' remote state to: {connected}")
+        
+        # Update panels with remote state
+        for panel_name, panel in self.panels.items():
+            try:
+                # Use new set_remote_mode method if available
+                if hasattr(panel, 'set_remote_mode'):
+                    panel.set_remote_mode(connected, remote_manager)
+                # Fall back to legacy update_remote_state method if available
+                elif hasattr(panel, 'update_remote_state'):
+                    panel.update_remote_state(connected)
+                    
+                self.logger.debug(f"Updated remote state for {panel_name} panel")
+            except Exception as e:
+                self.logger.error(f"Error updating remote state for {panel_name} panel: {str(e)}")
+        
+        # Update UI to reflect remote state
+        current_index = self.tab_widget.currentIndex()
+        if current_index >= 0:
+            # Force a refresh of the current tab
+            self.tab_widget.setCurrentIndex(current_index)
 
     def update_panels_with_config(self, config):
         """Update panels to show imported configuration items without applying changes.

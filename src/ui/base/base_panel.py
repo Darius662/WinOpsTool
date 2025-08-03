@@ -1,9 +1,13 @@
 """Base class for all management panels."""
 from PyQt6.QtWidgets import QWidget, QVBoxLayout
+from PyQt6.QtCore import pyqtSignal
 from src.core.logger import setup_logger
 
 class BasePanel(QWidget):
     """Base class for all management panels."""
+    
+    # Signal emitted when panel data is refreshed
+    data_refreshed = pyqtSignal()
     
     def __init__(self, parent=None):
         """Initialize the panel."""
@@ -16,6 +20,10 @@ class BasePanel(QWidget):
         
         # Track imported configuration items for highlighting
         self.imported_config_items = set()
+        
+        # Remote mode flag
+        self.is_remote_mode = False
+        self.remote_manager = None
         
         # Initialize UI
         self.setup_ui()
@@ -58,15 +66,60 @@ class BasePanel(QWidget):
     def load_data(self):
         """Load or refresh panel data.
         
+        This method should be overridden by derived classes to load data.
+        It should check self.is_remote_mode to determine whether to load local or remote data.
+        """
+        self.logger.debug(f"Loading data (remote mode: {self.is_remote_mode})")
+        if self.is_remote_mode:
+            self.load_remote_data()
+        else:
+            self.load_local_data()
+        
+        # Emit signal that data has been refreshed
+        self.data_refreshed.emit()
+        
+    def load_local_data(self):
+        """Load data from the local system.
+        
         Override this method in derived classes.
         """
-        pass  # Optional to override
+        self.logger.debug("Loading local data")
+        pass  # Must be overridden by derived classes
+        
+    def load_remote_data(self):
+        """Load data from the remote system.
+        
+        Override this method in derived classes.
+        """
+        self.logger.debug("Loading remote data")
+        pass  # Must be overridden by derived classes
         
     def save_data(self):
         """Save panel data.
         
+        This method should be overridden by derived classes to save data.
+        It should check self.is_remote_mode to determine whether to save to local or remote system.
+        """
+        self.logger.debug(f"Saving data (remote mode: {self.is_remote_mode})")
+        if self.is_remote_mode:
+            self.save_remote_data()
+        else:
+            self.save_local_data()
+            
+    def save_local_data(self):
+        """Save data to the local system.
+        
         Override this method in derived classes.
         """
+        self.logger.debug("Saving local data")
+        pass  # Optional to override
+        
+    def save_remote_data(self):
+        """Save data to the remote system.
+        
+        Override this method in derived classes.
+        """
+        self.logger.debug("Saving remote data")
         pass  # Optional to override
         
     def mark_config_items(self, config):
@@ -153,3 +206,47 @@ class BasePanel(QWidget):
             str: CSS style string for imported configuration items
         """
         return "background-color: #E6F7FF; border: 2px solid #1890FF; font-weight: bold;"
+        
+    def set_remote_mode(self, is_remote, remote_manager=None):
+        """Set whether the panel is in remote mode.
+        
+        Args:
+            is_remote: True if panel should operate in remote mode, False for local mode
+            remote_manager: RemoteManager instance for remote operations
+        """
+        if self.is_remote_mode == is_remote and self.remote_manager == remote_manager:
+            # No change in mode, no need to refresh
+            return
+            
+        self.logger.info(f"Setting remote mode to {is_remote}")
+        self.is_remote_mode = is_remote
+        self.remote_manager = remote_manager
+        
+        # Clear any existing data
+        self.clear_data()
+        
+        # Load data for the new mode
+        self.load_data()
+        
+    def clear_data(self):
+        """Clear all data in the panel.
+        
+        Override this method in derived classes to clear any displayed data.
+        """
+        self.logger.debug("Clearing panel data")
+        pass  # Must be overridden by derived classes
+        
+    def apply_remote(self, remote_connection):
+        """Apply panel changes to a remote system.
+        
+        This method is called when applying changes to remote systems.
+        It should be overridden by derived classes that support remote operations.
+        
+        Args:
+            remote_connection: RemoteConnection instance
+            
+        Returns:
+            bool: True if changes were applied successfully, False otherwise
+        """
+        self.logger.warning(f"{self.__class__.__name__} does not implement apply_remote")
+        return False

@@ -24,21 +24,25 @@ class RemoteHandler:
         
     def connect(self):
         """Show connection dialog and establish remote connection."""
-        dialog = ConnectionDialog(self.remote_manager, self.main_window)
+        dialog = ConnectionDialog(self.ps_remote, self.main_window)
         if dialog.exec():
             # Connection is handled by the dialog itself
-            if self.remote_manager.is_connected():
-                self.main_window.status_handler.set_connection_status(True, self.remote_manager.connection.host)
-                self.main_window.status_handler.set_status(f"Connected to {self.remote_manager.connection.host}")
+            if self.ps_remote.is_connected():
+                # Update status if status_handler exists
+                if hasattr(self.main_window, 'status_handler'):
+                    self.main_window.status_handler.set_connection_status(True, self.ps_remote.connection.host)
+                    self.main_window.status_handler.set_status(f"Connected to {self.ps_remote.connection.host}")
                 self.enable_remote_features()
 
                 
     def disconnect(self):
         """Disconnect from remote system."""
         try:
-            self.remote_manager.disconnect()
-            self.main_window.status_handler.set_connection_status(False)
-            self.main_window.status_handler.set_status("Disconnected")
+            self.ps_remote.disconnect()
+            # Update status if status_handler exists
+            if hasattr(self.main_window, 'status_handler'):
+                self.main_window.status_handler.set_connection_status(False)
+                self.main_window.status_handler.set_status("Disconnected")
             self.disable_remote_features()
         except Exception as e:
             self.logger.error(f"Error during disconnect: {str(e)}")
@@ -75,14 +79,23 @@ class RemoteHandler:
         # Update UI elements that depend on remote connection
         self.main_window.update_remote_state(True)
         
+        # Update panels with remote state and pass the correct remote manager
+        # Use ps_remote since that's the one actually handling the connection
+        if hasattr(self.main_window, 'panel_manager'):
+            self.main_window.panel_manager.update_remote_state(True, self.ps_remote)
+        
     def disable_remote_features(self):
         """Disable remote-specific features."""
         # Update UI elements that depend on remote connection
         self.main_window.update_remote_state(False)
         
+        # Update panels with remote state (pass None for remote_manager since disconnected)
+        if hasattr(self.main_window, 'panel_manager'):
+            self.main_window.panel_manager.update_remote_state(False, None)
+        
     def is_connected(self):
         """Check if connected to remote system."""
-        return self.remote_manager.is_connected()
+        return self.ps_remote.is_connected()
         
     def refresh_connections(self):
         """Refresh the list of saved connections."""

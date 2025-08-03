@@ -124,12 +124,7 @@ class VariableOperations:
                 
     def refresh_variables(self):
         """Refresh environment variables list."""
-        self.variables_view.clear_variables()
-        
-        # Add user variables
-        for name, value in self.manager.get_user_variables().items():
-            self.variables_view.add_variable(name, value, "User")
-            
-        # Add system variables
-        for name, value in self.manager.get_system_variables().items():
-            self.variables_view.add_variable(name, value, "System")
+        # This method is now just a wrapper for the panel's load_data method
+        # which will handle both local and remote data loading
+        if hasattr(self.panel, 'load_data'):
+            self.panel.load_data()

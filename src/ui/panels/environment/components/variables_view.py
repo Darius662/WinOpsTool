@@ -156,6 +156,34 @@ class VariablesView(QWidget):
         self.user_tree.clear()
         self.system_tree.clear()
         
+    def clear(self):
+        """Clear all data in the view."""
+        self.clear_variables()
+        
+    def update_variables(self, user_vars, system_vars):
+        """Update both user and system variables.
+        
+        Args:
+            user_vars: List of user environment variables
+            system_vars: List of system environment variables
+        """
+        # Clear existing variables
+        self.clear_variables()
+        
+        # Add user variables
+        for var in user_vars:
+            name = var.get('name', '')
+            value = var.get('value', '')
+            if name:
+                self.add_variable(name, value, "User")
+                
+        # Add system variables
+        for var in system_vars:
+            name = var.get('name', '')
+            value = var.get('value', '')
+            if name:
+                self.add_variable(name, value, "System")
+        
     def add_virtual_user_variable(self, name, value):
         """Add a virtual user variable that doesn't exist in the system yet.
         

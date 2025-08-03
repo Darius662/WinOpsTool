@@ -1,0 +1,164 @@
+2025-08-03 22:06:21,158 - __main__ - INFO - Initializing Qt application
+2025-08-03 22:06:21,200 - __main__ - DEBUG - Some Qt attributes not available, continuing without them
+2025-08-03 22:06:21,201 - __main__ - INFO - Qt application initialized with performance optimizations
+2025-08-03 22:06:21,201 - src.core.dependencies.checker - DEBUG - Package PyQt6 is installed
+2025-08-03 22:06:21,201 - src.core.dependencies.checker - DEBUG - pywin32 modules are available
+2025-08-03 22:06:21,201 - src.core.dependencies.checker - DEBUG - Package PyYAML is installed
+2025-08-03 22:06:21,202 - src.core.dependencies.checker - DEBUG - Package psutil is installed
+2025-08-03 22:06:21,217 - src.core.dependencies.checker - DEBUG - Package wmi is installed
+2025-08-03 22:06:21,217 - __main__ - INFO - Creating main window
+2025-08-03 22:06:21,219 - src.ui.main.window - INFO - MainWindow initialized with configuration: 0 sections
+2025-08-03 22:06:21,220 - PSRemoteManager - INFO - Loaded 1 connections from C:\Users\dariu\AppData\Local\WinOpsTool\connections.json
+2025-08-03 22:06:21,222 - PSRemoteManager - INFO - Loaded 1 connections from C:\Users\dariu\AppData\Local\WinOpsTool\connections.json
+2025-08-03 22:06:21,272 - EnvironmentPanel - DEBUG - Loading data (remote mode: False)
+2025-08-03 22:06:21,273 - EnvironmentPanel - DEBUG - Loading local environment variables
+2025-08-03 22:06:21,279 - RegistryPanel - INFO - Refreshing registry entries
+2025-08-03 22:06:21,280 - RegistryOperations - INFO - Registry entries refreshed successfully
+2025-08-03 22:06:21,280 - RegistryPanel - INFO - Registry entries refreshed successfully
+2025-08-03 22:06:21,300 - UsersPanel - INFO - Refreshed users and groups lists
+2025-08-03 22:06:21,304 - ServicesPanel - INFO - Refreshing services list
+2025-08-03 22:06:21,595 - ServiceOperations - INFO - Refreshed services list with highlighting
+2025-08-03 22:06:21,677 - FirewallPanel - INFO - Refreshed inbound firewall rules
+2025-08-03 22:06:21,753 - FirewallPanel - INFO - Refreshed outbound firewall rules
+2025-08-03 22:06:21,768 - SoftwarePanel - INFO - Refreshed software list
+2025-08-03 22:06:22,666 - ProcessesTab - INFO - Refreshed processes list
+2025-08-03 22:06:22,668 - StartupTab - INFO - Refreshed startup items list
+2025-08-03 22:06:22,744 - CredentialsPanel - DEBUG - Refreshed 34 credentials
+2025-08-03 22:06:22,750 - __main__ - INFO - Main window created, showing window
+2025-08-03 22:06:22,789 - __main__ - INFO - Main window shown
+2025-08-03 22:06:23,700 - ProcessesPanel - INFO - Starting delayed initialization of ProcessesPanel
+2025-08-03 22:06:25,490 - ProcessesPanel - INFO - ProcessesPanel initialization complete
+2025-08-03 22:06:25,490 - SchedulerPanel - INFO - Starting delayed initialization of SchedulerPanel
+2025-08-03 22:06:27,898 - SchedulerManager - DEBUG - Retrieved 452 scheduled tasks
+2025-08-03 22:06:27,912 - SchedulerTreeWidget - DEBUG - Populated tree with 452 scheduled tasks
+2025-08-03 22:06:27,924 - SchedulerPanel - INFO - Refreshed 452 scheduled tasks
+2025-08-03 22:06:27,924 - SchedulerPanel - INFO - SchedulerPanel initialization complete
+2025-08-03 22:06:27,925 - DiskPanel - INFO - Starting delayed initialization of DiskPanel
+2025-08-03 22:06:28,078 - DiskPanel - DEBUG - Refreshed physical disks
+2025-08-03 22:06:28,155 - DiskPanel - DEBUG - Refreshed volumes
+2025-08-03 22:06:28,155 - DiskPanel - INFO - DiskPanel initialization complete
+2025-08-03 22:06:28,156 - EventsPanel - INFO - Starting delayed initialization of EventsPanel
+2025-08-03 22:06:28,177 - EventsManager - DEBUG - Retrieved 1207 event logs
+2025-08-03 22:06:28,186 - EventsPanel - INFO - EventsPanel initialization complete
+2025-08-03 22:06:28,186 - DriversPanel - INFO - Starting delayed initialization of DriversPanel
+2025-08-03 22:06:28,187 - EventsManager - DEBUG - Trying basic query: wevtutil qe System /count:100 /format:xml
+2025-08-03 22:06:28,207 - EventsManager - DEBUG - Basic query succeeded for System
+2025-08-03 22:06:28,208 - EventsManager - DEBUG - Raw XML output length: 77221
+2025-08-03 22:06:28,215 - EventsManager - DEBUG - Retrieved 100 events from System
+2025-08-03 22:06:33,448 - DriversPanel - DEBUG - Refreshed drivers list
+2025-08-03 22:06:33,449 - DriversPanel - INFO - DriversPanel initialization complete
+2025-08-03 22:06:33,450 - NetworkPanel - INFO - Starting delayed initialization of NetworkPanel
+2025-08-03 22:06:33,683 - NetworkPanel - INFO - Network interfaces refreshed successfully
+2025-08-03 22:06:33,687 - NetworkPanel - ERROR - Failed to refresh network connections: 'local_port'
+2025-08-03 22:06:33,688 - NetworkPanel - INFO - NetworkPanel initialization complete
+2025-08-03 22:06:33,688 - PackagesPanel - INFO - Starting delayed initialization of PackagesPanel
+2025-08-03 22:06:33,688 - PackagesPanel - INFO - Started loading programs in background
+2025-08-03 22:06:33,689 - PackagesPanel - INFO - PackagesPanel initialization complete
+2025-08-03 22:06:33,693 - EventsTreeWidget - DEBUG - Populated tree with 100 events
+2025-08-03 22:06:33,694 - EventsPanel - DEBUG - Refreshed events from System
+2025-08-03 22:07:54,612 - __main__ - INFO - Initializing Qt application
+2025-08-03 22:07:54,698 - __main__ - DEBUG - Some Qt attributes not available, continuing without them
+2025-08-03 22:07:54,698 - __main__ - INFO - Qt application initialized with performance optimizations
+2025-08-03 22:07:54,698 - src.core.dependencies.checker - DEBUG - Package PyQt6 is installed
+2025-08-03 22:07:54,699 - src.core.dependencies.checker - DEBUG - pywin32 modules are available
+2025-08-03 22:07:54,699 - src.core.dependencies.checker - DEBUG - Package PyYAML is installed
+2025-08-03 22:07:54,699 - src.core.dependencies.checker - DEBUG - Package psutil is installed
+2025-08-03 22:07:54,723 - src.core.dependencies.checker - DEBUG - Package wmi is installed
+2025-08-03 22:07:54,723 - __main__ - INFO - Creating main window
+2025-08-03 22:07:54,729 - src.ui.main.window - INFO - MainWindow initialized with configuration: 0 sections
+2025-08-03 22:07:54,732 - PSRemoteManager - INFO - Loaded 1 connections from C:\Users\dariu\AppData\Local\WinOpsTool\connections.json
+2025-08-03 22:07:54,733 - PSRemoteManager - INFO - Loaded 1 connections from C:\Users\dariu\AppData\Local\WinOpsTool\connections.json
+2025-08-03 22:07:54,837 - EnvironmentPanel - DEBUG - Loading data (remote mode: False)
+2025-08-03 22:07:54,837 - EnvironmentPanel - DEBUG - Loading local environment variables
+2025-08-03 22:07:54,849 - RegistryPanel - INFO - Refreshing registry entries
+2025-08-03 22:07:54,850 - RegistryOperations - INFO - Registry entries refreshed successfully
+2025-08-03 22:07:54,850 - RegistryPanel - INFO - Registry entries refreshed successfully
+2025-08-03 22:07:54,874 - UsersPanel - INFO - Refreshed users and groups lists
+2025-08-03 22:07:54,879 - ServicesPanel - INFO - Refreshing services list
+2025-08-03 22:07:55,190 - ServiceOperations - INFO - Refreshed services list with highlighting
+2025-08-03 22:07:55,298 - FirewallPanel - INFO - Refreshed inbound firewall rules
+2025-08-03 22:07:55,380 - FirewallPanel - INFO - Refreshed outbound firewall rules
+2025-08-03 22:07:55,407 - SoftwarePanel - INFO - Refreshed software list
+2025-08-03 22:07:56,335 - ProcessesTab - INFO - Refreshed processes list
+2025-08-03 22:07:56,339 - StartupTab - INFO - Refreshed startup items list
+2025-08-03 22:07:56,454 - CredentialsPanel - DEBUG - Refreshed 34 credentials
+2025-08-03 22:07:56,463 - __main__ - INFO - Main window created, showing window
+2025-08-03 22:07:56,522 - __main__ - INFO - Main window shown
+2025-08-03 22:07:57,384 - ProcessesPanel - INFO - Starting delayed initialization of ProcessesPanel
+2025-08-03 22:07:59,045 - ProcessesPanel - INFO - ProcessesPanel initialization complete
+2025-08-03 22:07:59,045 - SchedulerPanel - INFO - Starting delayed initialization of SchedulerPanel
+2025-08-03 22:08:02,053 - SchedulerManager - DEBUG - Retrieved 452 scheduled tasks
+2025-08-03 22:08:02,071 - SchedulerTreeWidget - DEBUG - Populated tree with 452 scheduled tasks
+2025-08-03 22:08:02,089 - SchedulerPanel - INFO - Refreshed 452 scheduled tasks
+2025-08-03 22:08:02,090 - SchedulerPanel - INFO - SchedulerPanel initialization complete
+2025-08-03 22:08:02,090 - DiskPanel - INFO - Starting delayed initialization of DiskPanel
+2025-08-03 22:08:02,320 - DiskPanel - DEBUG - Refreshed physical disks
+2025-08-03 22:08:02,412 - DiskPanel - DEBUG - Refreshed volumes
+2025-08-03 22:08:02,413 - DiskPanel - INFO - DiskPanel initialization complete
+2025-08-03 22:08:02,413 - EventsPanel - INFO - Starting delayed initialization of EventsPanel
+2025-08-03 22:08:02,443 - EventsManager - DEBUG - Retrieved 1207 event logs
+2025-08-03 22:08:02,456 - EventsPanel - INFO - EventsPanel initialization complete
+2025-08-03 22:08:02,457 - EventsManager - DEBUG - Trying basic query: wevtutil qe System /count:100 /format:xml
+2025-08-03 22:08:02,458 - DriversPanel - INFO - Starting delayed initialization of DriversPanel
+2025-08-03 22:08:02,486 - EventsManager - DEBUG - Basic query succeeded for System
+2025-08-03 22:08:02,487 - EventsManager - DEBUG - Raw XML output length: 77221
+2025-08-03 22:08:02,498 - EventsManager - DEBUG - Retrieved 100 events from System
+2025-08-03 22:08:11,997 - DriversPanel - DEBUG - Refreshed drivers list
+2025-08-03 22:08:11,998 - DriversPanel - INFO - DriversPanel initialization complete
+2025-08-03 22:08:11,999 - NetworkPanel - INFO - Starting delayed initialization of NetworkPanel
+2025-08-03 22:08:12,305 - NetworkPanel - INFO - Network interfaces refreshed successfully
+2025-08-03 22:08:12,309 - NetworkPanel - ERROR - Failed to refresh network connections: 'local_port'
+2025-08-03 22:08:12,309 - NetworkPanel - INFO - NetworkPanel initialization complete
+2025-08-03 22:08:12,310 - PackagesPanel - INFO - Starting delayed initialization of PackagesPanel
+2025-08-03 22:08:12,310 - PackagesPanel - INFO - Started loading programs in background
+2025-08-03 22:08:12,310 - PackagesPanel - INFO - PackagesPanel initialization complete
+2025-08-03 22:08:12,323 - EventsTreeWidget - DEBUG - Populated tree with 100 events
+2025-08-03 22:08:12,323 - EventsPanel - DEBUG - Refreshed events from System
+2025-08-03 22:08:13,827 - PSRemoteManager - DEBUG - Stored temporary credentials for WinSrv22
+2025-08-03 22:08:13,828 - PSRemoteManager - DEBUG - Running PowerShell command on WinSrv22 as administrator:
+
+                # Set error preferences
+                $ErrorActionPreference = 'Stop'
+                $VerbosePreference = 'Continue'
+                
+                # Set TrustedHosts to allow co...
+2025-08-03 22:08:14,606 - PSRemoteManager - DEBUG - PowerShell command executed with return code: 0
+2025-08-03 22:08:14,606 - PSRemoteManager - DEBUG - PowerShell stdout: Connection test successful
+
+
+wsmid           : http://schemas.dmtf.org/wbem/wsman/identity/1/wsmanidentity.xsd
+ProtocolVersion : http://schemas.dmtf.org/wbem/wsman/1/wsman.xsd
+ProductVendor   : Microsoft Corporation
+ProductVersion  : OS: 0.0.0 SP: 0.0 Stack: 3.0
+
+
+
+
+2025-08-03 22:08:16,663 - PSRemoteManager - INFO - ===== STARTING CONNECTION ATTEMPT TO WinSrv22 =====
+2025-08-03 22:08:16,664 - PSRemoteManager - INFO - Current connections: ['WinSrv22']
+2025-08-03 22:08:16,664 - PSRemoteManager - INFO - Connection details: hostname=WinSrv22, username=administrator
+2025-08-03 22:08:16,664 - PSRemoteManager - INFO - Attempting to connect to WinSrv22 (WinSrv22) as administrator
+2025-08-03 22:08:16,693 - PSRemoteManager - INFO - WinRM port 5985 is open on WinSrv22
+2025-08-03 22:08:16,729 - PSRemoteManager - DEBUG - Stored temporary credentials for WinSrv22
+2025-08-03 22:08:16,730 - PSRemoteManager - DEBUG - Running PowerShell command on WinSrv22 as administrator:
+
+                # Set error preferences
+                $ErrorActionPreference = 'Stop'
+                $VerbosePreference = 'Continue'
+                
+                # Set TrustedHosts to allow co...
+2025-08-03 22:08:17,075 - PSRemoteManager - DEBUG - PowerShell command executed with return code: 0
+2025-08-03 22:08:17,075 - PSRemoteManager - DEBUG - PowerShell stdout: Connection test successful
+
+
+wsmid           : http://schemas.dmtf.org/wbem/wsman/identity/1/wsmanidentity.xsd
+ProtocolVersion : http://schemas.dmtf.org/wbem/wsman/1/wsman.xsd
+ProductVendor   : Microsoft Corporation
+ProductVersion  : OS: 0.0.0 SP: 0.0 Stack: 3.0
+
+
+
+
+2025-08-03 22:08:17,075 - PSRemoteManager - INFO - Connected to WinSrv22
+2025-08-03 22:08:20,855 - EnvironmentPanel - DEBUG - Loading data (remote mode: False)
+2025-08-03 22:08:20,855 - EnvironmentPanel - DEBUG - Loading local environment variables
