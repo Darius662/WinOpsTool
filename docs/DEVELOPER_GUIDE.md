@@ -19,8 +19,8 @@ This comprehensive guide is intended for developers who want to understand, main
 
 The WinOpsTool is a comprehensive GUI application for managing Windows systems locally and remotely. It consists of two main applications:
 
-1. **WinOpsTool** (`main.py`): The primary application with multiple panels for different system management tasks.
-2. **WinOpsInit** (`config_manager.py`): A tool for creating and managing configuration files that can be imported into the main application.
+1. **WinOpsTool** (`WinOpsTool.py`): The primary application with multiple panels for different system management tasks.
+2. **WinOpsInit** (`WinOpsInit.py`): A tool for creating and managing configuration files that can be imported into the main application.
 
 The project is built using PyQt6 for the UI and leverages various Windows APIs (through libraries like pywin32, psutil, etc.) for system management operations.
 
@@ -306,32 +306,171 @@ class SomeManager:
 
 ## Configuration System
 
-### Configuration Schema
+The WinOpsTool uses a YAML-based configuration system for importing and exporting settings. This section explains how the configuration system works and how to extend it for new panels.
 
-The configuration schema is defined in `src/core/config_schema.py` and follows a structured format:
+### Configuration Structure
 
-```python
-CONFIG_SCHEMA = {
-    "section_name": {
-        "subsection": {
-            "type": "type_name",
-            "description": "Description of this section",
-            "items": {
-                # Schema for items if this is a list
-            }
-        }
-    }
-}
+Configuration files are structured in YAML format with sections corresponding to each panel:
+
+```yaml
+# Example configuration structure
+users:
+  create:
+    - username: testuser
+      fullname: Test User
+      description: Test user account
+      password: SecurePassword123
+      groups:
+        - Users
+  groups:
+    - name: TestGroup
+      description: Test group
+      members:
+        - testuser
+
+services:
+  - name: Spooler
+    start_type: Auto
+    state: Running
+
+environment_variables:
+  system:
+    - name: TEST_VAR
+      value: test_value
+  user:
+    - name: USER_VAR
+      value: user_value
 ```
 
-### Configuration Validation
+### Configuration Loading Flow
 
-When adding new configuration options:
+1. Configuration can be loaded at application startup from `config/test_config.yaml`
+2. The configuration is passed to the `MainWindow` constructor
+3. `MainWindow` passes the configuration to `PanelManager`
+4. `PanelManager` distributes relevant sections to each panel via `apply_config_to_panels()`
+5. Each panel implements its own `apply_config()` method to handle its specific configuration section
 
-1. Update the schema in `src/core/config_schema.py`
-2. Add validation in `src/core/config/validation.py`
-3. Update default configuration in `src/core/config/defaults.py`
-4. Update the WinOpsInit UI if needed
+### Implementing Configuration Support in Panels
+
+All panels inherit from `BasePanel`, which provides base implementation for configuration handling:
+
+```python
+def apply_config(self, config):
+    """Apply configuration to the panel.
+    
+    Args:
+        config: Dictionary containing configuration data
+        
+    Returns:
+        bool: True if configuration was applied successfully, False otherwise
+    """
+    self.logger.info(f"Base apply_config called for {self.__class__.__name__}")
+    return True
+    
+def export_config(self):
+    """Export panel configuration.
+    
+    Returns:
+        dict: Dictionary containing panel configuration
+    """
+    self.logger.info(f"Base export_config called for {self.__class__.__name__}")
+    return {}
+```
+
+To implement configuration support in a new panel:
+
+1. Override `apply_config(self, config)` to handle the panel's specific configuration section
+2. Override `export_config(self)` to export the panel's current settings
+3. Use `mark_as_imported_config(item_id)` to track imported configuration items
+4. Use `is_imported_config_item(item_id)` to check if an item was imported from configuration
+5. Apply the imported item style to UI elements using the appropriate styling methods
+
+### Highlighting Imported Configuration Items and Virtual Entries
+
+The `BasePanel` class provides support for tracking and highlighting imported configuration items, as well as creating virtual entries for items that don't exist in the system:
+
+```python
+def mark_as_imported_config(self, item_id):
+    """Mark an item as imported from configuration.
+    
+    Args:
+        item_id: Unique identifier for the item
+    """
+    self.imported_config_items.add(item_id)
+    
+def is_imported_config_item(self, item_id):
+    """Check if an item was imported from configuration.
+    
+    Args:
+        item_id: Unique identifier for the item
+        
+    Returns:
+        bool: True if the item was imported from configuration, False otherwise
+    """
+    return item_id in self.imported_config_items
+    
+def get_imported_config_style(self):
+    """Get the style for imported configuration items.
+    
+    Returns:
+        str: CSS style string for imported configuration items
+    """
+    return "background-color: #e0f7fa; border: 1px solid #00acc1; font-weight: bold;"
+```
+
+When implementing highlighting and virtual entries in a panel:
+
+1. In the panel's `refresh_*` methods, check if each item is imported using `is_imported_config_item()`
+2. If an item is imported, apply special styling to make it visually distinct
+3. For tree widgets, pass the `is_imported` flag to the tree widget's `add_*` methods
+4. In tree widgets, implement styling for imported items in the `add_*` and `update_*` methods
+5. Implement `mark_config_items(self, config)` to highlight imported items without applying changes
+6. Create virtual entries for configuration items that don't exist in the system
+7. Add tooltips to virtual entries explaining they are from the configuration file
+
+Example implementation for a tree widget with support for virtual entries:
+
+```python
+def add_user(self, username, full_name, description, disabled=False, is_imported=False, is_virtual=False):
+    """Add a user account to the tree with optional highlighting.
+    
+    Args:
+        username: Username
+        full_name: Full name
+        description: Account description
+        disabled: Whether account is disabled
+        is_imported: Whether this user was imported from configuration
+        is_virtual: Whether this is a virtual entry (doesn't exist in system)
+    """
+    item = QTreeWidgetItem([username, full_name, description, "Disabled" if disabled else "Enabled"])
+    
+    # Apply special styling for imported items
+    if is_imported:
+        for col in range(4):
+            item.setBackground(col, Qt.GlobalColor.cyan)
+            item.setForeground(col, Qt.GlobalColor.darkBlue)
+            
+            tooltip = "Imported from configuration file"
+            if is_virtual:
+                tooltip += " (Virtual entry - will be created when config is applied)"
+                
+            item.setToolTip(col, tooltip)
+    
+    self.addTopLevelItem(item)
+    return item
+```
+
+### Adding Configuration Support to a New Panel
+
+When adding configuration support to a new panel:
+
+1. Implement `apply_config(self, config)` to handle the panel's configuration section
+2. Implement `export_config(self)` to export the panel's current settings
+3. Implement `mark_config_items(self, config)` to highlight imported items without applying changes
+4. Update the panel's refresh methods to check for imported items and apply highlighting
+5. Add support for creating and highlighting virtual entries for configuration items that don't exist in the system
+6. Update the panel's tree widgets to support highlighting of imported items and virtual entries
+7. Update `PanelManager.apply_config_to_panels()` to map the panel's configuration section
 
 ## Testing Guidelines
 
@@ -374,6 +513,29 @@ When adding new configuration options:
 3. Update default configuration in `src/core/config/defaults.py`
 4. Update WinOpsInit UI if needed
 
+## Configuration Workflow
+
+The WinOpsTool follows a specific workflow for configuration import and application:
+
+1. **Configuration Loading**: When a user loads a configuration file, the configuration is parsed and stored in the `MainWindow` class.
+
+2. **Configuration Marking**: The configuration is passed to each panel's `mark_config_items(config)` method, which highlights imported items in the UI without applying changes.
+
+3. **Virtual Entries**: For configuration items that don't exist in the system, panels create virtual entries that are visually distinct (cyan background, dark blue text) and include tooltips explaining they are from the configuration file.
+
+4. **Configuration Application**: When the user clicks "Apply Config" in the File menu, the configuration is passed to each panel's `apply_config(config)` method, which applies the changes to the system.
+
+5. **Configuration Export**: When the user clicks "Export Config" in the File menu, each panel's `export_config()` method is called to export the current settings to a configuration file.
+
+### Virtual Entries
+
+Virtual entries are created for configuration items that don't exist in the system. They are:
+
+1. Visually distinct from regular items (cyan background, dark blue text)
+2. Include tooltips explaining they are from the configuration file
+3. Only applied to the system when the user clicks "Apply Config"
+4. Not included in exported configurations unless they have been applied
+
 ## Troubleshooting
 
 ### Common Issues
@@ -383,6 +545,7 @@ When adding new configuration options:
 3. **Configuration Not Loading**: Check schema and validation
 4. **Windows API Errors**: Check for admin privileges and API availability
 5. **Logging Issues**: Check log level settings in the Settings dialog or directly in `src/core/logging_config.py`
+6. **PowerShell Remoting Issues**: Check WinRM configuration and credential handling
 
 ### Debugging Tips
 

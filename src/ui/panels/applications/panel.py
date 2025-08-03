@@ -1,6 +1,6 @@
 """Windows Applications management panel."""
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QPushButton,
-                          QMessageBox, QFileDialog, QTabWidget)
+                          QMessageBox, QFileDialog, QTabWidget, QInputDialog)
 from PyQt6.QtCore import Qt, QTimer
 from src.core.logger import setup_logger
 from src.ui.base.base_panel import BasePanel
@@ -174,22 +174,94 @@ class StartupTab(QWidget):
     def refresh_startup(self):
         """Refresh the startup items list."""
         try:
-            self.startup_tree.clear_startup_items()
-            items = self.manager.get_startup_items()
+            # Store current selection
+            current_item = self.startup_tree.currentItem()
+            current_name = current_item.text(0) if current_item else None
             
-            for item in items:
-                self.startup_tree.add_startup_item(
+            # Clear tree
+            self.startup_tree.clear_startup_items()
+            
+            # Get startup items
+            startup_items = self.manager.get_startup_items()
+            
+            # Add items to tree
+            for item in startup_items:
+                tree_item = self.startup_tree.add_startup_item(
                     item['name'],
                     item['command'],
                     item['location'],
                     item['type']
                 )
                 
+                # Check if this item is marked as imported config in the parent panel
+                if hasattr(self.parent(), 'is_imported_config_item') and self.parent().is_imported_config_item(f"applications:startup_item:{item['name']}"):
+                    self.startup_tree.highlight_item(tree_item)
+            
+            # Add virtual startup items from imported config
+            if hasattr(self.parent(), 'imported_config_items'):
+                self.add_virtual_startup_items()
+                
+            # Restore selection
+            if current_name:
+                items = self.startup_tree.findItems(current_name, Qt.MatchFlag.MatchExactly, 0)
+                if items:
+                    self.startup_tree.setCurrentItem(items[0])
+                    
             self.logger.info("Refreshed startup items list")
             
         except Exception as e:
             self.logger.error(f"Failed to refresh startup items: {str(e)}")
             QMessageBox.critical(self, "Error", "Failed to refresh startup items list")
+            
+    def add_virtual_startup_items(self):
+        """Add virtual startup items from imported configuration."""
+        try:
+            # Get parent panel (ApplicationsPanel)
+            parent_panel = self.parent()
+            if not hasattr(parent_panel, 'imported_config_items'):
+                return
+                
+            # Get existing startup items for comparison
+            existing_items = {item['name']: item for item in self.manager.get_startup_items()}
+            
+            # Check for virtual startup items to add
+            for item_id in parent_panel.imported_config_items:
+                # Only process startup items
+                if not item_id.startswith('applications:startup_item:'):
+                    continue
+                    
+                # Extract name from item_id
+                name = item_id.replace('applications:startup_item:', '')
+                
+                # Skip if item already exists in system
+                if name in existing_items:
+                    continue
+                    
+                # Get config data for this virtual item
+                if not hasattr(parent_panel, 'current_config') or not parent_panel.current_config:
+                    continue
+                    
+                config = parent_panel.current_config
+                if 'applications' not in config or 'startup_items' not in config['applications']:
+                    continue
+                    
+                # Find matching item in config
+                for item_config in config['applications']['startup_items']:
+                    if item_config.get('name') == name:
+                        # Add virtual startup item
+                        self.startup_tree.add_virtual_startup_item(
+                            name,
+                            item_config.get('path', 'Unknown'),
+                            item_config.get('location', 'Current User'),
+                            'Startup'  # Default type
+                        )
+                        break
+                        
+            self.logger.info("Added virtual startup items from imported configuration")
+            
+        except Exception as e:
+            self.logger.error(f"Failed to add virtual startup items: {str(e)}")
+            # Don't show error message to user, just log it
             
     def add_startup(self):
         """Add a new startup item."""
@@ -270,6 +342,9 @@ class ApplicationsPanel(BasePanel):
         super().__init__(parent)
         self.logger = setup_logger(self.__class__.__name__)
         
+        # Initialize imported config items
+        self.imported_config_items = set()
+        
     def setup_ui(self):
         """Initialize the UI components."""
         # Create tab widget
@@ -294,3 +369,184 @@ class ApplicationsPanel(BasePanel):
         """Perform cleanup before panel is destroyed."""
         if hasattr(self, 'processes_tab'):
             self.processes_tab.refresh_timer.stop()
+            
+    def apply_config(self, config):
+        """Apply configuration to the panel.
+        
+        Args:
+            config: Dictionary containing configuration data
+            
+        Returns:
+            bool: True if configuration was applied successfully, False otherwise
+        """
+        self.logger.info("Applying applications panel configuration")
+        
+        if not isinstance(config, dict):
+            self.logger.error("Invalid configuration format")
+            return False
+            
+        try:
+            # Process configuration
+            if 'applications' not in config:
+                self.logger.warning("No applications panel configuration found")
+                return False
+                
+            applications_config = config['applications']
+            success = True
+            
+            # Apply startup items configuration if available
+            if 'startup_items' in applications_config and isinstance(applications_config['startup_items'], list):
+                self.logger.info(f"Found {len(applications_config['startup_items'])} startup items in configuration")
+                
+                # Process each startup item
+                for item_config in applications_config['startup_items']:
+                    if not isinstance(item_config, dict):
+                        self.logger.warning("Skipping invalid startup item configuration")
+                        continue
+                        
+                    # Check required fields
+                    if 'name' not in item_config or 'path' not in item_config:
+                        self.logger.warning("Skipping startup item without required fields")
+                        continue
+                        
+                    name = item_config['name']
+                    path = item_config['path']
+                    location = item_config.get('location', 'Current User')
+                    
+                    # Add startup item
+                    if not self.startup_tab.manager.add_startup_item(name, path, location):
+                        self.logger.warning(f"Failed to add startup item: {name}")
+                        success = False
+                
+                # Refresh startup items list
+                self.startup_tab.refresh_startup()
+                
+                # Clear imported config items since they've been applied
+                self.imported_config_items.clear()
+            
+            return success
+            
+        except Exception as e:
+            self.logger.error(f"Error applying applications panel configuration: {str(e)}")
+            return False
+            
+    def export_config(self):
+        """Export panel configuration.
+        
+        Returns:
+            dict: Dictionary containing panel configuration
+        """
+        self.logger.info("Exporting applications panel configuration")
+        
+        try:
+            # Get startup items
+            startup_items = []
+            
+            # Get startup items from manager
+            for item in self.startup_tab.manager.get_startup_items():
+                startup_items.append({
+                    'name': item['name'],
+                    'path': item['command'],
+                    'location': item['location']
+                })
+            
+            # Create configuration dictionary
+            config = {
+                'applications': {
+                    'startup_items': startup_items
+                }
+            }
+            
+            return config
+            
+        except Exception as e:
+            self.logger.error(f"Error exporting applications panel configuration: {str(e)}")
+            return {'applications': {}}
+            
+    def mark_config_items(self, config):
+        """Mark items from configuration for highlighting without applying changes.
+        
+        This method identifies and marks startup items from the configuration
+        that would be modified by apply_config(), but does not actually
+        apply any changes to the system. Items will be visually highlighted in the UI.
+        
+        Args:
+            config: Dictionary containing configuration data
+            
+        Returns:
+            bool: True if items were marked successfully, False otherwise
+        """
+        self.logger.info("Marking applications panel configuration items")
+        
+        # Clear previous imported items
+        self.imported_config_items.clear()
+        
+        if not isinstance(config, dict):
+            self.logger.error("Invalid configuration format")
+            return False
+            
+        try:
+            # Check if applications section exists
+            if 'applications' not in config:
+                self.logger.warning("No applications panel configuration found")
+                return False
+                
+            # Store the current configuration for use in virtual startup items
+            self.current_config = config
+                
+            applications_config = config['applications']
+            
+            # Process startup items configuration if available
+            if 'startup_items' in applications_config and isinstance(applications_config['startup_items'], list):
+                self.logger.info(f"Found {len(applications_config['startup_items'])} startup items in configuration")
+                
+                # Get existing startup items for comparison
+                existing_items = {item['name']: item for item in self.startup_tab.manager.get_startup_items()}
+                
+                # Process each startup item
+                for item_config in applications_config['startup_items']:
+                    if not isinstance(item_config, dict):
+                        self.logger.warning("Skipping invalid startup item configuration")
+                        continue
+                        
+                    # Check required fields
+                    if 'name' not in item_config or 'path' not in item_config:
+                        self.logger.warning("Skipping startup item without required fields")
+                        continue
+                        
+                    name = item_config['name']
+                    
+                    # Mark this startup item as imported from config for highlighting
+                    self.mark_as_imported_config(f"applications:startup_item:{name}")
+                    
+                # Refresh startup items list to show highlighting
+                self.startup_tab.refresh_startup()
+                
+                return True
+                
+            # If no specific configurations were found, return False
+            self.logger.warning("No startup items configuration found")
+            return False
+            
+        except Exception as e:
+            self.logger.error(f"Error marking applications panel configuration items: {str(e)}")
+            return False
+    
+    def mark_as_imported_config(self, item):
+        """Mark an item as imported from config for highlighting.
+        
+        Args:
+            item: Item to mark
+        """
+        self.imported_config_items.add(item)
+        
+    def is_imported_config_item(self, item):
+        """Check if an item is marked as imported from config.
+        
+        Args:
+            item: Item to check
+            
+        Returns:
+            bool: True if item is marked as imported, False otherwise
+        """
+        return item in self.imported_config_items

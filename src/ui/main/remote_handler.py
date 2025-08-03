@@ -2,8 +2,10 @@
 from PyQt6.QtWidgets import QMessageBox
 from src.core.logger import setup_logger
 from src.core.remote.manager import RemoteManager
+from src.core.remote.ps_remote_manager import PSRemoteManager
 from src.ui.dialogs.connection_dialog import ConnectionDialog
 from src.ui.dialogs.file_transfer_dialog import FileTransferDialog
+from src.ui.dialogs.enable_winrm_dialog import EnableWinRMDialog
 
 class RemoteHandler:
     """Handles remote management functionality."""
@@ -17,6 +19,7 @@ class RemoteHandler:
         self.main_window = main_window
         self.logger = setup_logger(self.__class__.__name__)
         self.remote_manager = RemoteManager()
+        self.ps_remote = PSRemoteManager()  # Add PSRemoteManager instance
         self.file_transfer_dialog = None
         
     def connect(self):
@@ -61,6 +64,11 @@ class RemoteHandler:
                 self.remote_manager
             )
         self.file_transfer_dialog.show()
+        
+    def enable_winrm_remotely(self):
+        """Show dialog to enable WinRM remotely."""
+        dialog = EnableWinRMDialog(self.main_window)
+        dialog.exec()
         
     def enable_remote_features(self):
         """Enable remote-specific features."""

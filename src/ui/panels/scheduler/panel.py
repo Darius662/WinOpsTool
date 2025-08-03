@@ -13,6 +13,10 @@ class SchedulerPanel(BasePanel):
     
     def __init__(self, parent=None):
         self.manager = SchedulerManager()
+        
+        # Initialize imported config items
+        self.imported_config_items = set()
+        
         super().__init__(parent)
         
     def setup_ui(self):
@@ -115,14 +119,33 @@ class SchedulerPanel(BasePanel):
     def refresh_tasks(self):
         """Refresh the list of scheduled tasks."""
         try:
-            self.logger.debug("Refreshing scheduled tasks")
             tasks = self.manager.get_scheduled_tasks()
             self.task_tree.populate_tasks(tasks)
+            
+            # Highlight imported config items
+            self.highlight_imported_tasks()
+            
             self.info_text.setPlainText(f"Loaded {len(tasks)} scheduled tasks.")
-            self.logger.debug("Refreshed scheduled tasks list")
+            self.logger.info(f"Refreshed {len(tasks)} scheduled tasks")
         except Exception as e:
-            self.logger.error(f"Error refreshing tasks: {e}")
+            self.logger.error(f"Failed to refresh tasks: {str(e)}")
             QMessageBox.critical(self, "Error", f"Failed to refresh tasks:\n{str(e)}")
+            
+    def highlight_imported_tasks(self):
+        """Highlight tasks that are marked as imported from configuration."""
+        try:
+            # Iterate through all items in the tree
+            for item in self.task_tree.get_all_items():
+                task_data = item.data(0, Qt.ItemDataRole.UserRole)
+                if task_data and task_data.get('name'):
+                    task_name = task_data.get('name')
+                    
+                    # Check if this task is in the imported config
+                    if f"scheduler:task:{task_name}" in self.imported_config_items:
+                        self.task_tree.highlight_item(item)
+                        
+        except Exception as e:
+            self.logger.error(f"Error highlighting imported tasks: {str(e)}")
             
     def on_task_selection_changed(self):
         """Handle task selection changes."""
@@ -248,3 +271,246 @@ class SchedulerPanel(BasePanel):
             pass
         except Exception as e:
             self.logger.error(f"Error during cleanup: {e}")
+            
+    def apply_config(self, config):
+        """Apply configuration to the panel.
+        
+        Args:
+            config: Dictionary containing configuration data
+            
+        Returns:
+            bool: True if configuration was applied successfully, False otherwise
+        """
+        self.logger.info("Applying scheduler configuration")
+        
+        if not isinstance(config, dict):
+            self.logger.error("Invalid configuration format")
+            return False
+            
+        try:
+            # Process configuration
+            if 'scheduled_tasks' not in config:
+                self.logger.warning("No scheduled tasks configuration found")
+                return False
+                
+            tasks_config = config['scheduled_tasks']
+            
+            if not isinstance(tasks_config, list):
+                self.logger.warning("Invalid scheduled tasks configuration format")
+                return False
+                
+            success = False
+            
+            # Process each task in the configuration
+            for task_config in tasks_config:
+                if not isinstance(task_config, dict):
+                    self.logger.warning("Skipping invalid task configuration")
+                    continue
+                    
+                # Check required fields
+                if 'name' not in task_config or 'command' not in task_config:
+                    self.logger.warning("Skipping task without required fields")
+                    continue
+                    
+                task_name = task_config['name']
+                command = task_config['command']
+                
+                # Optional fields with defaults
+                description = task_config.get('description', '')
+                schedule_type = task_config.get('schedule_type', 'ONCE')
+                start_time = task_config.get('start_time', None)
+                enabled = task_config.get('enabled', True)
+                
+                # Create task dialog would normally be used here, but we're applying directly
+                try:
+                    # Check if task already exists
+                    existing_tasks = self.manager.get_scheduled_tasks()
+                    task_exists = any(task['name'] == task_name for task in existing_tasks)
+                    
+                    if task_exists:
+                        # Delete existing task first
+                        self.logger.info(f"Replacing existing task: {task_name}")
+                        self.manager.delete_task(task_name)
+                    
+                    # Create the task with configuration
+                    result = self.manager.create_task(
+                        name=task_name,
+                        command=command,
+                        description=description,
+                        schedule_type=schedule_type,
+                        start_time=start_time
+                    )
+                    
+                    if result:
+                        self.logger.info(f"Created scheduled task: {task_name}")
+                        
+                        # Set enabled state if needed
+                        if not enabled:
+                            self.manager.disable_task(task_name)
+                            self.logger.info(f"Disabled task: {task_name}")
+                            
+                        success = True
+                    else:
+                        self.logger.warning(f"Failed to create scheduled task: {task_name}")
+                        
+                except Exception as e:
+                    self.logger.error(f"Error creating scheduled task '{task_name}': {str(e)}")
+            
+            # Refresh the task list to show updated state
+            self.refresh_tasks()
+            return success
+            
+        except Exception as e:
+            self.logger.error(f"Error applying scheduler configuration: {str(e)}")
+            return False
+            
+    def export_config(self):
+        """Export panel configuration.
+        
+        Returns:
+            dict: Dictionary containing panel configuration
+        """
+        self.logger.info("Exporting scheduler configuration")
+        
+        try:
+            # Get current scheduled tasks
+            tasks = self.manager.get_scheduled_tasks()
+            
+            # Filter out system tasks and create exportable task configurations
+            exportable_tasks = []
+            
+            for task in tasks:
+                # Skip Microsoft and Windows system tasks
+                if task['name'].startswith('\\Microsoft\\') or task['name'].startswith('\\Windows\\'):
+                    continue
+                    
+                # Get detailed task information
+                task_details = self.manager.get_task_details(task['name'])
+                
+                if not task_details:
+                    continue
+                    
+                # Create task configuration
+                task_config = {
+                    'name': task['name'],
+                    'command': task.get('task_to_run', ''),
+                    'description': task_details.get('description', ''),
+                    'schedule_type': task_details.get('trigger_type', 'ONCE'),
+                    'enabled': task.get('status', '') == 'Ready'
+                }
+                
+                exportable_tasks.append(task_config)
+            
+            # Create configuration dictionary
+            config = {
+                'scheduled_tasks': exportable_tasks
+            }
+            
+            return config
+            
+        except Exception as e:
+            self.logger.error(f"Error exporting scheduler configuration: {str(e)}")
+            return {'scheduled_tasks': []}
+
+    def mark_config_items(self, config):
+        """Mark items from configuration for highlighting without applying changes.
+        
+        This method identifies and marks scheduled tasks from the configuration
+        that would be modified by apply_config(), but does not actually
+        apply any changes to the system. Items will be visually highlighted in the UI.
+        
+        Args:
+            config: Dictionary containing configuration data
+            
+        Returns:
+            bool: True if items were marked successfully, False otherwise
+        """
+        self.logger.info("Marking scheduled tasks from configuration for highlighting")
+        
+        # Clear previous imported items
+        self.imported_config_items.clear()
+        
+        if not isinstance(config, dict):
+            self.logger.error("Invalid configuration format")
+            return False
+            
+        try:
+            # Check if scheduler section exists
+            if 'scheduled_tasks' not in config:
+                self.logger.warning("No scheduled tasks configuration found")
+                return False
+                
+            scheduled_tasks = config['scheduled_tasks']
+            
+            if not isinstance(scheduled_tasks, list):
+                self.logger.warning("Invalid scheduled tasks configuration format")
+                return False
+                
+            # Get existing tasks for comparison
+            existing_tasks = {task['name']: task for task in self.manager.get_scheduled_tasks()}
+            
+            # Process scheduled tasks
+            for task_config in scheduled_tasks:
+                if not isinstance(task_config, dict):
+                    continue
+                    
+                # Check required fields
+                if 'name' not in task_config:
+                    self.logger.warning("Skipping invalid task configuration (missing name)")
+                    continue
+                    
+                task_name = task_config['name']
+                
+                # Mark this task as imported from config for highlighting
+                self.mark_as_imported_config(f"scheduler:task:{task_name}")
+                self.logger.debug(f"Marked scheduled task for highlighting: {task_name}")
+                
+                # Check if task exists
+                if task_name in existing_tasks:
+                    # Task exists, it will be highlighted during refresh
+                    pass
+                else:
+                    # Task doesn't exist, add virtual entry
+                    self.add_virtual_task(task_config)
+            
+            # Refresh the tasks to show updated state with highlighting
+            self.refresh_tasks()
+            
+            return True
+            
+        except Exception as e:
+            self.logger.error(f"Error marking scheduled tasks from configuration: {str(e)}")
+            return False
+    
+    def add_virtual_task(self, task_config):
+        """Add a virtual task entry that doesn't exist in the system yet.
+        
+        Args:
+            task_config: Dictionary containing task configuration
+        """
+        try:
+            # Create a task dictionary in the format expected by the tree widget
+            virtual_task = {
+                'name': task_config.get('name', ''),
+                'command': task_config.get('command', ''),
+                'description': task_config.get('description', ''),
+                'schedule_type': task_config.get('schedule_type', 'ONCE'),
+                'status': 'Virtual (Not Applied)',
+                'task_to_run': task_config.get('command', '')
+            }
+            
+            # Add virtual entry to the tree
+            self.task_tree.add_virtual_task(virtual_task)
+            
+            self.logger.debug(f"Added virtual scheduled task: {task_config.get('name', '')}")
+            
+        except Exception as e:
+            self.logger.error(f"Error adding virtual scheduled task: {str(e)}")
+    
+    def mark_as_imported_config(self, item):
+        """Mark an item as imported from config for highlighting.
+        
+        Args:
+            item: Item to mark
+        """
+        self.imported_config_items.add(item)

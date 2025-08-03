@@ -130,3 +130,83 @@ class SchedulerTreeWidget(QTreeWidget):
                     item.setForeground(1, Qt.GlobalColor.darkRed)
                 
                 break
+
+    def add_virtual_task(self, task):
+        """Add a virtual task entry from imported configuration.
+        
+        A virtual task represents a task from the imported configuration
+        that doesn't exist in the system yet. It will be highlighted to
+        indicate it's from the imported configuration.
+        
+        Args:
+            task: Dictionary containing task data
+            
+        Returns:
+            QTreeWidgetItem: Created tree item
+        """
+        try:
+            item = QTreeWidgetItem([
+                task.get('name', ''),
+                "Virtual (Not Applied)",
+                "N/A",  # Next Run
+                "N/A",  # Last Run
+                "N/A",  # Last Result
+                "Config Import",  # Author
+                task.get('command', '')
+            ])
+            
+            # Store full task data in the item
+            item.setData(0, Qt.ItemDataRole.UserRole, task)
+            
+            # Apply highlighting for virtual item
+            self.highlight_item(item, is_virtual=True)
+            
+            self.addTopLevelItem(item)
+            self.logger.debug(f"Added virtual task: {task.get('name', '')}")
+            return item
+            
+        except Exception as e:
+            self.logger.error(f"Error adding virtual task item: {e}")
+            return None
+    
+    def highlight_item(self, item, is_virtual=False):
+        """Highlight an item to indicate it's from imported configuration.
+        
+        Args:
+            item: QTreeWidgetItem to highlight
+            is_virtual: Whether this is a virtual entry (not in system yet)
+        """
+        for col in range(self.columnCount()):
+            item.setBackground(col, Qt.GlobalColor.cyan)
+            item.setForeground(col, Qt.GlobalColor.darkBlue)
+            
+            if is_virtual:
+                item.setToolTip(col, "Virtual task from configuration file (not created yet)")
+            else:
+                item.setToolTip(col, "Imported from configuration file")
+    
+    def get_all_items(self):
+        """Get all items in the tree.
+        
+        Returns:
+            list: List of all QTreeWidgetItems
+        """
+        items = []
+        for i in range(self.topLevelItemCount()):
+            items.append(self.topLevelItem(i))
+        return items
+        
+    def find_task_by_name(self, task_name):
+        """Find a task item by name.
+        
+        Args:
+            task_name: Name of the task to find
+            
+        Returns:
+            QTreeWidgetItem: Found item or None
+        """
+        for i in range(self.topLevelItemCount()):
+            item = self.topLevelItem(i)
+            if item and item.text(0) == task_name:
+                return item
+        return None

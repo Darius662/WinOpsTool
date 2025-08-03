@@ -204,6 +204,82 @@ class VolumesTree(QTreeWidget):
             item.setText(6, f"{free_gb:.1f}")
             item.setText(7, f"{used_percent:.1f}")
             
+    def add_virtual_volume(self, device, label="", type="Network Drive", fstype="Unknown", 
+                         total=0, used=0, free=0):
+        """Add a virtual volume entry from imported configuration.
+        
+        A virtual volume represents a volume from the imported configuration
+        that doesn't exist in the system yet or needs to be modified. It will be 
+        highlighted to indicate it's from the imported configuration.
+        
+        Args:
+            device: Device path (drive letter)
+            label: Volume label
+            type: Drive type
+            fstype: Filesystem type
+            total: Total size in bytes
+            used: Used space in bytes
+            free: Free space in bytes
+            
+        Returns:
+            QTreeWidgetItem: Created tree item
+        """
+        # Convert sizes to GB
+        total_gb = round(total / (1024 * 1024 * 1024), 1) if total > 0 else 0
+        used_gb = round(used / (1024 * 1024 * 1024), 1) if used > 0 else 0
+        free_gb = round(free / (1024 * 1024 * 1024), 1) if free > 0 else 0
+        used_percent = round((used / total * 100), 1) if total > 0 else 0
+        
+        item = QTreeWidgetItem([
+            device,
+            label,
+            f"{type} (Virtual)",
+            fstype,
+            f"{total_gb:.1f}" if total > 0 else "N/A",
+            f"{used_gb:.1f}" if used > 0 else "N/A",
+            f"{free_gb:.1f}" if free > 0 else "N/A",
+            f"{used_percent:.1f}" if total > 0 else "N/A"
+        ])
+        
+        # Right-align numeric columns
+        item.setTextAlignment(4, Qt.AlignmentFlag.AlignRight)  # Total
+        item.setTextAlignment(5, Qt.AlignmentFlag.AlignRight)  # Used
+        item.setTextAlignment(6, Qt.AlignmentFlag.AlignRight)  # Free
+        item.setTextAlignment(7, Qt.AlignmentFlag.AlignRight)  # Used %
+        
+        # Apply highlighting for virtual item
+        self.highlight_item(item, is_virtual=True)
+        
+        self.addTopLevelItem(item)
+        return item
+    
+    def highlight_item(self, item, is_virtual=False):
+        """Highlight an item to indicate it's from imported configuration.
+        
+        Args:
+            item: QTreeWidgetItem to highlight
+            is_virtual: Whether this is a virtual entry (not in system yet)
+        """
+        for col in range(self.columnCount()):
+            item.setBackground(col, Qt.GlobalColor.cyan)
+            item.setForeground(col, Qt.GlobalColor.darkBlue)
+            
+            if is_virtual:
+                item.setToolTip(col, "Virtual volume from configuration file (not applied yet)")
+            else:
+                item.setToolTip(col, "Imported from configuration file")
+    
+    def get_all_items(self):
+        """Get all items in the tree.
+        
+        Returns:
+            list: List of all QTreeWidgetItems
+        """
+        items = []
+        for i in range(self.topLevelItemCount()):
+            items.append(self.topLevelItem(i))
+        return items
+        
     def clear_volumes(self):
         """Clear all volumes from the tree."""
         self.clear()
