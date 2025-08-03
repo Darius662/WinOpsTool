@@ -3,6 +3,7 @@ import yaml
 from PyQt6.QtWidgets import QMessageBox, QFileDialog
 from src.core.logger import setup_logger
 from src.ui.dialogs.connection_dialog import ConnectionDialog
+from src.ui.dialogs.enable_winrm_dialog import EnableWinRMDialog
 
 logger = setup_logger(__name__)
 
@@ -29,6 +30,11 @@ class DialogHandler:
             from src.ui.dialogs.file_transfer_dialog import FileTransferDialog
             dialog = FileTransferDialog(self.parent.remote_handler, self.parent)
             dialog.exec()
+            
+    def show_enable_winrm(self):
+        """Show the Enable WinRM Remotely dialog."""
+        dialog = EnableWinRMDialog(self.parent)
+        dialog.exec()
             
     def show_about(self):
         """Show about dialog."""
