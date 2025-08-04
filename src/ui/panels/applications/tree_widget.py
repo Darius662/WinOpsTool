@@ -3,6 +3,7 @@ from PyQt6.QtWidgets import QTreeWidget, QTreeWidgetItem
 from PyQt6.QtCore import Qt
 from src.core.logger import setup_logger
 from datetime import datetime
+from PyQt6.QtGui import QColor, QBrush
 
 class ProcessesTree(QTreeWidget):
     """Tree widget for displaying running processes."""
@@ -129,6 +130,9 @@ class StartupTree(QTreeWidget):
         self.logger = setup_logger(self.__class__.__name__)
         self.setup_ui()
         
+        # Track virtual items
+        self.virtual_items = set()
+        
     def setup_ui(self):
         """Set up the tree widget UI."""
         # Set up columns
@@ -171,6 +175,75 @@ class StartupTree(QTreeWidget):
         
         self.addTopLevelItem(item)
         return item
+        
+    def add_virtual_startup_item(self, name, command, location, item_type):
+        """Add a virtual startup item to the tree (from imported config).
+        
+        Args:
+            name: Item name
+            command: Command or path
+            location: Registry hive or folder location
+            item_type: Type (Run, RunOnce, Startup Folder)
+            
+        Returns:
+            QTreeWidgetItem: Created tree item
+        """
+        item = self.add_startup_item(name, command, location, f"{item_type} (Virtual)")
+        
+        # Mark as virtual
+        self.virtual_items.add(item)
+        
+        # Highlight the item
+        self.highlight_item(item, is_virtual=True)
+        
+        return item
+        
+    def highlight_item(self, item, is_virtual=False):
+        """Highlight an item to indicate it's from imported config or virtual.
+        
+        Args:
+            item: QTreeWidgetItem to highlight
+            is_virtual: Whether this is a virtual item
+        """
+        # Use cyan background with dark blue text for highlighting
+        background_color = QColor(200, 255, 255)  # Light cyan
+        text_color = QColor(0, 0, 128)  # Dark blue
+        
+        # Set background color for all columns
+        for col in range(self.columnCount()):
+            item.setBackground(col, QBrush(background_color))
+            item.setForeground(col, QBrush(text_color))
+            
+        # Set tooltip
+        if is_virtual:
+            tooltip = "Virtual item from imported configuration (does not exist in system)"
+        else:
+            tooltip = "Item from imported configuration"
+            
+        for col in range(self.columnCount()):
+            item.setToolTip(col, tooltip)
+            
+    def is_virtual_item(self, item):
+        """Check if an item is a virtual item.
+        
+        Args:
+            item: QTreeWidgetItem to check
+            
+        Returns:
+            bool: True if item is virtual, False otherwise
+        """
+        return item in self.virtual_items
+        
+    def get_all_items(self):
+        """Get all items in the tree.
+        
+        Returns:
+            list: List of all QTreeWidgetItems
+        """
+        items = []
+        for i in range(self.topLevelItemCount()):
+            items.append(self.topLevelItem(i))
+        return items
         
     def get_startup_item(self, item):
         """Get startup item details from tree item.

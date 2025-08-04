@@ -3,21 +3,21 @@ from src.core.logger import setup_logger
 from .connection import RemoteConnection
 from .file_transfer import FileTransfer
 from .process import ProcessManager
-from .wmi import WmiManager
+from .ps_remote_manager import PSRemoteManager, PSRemoteConnection
 
 class RemoteManager:
-    """Main class for remote system management."""
+    """Main class for remote system management using PowerShell Remoting."""
     
     def __init__(self):
         """Initialize remote manager."""
         self.logger = setup_logger(self.__class__.__name__)
-        self.connection = RemoteConnection()
+        self.ps_remote = PSRemoteManager()
         self.file_transfer = FileTransfer()
         self.process = ProcessManager()
-        self.wmi = WmiManager()
+        self.connection = None  # For compatibility with existing code
         
     def connect(self, host, username, password):
-        """Connect to remote system.
+        """Connect to remote system using PowerShell Remoting.
         
         Args:
             host: Remote hostname or IP
@@ -27,17 +27,31 @@ class RemoteManager:
         Raises:
             ConnectionError: If connection fails
         """
-        self.connection.connect(host, username, password)
+        # Generate a unique name for this connection
+        name = f"{host}_{username}"
+        
+        # Add the connection if it doesn't exist
+        if not self.ps_remote.get_connection(name):
+            success = self.ps_remote.add_connection(name, host, username, password)
+            if not success:
+                raise ConnectionError(f"Failed to connect to {host}")
+        
+        # Connect to the remote system
+        success = self.ps_remote.connect(name)
+        if not success:
+            raise ConnectionError(f"Failed to connect to {host}")
+            
+        # Set up the connection for other components
+        self.connection = self.ps_remote.connection
         self.file_transfer.set_connection(self.connection)
         self.process.set_connection(self.connection)
-        self.wmi.set_connection(self.connection)
         
     def disconnect(self):
         """Disconnect from remote system."""
-        self.connection.disconnect()
+        self.ps_remote.disconnect()
         self.file_transfer.clear_connection()
         self.process.clear_connection()
-        self.wmi.clear_connection()
+        self.connection = None
         
     def is_connected(self):
         """Check if connected to remote system.
@@ -45,23 +59,19 @@ class RemoteManager:
         Returns:
             bool: True if connected, False otherwise
         """
-        return self.connection.is_connected()
+        return self.ps_remote.is_connected()
         
     def refresh_connections(self):
         """Refresh the list of saved connections."""
-        # For now, just ensure connection state is updated
-        pass
+        self.ps_remote.refresh_connections()
         
     def get_connections(self):
         """Get list of saved connections.
         
         Returns:
-            list: List of RemoteConnection objects
+            list: List of PSRemoteConnection objects
         """
-        # For now, just return current connection if connected
-        if self.is_connected():
-            return [self.connection]
-        return []
+        return self.ps_remote.get_connections()
         
     def add_connection(self, name, hostname, username, password):
         """Add a new remote connection.
@@ -75,13 +85,7 @@ class RemoteManager:
         Returns:
             bool: True if connection was added successfully
         """
-        try:
-            self.connect(hostname, username, password)
-            self.connection.name = name
-            return True
-        except Exception as e:
-            self.logger.error(f"Failed to add connection: {str(e)}")
-            return False
+        return self.ps_remote.add_connection(name, hostname, username, password)
             
     def remove_connection(self, name):
         """Remove a saved connection.
@@ -92,6 +96,50 @@ class RemoteManager:
         Returns:
             bool: True if connection was removed successfully
         """
-        if self.is_connected() and self.connection.name == name:
-            self.disconnect()
-        return True
+        return self.ps_remote.remove_connection(name)
+        
+    def execute_command(self, command):
+        """Execute a PowerShell command on the remote system.
+        
+        Args:
+            command: PowerShell command to execute
+            
+        Returns:
+            tuple: (return_code, stdout, stderr)
+        """
+        return self.ps_remote.execute_command(command)
+        
+    def execute_script(self, script_content):
+        """Execute a PowerShell script on the remote system.
+        
+        Args:
+            script_content: Content of the PowerShell script
+            
+        Returns:
+            tuple: (return_code, stdout, stderr)
+        """
+        return self.ps_remote.execute_script(script_content)
+        
+    def copy_file_to_remote(self, local_path, remote_path):
+        """Copy a file to the remote system.
+        
+        Args:
+            local_path: Path to the local file
+            remote_path: Destination path on the remote system
+            
+        Returns:
+            bool: True if successful
+        """
+        return self.ps_remote.copy_file_to_remote(local_path, remote_path)
+        
+    def copy_file_from_remote(self, remote_path, local_path):
+        """Copy a file from the remote system.
+        
+        Args:
+            remote_path: Path to the file on the remote system
+            local_path: Destination path on the local system
+            
+        Returns:
+            bool: True if successful
+        """
+        return self.ps_remote.copy_file_from_remote(remote_path, local_path)

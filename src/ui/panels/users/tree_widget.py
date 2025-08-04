@@ -35,7 +35,7 @@ class UsersTree(QTreeWidget):
         self.setSortingEnabled(True)
         self.sortByColumn(0, Qt.SortOrder.AscendingOrder)
         
-    def add_user(self, username, full_name, description, disabled=False):
+    def add_user(self, username, full_name, description, disabled=False, is_imported=False):
         """Add a user account to the tree.
         
         Args:
@@ -43,6 +43,7 @@ class UsersTree(QTreeWidget):
             full_name: Full name
             description: Account description
             disabled: Whether account is disabled
+            is_imported: Whether this user was imported from configuration
             
         Returns:
             QTreeWidgetItem: Created tree item
@@ -54,11 +55,20 @@ class UsersTree(QTreeWidget):
             description,
             status
         ])
+        
+        # Apply special styling for imported items
+        if is_imported:
+            for col in range(4):
+                item.setBackground(col, Qt.GlobalColor.cyan)
+                item.setForeground(col, Qt.GlobalColor.darkBlue)
+                item.setFont(col, self.font())
+                item.setToolTip(col, "Imported from configuration file")
+        
         self.addTopLevelItem(item)
         return item
         
     def update_user(self, item, username=None, full_name=None,
-                  description=None, disabled=None):
+                  description=None, disabled=None, is_imported=None):
         """Update an existing user account.
         
         Args:
@@ -67,6 +77,7 @@ class UsersTree(QTreeWidget):
             full_name: New full name (optional)
             description: New description (optional)
             disabled: New disabled state (optional)
+            is_imported: Whether this user was imported from configuration
         """
         if username is not None:
             item.setText(0, username)
@@ -76,6 +87,19 @@ class UsersTree(QTreeWidget):
             item.setText(2, description)
         if disabled is not None:
             item.setText(3, "Disabled" if disabled else "Enabled")
+            
+        # Apply special styling for imported items
+        if is_imported is not None:
+            for col in range(4):
+                if is_imported:
+                    item.setBackground(col, Qt.GlobalColor.cyan)
+                    item.setForeground(col, Qt.GlobalColor.darkBlue)
+                    item.setFont(col, self.font())
+                    item.setToolTip(col, "Imported from configuration file")
+                else:
+                    item.setBackground(col, Qt.GlobalColor.transparent)
+                    item.setForeground(col, Qt.GlobalColor.black)
+                    item.setToolTip(col, "")
             
     def get_user(self, item):
         """Get user account details from tree item.
@@ -127,13 +151,14 @@ class GroupsTree(QTreeWidget):
         self.setSortingEnabled(True)
         self.sortByColumn(0, Qt.SortOrder.AscendingOrder)
         
-    def add_group(self, name, description, members=None):
+    def add_group(self, name, description, members=None, is_imported=False):
         """Add a user group to the tree.
         
         Args:
             name: Group name
             description: Group description
             members: List of member usernames
+            is_imported: Whether this group was imported from configuration
             
         Returns:
             QTreeWidgetItem: Created tree item
@@ -144,10 +169,19 @@ class GroupsTree(QTreeWidget):
             description,
             members_str
         ])
+        
+        # Apply special styling for imported items
+        if is_imported:
+            for col in range(3):
+                item.setBackground(col, Qt.GlobalColor.cyan)
+                item.setForeground(col, Qt.GlobalColor.darkBlue)
+                item.setFont(col, self.font())
+                item.setToolTip(col, "Imported from configuration file")
+                
         self.addTopLevelItem(item)
         return item
         
-    def update_group(self, item, name=None, description=None, members=None):
+    def update_group(self, item, name=None, description=None, members=None, is_imported=None):
         """Update an existing user group.
         
         Args:
@@ -155,6 +189,7 @@ class GroupsTree(QTreeWidget):
             name: New group name (optional)
             description: New description (optional)
             members: New list of member usernames (optional)
+            is_imported: Whether this group was imported from configuration
         """
         if name is not None:
             item.setText(0, name)
@@ -162,6 +197,19 @@ class GroupsTree(QTreeWidget):
             item.setText(1, description)
         if members is not None:
             item.setText(2, ", ".join(members))
+            
+        # Apply special styling for imported items
+        if is_imported is not None:
+            for col in range(3):
+                if is_imported:
+                    item.setBackground(col, Qt.GlobalColor.cyan)
+                    item.setForeground(col, Qt.GlobalColor.darkBlue)
+                    item.setFont(col, self.font())
+                    item.setToolTip(col, "Imported from configuration file")
+                else:
+                    item.setBackground(col, Qt.GlobalColor.transparent)
+                    item.setForeground(col, Qt.GlobalColor.black)
+                    item.setToolTip(col, "")
             
     def get_group(self, item):
         """Get group details from tree item.

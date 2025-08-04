@@ -22,6 +22,10 @@ class DiskPanel(BasePanel):
         self.logger = setup_logger(self.__class__.__name__)
         self.manager = DiskManager()
         
+        # Initialize imported config items
+        self.imported_config_items = set()
+        self.virtual_network_drives = {}
+        
         # Set up refresh timer (5 seconds)
         self.refresh_timer = QTimer(self)
         self.refresh_timer.timeout.connect(self.refresh_all)
@@ -185,9 +189,19 @@ class DiskPanel(BasePanel):
             self.volumes_tree.clear_volumes()
             volumes = self.manager.get_volumes()
             
+            # Track volume drive letters we've seen to add virtual entries later
+            seen_drive_letters = set()
+            
             for vol in volumes:
-                self.volumes_tree.add_volume(
-                    vol['mountpoint'],
+                # Check if this volume is in the imported config
+                drive_letter = vol['device'].rstrip('\\')
+                is_imported = self.is_imported_config_item(f"disk:network_drive:{drive_letter}")
+                
+                # Add to seen drive letters
+                seen_drive_letters.add(drive_letter)
+                
+                item = self.volumes_tree.add_volume(
+                    vol['device'],
                     vol['label'],
                     vol['type'],
                     vol['fstype'],
@@ -195,6 +209,13 @@ class DiskPanel(BasePanel):
                     vol['used'],
                     vol['free']
                 )
+                
+                # Highlight if this volume is in the imported config
+                if is_imported:
+                    self.volumes_tree.highlight_item(item)
+            
+            # Add virtual entries for network drives in config but not in system
+            self.add_virtual_network_drives(seen_drive_letters)
                 
             # Reapply filter if search text exists
             if self.volume_search.text():
@@ -206,9 +227,38 @@ class DiskPanel(BasePanel):
                 if item:
                     item.setSelected(True)
                     
+            # Update button states
+            self.update_volume_buttons()
+            
             self.logger.debug("Refreshed volumes")
+            
         except Exception as e:
             self.logger.error(f"Failed to refresh volumes: {str(e)}")
+            
+    def add_virtual_network_drives(self, seen_drive_letters):
+        """Add virtual entries for network drives in config but not in system.
+        
+        Args:
+            seen_drive_letters: Set of drive letters that are currently in the system
+        """
+        try:
+            # Check for network drive configurations in imported config
+            for drive_letter, drive_config in self.virtual_network_drives.items():
+                # Only add virtual entry if drive letter is not in system
+                if drive_letter not in seen_drive_letters:
+                    network_path = drive_config.get('network_path', '')
+                    
+                    self.volumes_tree.add_virtual_volume(
+                        device=drive_letter,
+                        label=network_path,
+                        type="Network Drive",
+                        fstype="Network"
+                    )
+                    
+                    self.logger.debug(f"Added virtual network drive entry: {drive_letter} -> {network_path}")
+                    
+        except Exception as e:
+            self.logger.error(f"Error adding virtual network drives: {str(e)}")
             
     def filter_disks(self, text):
         """Filter disks by name or model.
@@ -338,3 +388,246 @@ class DiskPanel(BasePanel):
                 self.logger.error(f"Error disconnecting network drive: {str(e)}")
                 QMessageBox.critical(self, "Error", 
                            f"Error disconnecting network drive: {str(e)}")
+
+    def apply_config(self, config):
+        """Apply configuration to the panel.
+        
+        Args:
+            config: Dictionary containing configuration data
+            
+        Returns:
+            bool: True if configuration was applied successfully, False otherwise
+        """
+        self.logger.info("Applying disk configuration")
+        
+        if not isinstance(config, dict):
+            self.logger.error("Invalid configuration format")
+            return False
+            
+        try:
+            # Check if disk section exists
+            if 'disk' not in config:
+                self.logger.warning("No disk configuration found")
+                return False
+                
+            disk_config = config['disk']
+            
+            # Process network drive configurations
+            if 'network_drives' in disk_config and isinstance(disk_config['network_drives'], list):
+                self.logger.info(f"Found {len(disk_config['network_drives'])} network drive configurations")
+                
+                # Track success/failure
+                success_count = 0
+                total_count = 0
+                
+                # Get existing volumes for comparison
+                existing_volumes = {vol['device'].rstrip('\\'): vol for vol in self.manager.get_volumes()}
+                
+                for drive_config in disk_config['network_drives']:
+                    if not isinstance(drive_config, dict):
+                        self.logger.warning("Skipping invalid network drive configuration")
+                        continue
+                        
+                    # Check required fields
+                    if 'network_path' not in drive_config or 'drive_letter' not in drive_config:
+                        self.logger.warning("Skipping network drive without required fields")
+                        continue
+                        
+                    total_count += 1
+                    drive_letter = drive_config['drive_letter']
+                    network_path = drive_config['network_path']
+                    
+                    # Optional fields with defaults
+                    use_windows_creds = drive_config.get('use_windows_creds', True)
+                    username = drive_config.get('username', '')
+                    password = drive_config.get('password', '')
+                    reconnect = drive_config.get('reconnect', True)
+                    
+                    # Check if drive letter exists
+                    if drive_letter in existing_volumes:
+                        # If it's already mapped to the same network path, skip
+                        vol = existing_volumes[drive_letter]
+                        if vol.get('is_network_drive', False) and vol.get('network_path') == network_path:
+                            self.logger.info(f"Network drive {drive_letter} already mapped to {network_path}")
+                            success_count += 1
+                            continue
+                        
+                        # Otherwise, disconnect first
+                        self.logger.info(f"Disconnecting existing drive {drive_letter} before remapping")
+                        result = self.manager.disconnect_network_drive(drive_letter)
+                        if not result.get('success', False):
+                            self.logger.error(f"Failed to disconnect drive {drive_letter}: {result.get('error', 'Unknown error')}")
+                            continue
+                    
+                    # Map the network drive
+                    self.logger.info(f"Mapping network drive {drive_letter} to {network_path}")
+                    result = self.manager.map_network_drive(
+                        network_path=network_path,
+                        drive_letter=drive_letter,
+                        use_windows_creds=use_windows_creds,
+                        username=username,
+                        password=password,
+                        reconnect=reconnect
+                    )
+                    
+                    if result.get('success', False):
+                        self.logger.info(f"Successfully mapped network drive {drive_letter} to {network_path}")
+                        success_count += 1
+                    else:
+                        self.logger.error(f"Failed to map network drive {drive_letter}: {result.get('error', 'Unknown error')}")
+                
+                # Clear imported config items and virtual drives since they've been applied
+                self.imported_config_items.clear()
+                self.virtual_network_drives.clear()
+                
+                # Refresh volumes to show updated state
+                self.refresh_volumes()
+                
+                return success_count > 0 and success_count == total_count
+                
+            # If no specific configurations were found, return False
+            self.logger.warning("No network drive configurations found")
+            return False
+            
+        except Exception as e:
+            self.logger.error(f"Error applying disk configuration: {str(e)}")
+            return False
+
+    def export_config(self):
+        """Export panel configuration.
+        
+        Returns:
+            dict: Dictionary containing panel configuration
+        """
+        self.logger.info("Exporting disk configuration")
+        
+        try:
+            # Get current volumes
+            volumes = self.manager.get_volumes()
+            
+            # Filter for network drives and create exportable configurations
+            network_drives = []
+            
+            for volume in volumes:
+                # Only include network drives
+                if volume['type'] != "Network Drive":
+                    continue
+                    
+                # Create network drive configuration
+                drive_config = {
+                    'drive_letter': volume['drive_letter'],
+                    'network_path': volume['path'],
+                    'reconnect': True  # Default to reconnect at logon
+                }
+                
+                network_drives.append(drive_config)
+            
+            # Create configuration dictionary
+            config = {
+                'disk': {
+                    'network_drives': network_drives
+                }
+            }
+            
+            return config
+            
+        except Exception as e:
+            self.logger.error(f"Error exporting disk configuration: {str(e)}")
+            return {'disk': {'network_drives': []}}
+
+    def mark_config_items(self, config):
+        """Mark items from configuration for highlighting without applying changes.
+        
+        This method identifies and marks network drives from the configuration
+        that would be modified by apply_config(), but does not actually
+        apply any changes to the system. Items will be visually highlighted in the UI.
+        
+        Args:
+            config: Dictionary containing configuration data
+            
+        Returns:
+            bool: True if items were marked successfully, False otherwise
+        """
+        self.logger.info("Marking network drives from configuration for highlighting")
+        
+        # Clear previous imported items
+        self.imported_config_items.clear()
+        
+        # Clear virtual network drives dictionary
+        self.virtual_network_drives = {}
+        
+        if not isinstance(config, dict):
+            self.logger.error("Invalid configuration format")
+            return False
+            
+        try:
+            # Check if disk section exists
+            if 'disk' not in config:
+                self.logger.warning("No disk configuration found")
+                return False
+                
+            disk_config = config['disk']
+            
+            # Process network drive configurations
+            if 'network_drives' in disk_config and isinstance(disk_config['network_drives'], list):
+                self.logger.info(f"Found {len(disk_config['network_drives'])} network drive configurations")
+                
+                # Get existing volumes for comparison
+                existing_volumes = {vol['device'].rstrip('\\'): vol for vol in self.manager.get_volumes()}
+                
+                for drive_config in disk_config['network_drives']:
+                    if not isinstance(drive_config, dict):
+                        self.logger.warning("Skipping invalid network drive configuration")
+                        continue
+                        
+                    # Check required fields
+                    if 'network_path' not in drive_config or 'drive_letter' not in drive_config:
+                        self.logger.warning("Skipping network drive without required fields")
+                        continue
+                        
+                    drive_letter = drive_config['drive_letter']
+                    network_path = drive_config['network_path']
+                    
+                    # Mark this network drive as imported from config for highlighting
+                    self.mark_as_imported_config(f"disk:network_drive:{drive_letter}")
+                    self.logger.debug(f"Marked network drive for highlighting: {drive_letter} -> {network_path}")
+                    
+                    # Check if drive letter exists
+                    if drive_letter in existing_volumes:
+                        # Drive letter exists, it will be highlighted during refresh
+                        pass
+                    else:
+                        # Drive letter doesn't exist, store for virtual entry
+                        self.virtual_network_drives[drive_letter] = drive_config
+                
+                # Refresh volumes to show updated state with highlighting
+                self.refresh_volumes()
+                
+                return True
+                
+            # If no specific configurations were found, return False
+            self.logger.warning("No network drive configurations found")
+            return False
+            
+        except Exception as e:
+            self.logger.error(f"Error marking network drives from configuration: {str(e)}")
+            return False
+    
+    def mark_as_imported_config(self, item):
+        """Mark an item as imported from config for highlighting.
+        
+        Args:
+            item: Item to mark
+        """
+        self.imported_config_items.add(item)
+        
+    def is_imported_config_item(self, item):
+        """Check if an item is marked as imported from config.
+        
+        Args:
+            item: Item to check
+            
+        Returns:
+            bool: True if item is marked as imported, False otherwise
+        """
+        return item in self.imported_config_items

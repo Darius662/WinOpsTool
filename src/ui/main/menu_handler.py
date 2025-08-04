@@ -48,22 +48,27 @@ class MenuHandler:
         """Set up Remote menu."""
         remote_menu = self.menubar.addMenu("Remote")
         
-        # Connect
-        connect_action = QAction("Connect...", self.main_window)
-        connect_action.triggered.connect(self.main_window.dialog_handler.show_connections)
-        remote_menu.addAction(connect_action)
+        # Connect - Temporarily hidden
+        # connect_action = QAction("Connect...", self.main_window)
+        # connect_action.triggered.connect(self.main_window.dialog_handler.show_connections)
+        # remote_menu.addAction(connect_action)
         
-        # Disconnect
-        disconnect_action = QAction("Disconnect", self.main_window)
-        disconnect_action.triggered.connect(self.main_window.remote_handler.disconnect)
-        remote_menu.addAction(disconnect_action)
+        # Disconnect - Temporarily hidden
+        # disconnect_action = QAction("Disconnect", self.main_window)
+        # disconnect_action.triggered.connect(self.main_window.remote_handler.disconnect)
+        # remote_menu.addAction(disconnect_action)
         
-        remote_menu.addSeparator()
+        # remote_menu.addSeparator()
         
         # File transfer
         transfer_action = QAction("File Transfer...", self.main_window)
         transfer_action.triggered.connect(self.main_window.dialog_handler.show_file_transfer)
         remote_menu.addAction(transfer_action)
+        
+        # Enable WinRM Remotely - Temporarily hidden
+        # enable_winrm_action = QAction("Enable WinRM Remotely...", self.main_window)
+        # enable_winrm_action.triggered.connect(self.main_window.dialog_handler.show_enable_winrm)
+        # remote_menu.addAction(enable_winrm_action)
         
     def setup_help_menu(self):
         """Set up Help menu."""

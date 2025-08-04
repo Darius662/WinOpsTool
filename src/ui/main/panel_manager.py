@@ -19,6 +19,10 @@ class PanelManager:
         self.panels = {}
         self.setup_panels()
         
+        # Apply configuration if available
+        if hasattr(parent, 'config') and parent.config:
+            self.apply_config_to_panels(parent.config)
+        
     def setup_panels(self):
         """Set up all feature panels."""
         # Welcome panel
@@ -117,6 +121,12 @@ class PanelManager:
         self.tab_widget.addTab(events_panel, "Event Viewer")
         self.panels["Event Viewer"] = events_panel
         
+        # Credentials panel
+        from ..panels.credentials import CredentialsPanel
+        credentials_panel = CredentialsPanel(self.parent)
+        self.tab_widget.addTab(credentials_panel, "Credentials")
+        self.panels["Credentials"] = credentials_panel
+        
     def get_current_panel(self):
         """Get currently active panel.
         
@@ -143,3 +153,114 @@ class PanelManager:
             panel = self.tab_widget.widget(i)
             if hasattr(panel, 'update_remote_state'):
                 panel.update_remote_state(connected)
+
+    def update_panels_with_config(self, config):
+        """Update panels to show imported configuration items without applying changes.
+        
+        This method marks items in the configuration as imported but does not
+        apply any changes to the system. Items will be visually highlighted in the UI.
+        
+        Args:
+            config: Configuration dictionary
+            
+        Returns:
+            bool: True if all panels were updated successfully, False otherwise
+        """
+        if not isinstance(config, dict):
+            self.logger.warning("Invalid configuration format")
+            return False
+            
+        self.logger.info(f"Updating panels with configuration: {list(config.keys())}")
+        success = True
+        
+        # Update each panel based on its type
+        for panel_name, panel in self.panels.items():
+            try:
+                # Determine which section of the config applies to this panel
+                panel_config = {}
+                
+                # Map panel names to config sections
+                if "Environment Variables" in panel_name and "environment_variables" in config:
+                    panel_config = {"environment_variables": config["environment_variables"]}
+                elif "Registry Editor" in panel_name and "registry" in config:
+                    panel_config = {"registry": config["registry"]}
+                elif "Users & Groups" in panel_name and "users" in config:
+                    panel_config = {"users": config["users"]}
+                elif "Services" in panel_name and "services" in config:
+                    panel_config = {"services": config["services"]}
+                elif "Firewall" in panel_name and "firewall" in config:
+                    panel_config = {"firewall_rules": config["firewall"]}
+                elif "Software" in panel_name and "software" in config:
+                    panel_config = {"software": config["software"]}
+                elif "Permissions" in panel_name and "permissions" in config:
+                    panel_config = {"permissions": config["permissions"]}
+                elif "Applications" in panel_name and "applications" in config:
+                    panel_config = {"applications": config["applications"]}
+                elif "Packages" in panel_name and "software" in config:
+                    panel_config = {"software": config["software"]}
+                
+                # Update panel with configuration if available
+                if panel_config and hasattr(panel, 'mark_config_items'):
+                    self.logger.info(f"Updating {panel_name} panel with configuration")
+                    if not panel.mark_config_items(panel_config):
+                        success = False
+                        
+            except Exception as e:
+                self.logger.error(f"Error updating {panel_name} panel with configuration: {str(e)}")
+                success = False
+                
+        return success
+        
+    def apply_config_to_panels(self, config):
+        """Apply configuration to all panels.
+        
+        Args:
+            config: Configuration dictionary
+            
+        Returns:
+            bool: True if all panels were updated successfully, False otherwise
+        """
+        if not isinstance(config, dict):
+            self.logger.warning("Invalid configuration format")
+            return False
+            
+        self.logger.info(f"Applying configuration to panels: {list(config.keys())}")
+        success = True
+        
+        # Apply configuration to each panel based on its type
+        for panel_name, panel in self.panels.items():
+            try:
+                # Determine which section of the config applies to this panel
+                panel_config = {}
+                
+                # Map panel names to config sections
+                if "Environment Variables" in panel_name and "environment_variables" in config:
+                    panel_config = {"environment_variables": config["environment_variables"]}
+                elif "Registry Editor" in panel_name and "registry" in config:
+                    panel_config = {"registry": config["registry"]}
+                elif "Users & Groups" in panel_name and "users" in config:
+                    panel_config = {"users": config["users"]}
+                elif "Services" in panel_name and "services" in config:
+                    panel_config = {"services": config["services"]}
+                elif "Firewall" in panel_name and "firewall" in config:
+                    panel_config = {"firewall_rules": config["firewall"]}
+                elif "Software" in panel_name and "software" in config:
+                    panel_config = {"software": config["software"]}
+                elif "Permissions" in panel_name and "permissions" in config:
+                    panel_config = {"permissions": config["permissions"]}
+                elif "Applications" in panel_name and "applications" in config:
+                    panel_config = {"applications": config["applications"]}
+                elif "Packages" in panel_name and "software" in config:
+                    panel_config = {"software": config["software"]}
+                
+                # Apply configuration if available for this panel
+                if panel_config and hasattr(panel, 'apply_config'):
+                    self.logger.info(f"Applying configuration to {panel_name} panel")
+                    if not panel.apply_config(panel_config):
+                        success = False
+                    
+            except Exception as e:
+                self.logger.error(f"Error applying configuration to {panel_name} panel: {str(e)}")
+                success = False
+                
+        return success

@@ -1,6 +1,6 @@
 """Rule list component for firewall panel."""
 from PyQt6.QtWidgets import QWidget, QVBoxLayout
-from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtCore import pyqtSignal, Qt
 
 from ..tree_widget import RulesTree
 from .button_bar import ButtonBar
@@ -108,6 +108,50 @@ class RuleList(QWidget):
                 rule['program']
             )
             
+    def add_virtual_rule(self, rule):
+        """Add a virtual rule entry that doesn't exist in the system yet.
+        
+        This creates a visual entry for a firewall rule from the imported configuration
+        that doesn't exist in the system yet. The entry will be highlighted.
+        
+        Args:
+            rule: Dictionary containing rule properties
+        """
+        try:
+            # Extract rule properties with defaults for missing values
+            name = rule.get('name', '')
+            enabled = rule.get('enabled', True)
+            direction = rule.get('direction', self.direction)
+            action = rule.get('action', 'Allow')
+            protocol = rule.get('protocol', 'Any')
+            local_ports = rule.get('local_ports', 'Any')
+            remote_ports = rule.get('remote_ports', 'Any')
+            program = rule.get('program', 'Any')
+            
+            # Add the rule to the tree
+            item = self.rules_tree.add_rule(
+                name,
+                enabled,
+                direction,
+                action,
+                protocol,
+                local_ports,
+                remote_ports,
+                program
+            )
+            
+            # Apply special styling for imported items
+            for col in range(self.rules_tree.columnCount()):
+                item.setBackground(col, Qt.GlobalColor.cyan)
+                item.setForeground(col, Qt.GlobalColor.darkBlue)
+                item.setToolTip(col, "Imported from configuration file")
+                
+            return item
+            
+        except Exception as e:
+            print(f"Error adding virtual firewall rule: {str(e)}")
+            return None
+    
     def update_rule_state(self, rule_name, enabled):
         """Update a rule's enabled state in the tree.
         

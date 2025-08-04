@@ -18,8 +18,12 @@ logger = setup_logger(__name__)
 class MainWindow(QMainWindow):
     """Main application window."""
     
-    def __init__(self):
-        """Initialize main window."""
+    def __init__(self, config=None):
+        """Initialize main window.
+        
+        Args:
+            config: Optional configuration dictionary loaded from YAML file
+        """
         # Check for admin privileges
         if not is_admin():
             raise PermissionError("This tool requires administrator privileges.")
@@ -31,6 +35,10 @@ class MainWindow(QMainWindow):
         super().__init__()
         
         self.logger = logger
+        
+        # Store configuration
+        self.config = config or {}
+        self.logger.info(f"MainWindow initialized with configuration: {len(self.config)} sections")
         
         # Create handlers in dependency order
         self.remote_handler = RemoteHandler(self)
@@ -137,22 +145,52 @@ class MainWindow(QMainWindow):
             connected: True if connected to remote system, False otherwise
         """
         self.panel_manager.update_remote_state(connected)
+    
+    def set_config(self, config):
+        """Set the current configuration.
+        
+        Args:
+            config: Dictionary containing configuration data
+        """
+        self.config = config or {}
+        self.logger.info(f"Configuration set with {len(self.config)} sections")
+        
+        # Update panels to show imported items but don't apply changes
+        self.panel_manager.update_panels_with_config(self.config)
         
     def apply_config(self):
         """Apply current configuration to the system."""
         try:
-            current_panel = self.panel_manager.get_current_panel()
-            if not current_panel:
+            if not self.config:
+                self.logger.warning("No configuration loaded to apply")
+                self.dialog_handler.show_error(
+                    "Warning",
+                    "No configuration loaded. Please import a configuration file first."
+                )
                 return
                 
-            panel_name = self.panel_manager.get_current_panel_name()
+            # Confirm action
+            if not self.dialog_handler.confirm_action(
+                "Apply Configuration",
+                "Are you sure you want to apply the loaded configuration to the system?"
+            ):
+                return
+                
+            # Apply configuration to all panels
+            success = self.panel_manager.apply_config_to_panels(self.config)
             
-            # Each panel should implement an apply_config method
-            if hasattr(current_panel, 'apply_config'):
-                current_panel.apply_config()
-                self.logger.info(f"Configuration applied for {panel_name}")
+            if success:
+                self.logger.info("Configuration applied successfully")
+                self.dialog_handler.show_info(
+                    "Success",
+                    "Configuration applied successfully"
+                )
             else:
-                self.logger.warning(f"Panel {panel_name} does not support configuration application")
+                self.logger.warning("Some panels failed to apply configuration")
+                self.dialog_handler.show_warning(
+                    "Warning",
+                    "Some panels failed to apply configuration. Check logs for details."
+                )
                 
         except Exception as e:
             self.logger.error(f"Failed to apply configuration: {str(e)}")
