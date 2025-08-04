@@ -8,10 +8,10 @@ to configure and manage multiple aspects of Windows systems through a modern gra
 <h3>Key Features</h3>
 <ul>
     <li>Local system configuration</li>
-    <li>Remote PC management</li>
+    <!-- <li>Remote PC management</li> -->
     <li>Configuration import/export</li>
     <li>File transfer capabilities</li>
-    <li>Multi-PC operations</li>
+    <!-- <li>Multi-PC operations</li> -->
 </ul>
 
 <h3>Basic Usage</h3>
@@ -22,13 +22,13 @@ to configure and manage multiple aspects of Windows systems through a modern gra
     <li>Import/export configurations for reuse</li>
 </ol>
 
-<h3>Remote Management</h3>
+<!-- <h3>Remote Management</h3>
 <p>To manage remote PCs:</p>
 <ol>
     <li>Use Remote -> Manage Connections to add PCs</li>
     <li>Configure settings in any tab</li>
     <li>Use Remote -> Apply to All Connected PCs</li>
-</ol>
+</ol> -->
 """
 
 FEATURES_CONTENT = """
@@ -98,13 +98,13 @@ FEATURES_CONTENT = """
     <li>Configure auto-start</li>
 </ul>
 
-<h3>Remote Management</h3>
+<!-- <h3>Remote Management</h3>
 <p>Remote PC features:</p>
 <ul>
     <li>Connect to multiple PCs</li>
     <li>Transfer files</li>
     <li>Apply changes remotely</li>
-</ul>
+</ul> -->
 
 <h3>Configuration</h3>
 <p>Configuration management:</p>

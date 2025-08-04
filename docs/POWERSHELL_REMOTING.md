@@ -1,3 +1,4 @@
+<!-- 
 # PowerShell Remoting for WinOpsTool
 
 This document explains how to use PowerShell Remoting for remote PC management in WinOpsTool.
@@ -12,7 +13,9 @@ WinOpsTool now uses PowerShell Remoting (WinRM) for remote PC connections instea
 - Full PowerShell scripting capabilities
 - Improved file transfer capabilities
 - Better error handling and diagnostics
+-->
 
+<!-- 
 ## Requirements
 
 To use PowerShell Remoting with WinOpsTool, you need:
@@ -21,7 +24,9 @@ To use PowerShell Remoting with WinOpsTool, you need:
 2. Administrator privileges on both PCs
 3. PowerShell 5.1 or higher (included with Windows 10/11)
 4. WinRM enabled on the remote PC
+-->
 
+<!-- 
 ## Setting Up WinRM on Remote PCs
 
 Before you can connect to a remote PC, you need to enable WinRM on that PC. This only needs to be done once per PC.
@@ -41,7 +46,9 @@ This command:
 - Creates a firewall exception
 - Enables all required firewall rules
 - Configures a basic listener for WS-Management requests
+-->
 
+<!-- 
 ### Remote Enablement
 
 You can also enable WinRM remotely using WinOpsTool or other methods:
@@ -69,7 +76,9 @@ If you have access to the remote PC via PsExec:
 ```cmd
 psexec \\remotemachine -s powershell Enable-PSRemoting -Force
 ```
+-->
 
+<!-- 
 ### Enterprise Setup (Multiple PCs)
 
 For enterprise environments, you can use Group Policy to enable WinRM on multiple PCs:
@@ -79,7 +88,9 @@ For enterprise environments, you can use Group Policy to enable WinRM on multipl
 3. Navigate to: Computer Configuration → Policies → Administrative Templates → Windows Components → Windows Remote Management (WinRM) → WinRM Service
 4. Enable "Allow remote server management through WinRM"
 5. Configure the IPv4 and IPv6 filters as needed
+-->
 
+<!-- 
 ### Troubleshooting WinRM Setup
 
 If you encounter issues with WinRM setup, try the following:
@@ -108,7 +119,9 @@ Test-WSMan -ComputerName <remote-pc-name>
 ```powershell
 Enable-NetFirewallRule -DisplayGroup "Windows Remote Management"
 ```
+-->
 
+<!-- 
 ## Using PowerShell Remoting in WinOpsTool
 
 ### Connecting to Remote PCs
@@ -123,7 +136,9 @@ Enable-NetFirewallRule -DisplayGroup "Windows Remote Management"
 4. Click "Add Connection"
 5. Use the Connect/Disconnect buttons to manage connections
 6. Use the test buttons (Ping Test, Credential Test, WinRM Test) to verify connectivity
+-->
 
+<!-- 
 ### Executing Remote Commands
 
 Once connected to a remote PC, you can execute PowerShell commands directly:
@@ -139,7 +154,9 @@ To transfer files between the local and remote PC:
 1. Go to Remote → File Transfer
 2. Select the source and destination paths
 3. Click "Transfer"
+-->
 
+<!-- 
 ## Security Considerations
 
 PowerShell Remoting uses the following security measures:
@@ -170,7 +187,9 @@ Set-Item WSMan:\localhost\Service\IPv4Filter -Value "10.0.0.0/24"
 ```powershell
 Register-PSSessionConfiguration -Name "RestrictedEndpoint" -ShowSecurityDescriptorUI
 ```
+-->
 
+<!-- 
 ## Troubleshooting
 
 ### Common Issues
@@ -206,7 +225,9 @@ Get-ChildItem WSMan:\localhost\Listener
 # Check WinRM firewall rules
 Get-NetFirewallRule | Where-Object {$_.DisplayName -like "*WinRM*"}
 ```
+-->
 
+<!-- 
 ## Testing PowerShell Remoting
 
 WinOpsTool includes a test script to verify PowerShell Remoting functionality:
@@ -227,3 +248,4 @@ This script tests:
 - [Microsoft Documentation: PowerShell Remoting](https://docs.microsoft.com/en-us/powershell/scripting/learn/remoting/running-remote-commands)
 - [Microsoft Documentation: WinRM Service](https://docs.microsoft.com/en-us/windows/win32/winrm/portal)
 - [PowerShell Team Blog: PowerShell Remoting Security Considerations](https://devblogs.microsoft.com/powershell/powershell-remoting-security-considerations/)
+-->

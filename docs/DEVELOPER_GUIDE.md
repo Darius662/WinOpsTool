@@ -545,7 +545,7 @@ Virtual entries are created for configuration items that don't exist in the syst
 3. **Configuration Not Loading**: Check schema and validation
 4. **Windows API Errors**: Check for admin privileges and API availability
 5. **Logging Issues**: Check log level settings in the Settings dialog or directly in `src/core/logging_config.py`
-6. **PowerShell Remoting Issues**: Check WinRM configuration and credential handling
+<!-- 6. **PowerShell Remoting Issues**: Check WinRM configuration and credential handling -->
 
 ### Debugging Tips
 
